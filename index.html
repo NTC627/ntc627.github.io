@@ -8,6 +8,7 @@ title: index
     <meta charset="UTF-8">
     <title>b14ckb0x's space</title>
 </head>
+<div class="main-layout">
 <aside class="sidebar">
     <div class="panel">
         <h3>Author</h3> 
@@ -18,7 +19,9 @@ title: index
          <h3>Statistics</h3> <p>Posts: {{ site.posts.size }}</p> 
     </div> 
     <div class="panel"> <h3>Contact</h3> <p>Email:</p> <p>admin@example.com</p> <p>Github:</p> <p>b14ckb0x</p> 
-    </div> </aside> <main class="content"> 
+    </div> 
+</aside> 
+    <main class="content"> 
     <h1>Welcome</h1>
      {% for post in paginator.posts %} 
     <article class="post-card"> 
@@ -37,4 +40,5 @@ title: index
         <a href="{{ paginator.previous_page_path }}"> ← Newer </a> {% endif %} 
         <span> Page {{ paginator.page }} / {{ paginator.total_pages }} </span> {% if paginator.next_page %} 
         <a href="{{ paginator.next_page_path }}"> Older → </a> {% endif %} </div> </main>
+</div>
 </html>
