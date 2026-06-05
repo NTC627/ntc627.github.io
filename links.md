@@ -4,8 +4,21 @@ title: Links
 permalink: /links/
 ---
 
-# 友情链接
-
-- Friend A
-- Friend B
-- Friend C
+<div class="main-layout">
+<aside class="sidebar">
+    <div class="panel">
+        <h3>Author</h3> 
+        <img src="/assets/avatar.jpg" alt="avatar" class="avatar"> 
+        <p>b14ckb0x</p>
+    </div> 
+    <div class="panel">
+         <h3>Statistics</h3> <p>Posts: {{ site.posts.size }}</p> 
+    </div> 
+    <div class="panel"> <h3>Contact</h3>  <p><a href="https://space.bilibili.com/108097771?spm_id_from=333.1007.0.0">Visit my bilibili</a></p> <p><a href="https://github.com/NTC627">Visit my GitHub</p> 
+    </div> 
+</aside> 
+    <main class="content"> 
+    <h1>暂无</h1>
+    <p>就先这样吧</p>
+    </main>
+</div>

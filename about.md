@@ -4,14 +4,21 @@ title: About
 permalink: /about/
 ---
 
-# 关于
-
-这里是 b14ckb0x 的个人博客。
-
-主要记录：
-
-- Security Research
-- Reverse Engineering
-- Linux
-- Programming
-- Misc
+<div class="main-layout">
+<aside class="sidebar">
+    <div class="panel">
+        <h3>Author</h3> 
+        <img src="/assets/avatar.jpg" alt="avatar" class="avatar"> 
+        <p>b14ckb0x</p>
+    </div> 
+    <div class="panel">
+         <h3>Statistics</h3> <p>Posts: {{ site.posts.size }}</p> 
+    </div> 
+    <div class="panel"> <h3>Contact</h3>  <p><a href="https://space.bilibili.com/108097771?spm_id_from=333.1007.0.0">Visit my bilibili</a></p> <p><a href="https://github.com/NTC627">Visit my GitHub</p> 
+    </div> 
+</aside> 
+    <main class="content"> 
+    <h1>About</h1>
+    <p>这里是 b14ckb0x 的个人博客。主要记录个人的学习笔记，以及一些题解</p>
+    </main>
+</div>
