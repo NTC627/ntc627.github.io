@@ -16,7 +16,7 @@
   }
   
   a {
-  color: #32cd3ffe;
+  color: #72ea9cfe;
   text-decoration: none;
   }
   
@@ -93,7 +93,7 @@
   }
 
   .page-number {
-    color: #9acd32;
+    color: #0ca02a;
     transition: all 0.2s;
   }
 
@@ -102,13 +102,13 @@
   }
 
   .page-current {
-    background: #4caf50;
+    background: #14e21b;
     color: white;
     font-weight: 600;
   }
 
   .page-nav {
-    color: #9acd32;
+    color: #5bcd32;
     text-decoration: none;
     white-space: nowrap;
   }
@@ -154,7 +154,7 @@
     color: white;
 
     cursor: pointer;
-}
+  }
 
   .page-jump button:hover {
     opacity: 0.9;
@@ -234,7 +234,7 @@
   }
   
   .read-more {
-  color: #0de8b1;
+  color: #0de89b;
   }
   
   .pagination {
@@ -254,15 +254,12 @@
   }
   
   @media (max-width: 900px) {
-  
-  
   .main-layout {
       flex-direction: column;
   }
   
   .sidebar {
-      width: 220px;
-      flex-shrink: 0;
+      width: none;
   }
   
   
