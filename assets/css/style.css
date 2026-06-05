@@ -9,10 +9,12 @@
     color: #e1e1e1;
     font-family:
         "Courier New",
-        "FangSong",        
-        "STFangsong",   
-        "LXGW WenKai",
-        monospace;
+        "Courier",   
+        "FangSong",
+        "Noto Serif CJK SC", 
+        "STFangsong",       
+        "KaiTi",             
+        monospace;           
   }
 
   #wrapper {
@@ -22,7 +24,7 @@
   }
   
   a {
-  color: #dec9bbfe;
+  color: #ffffff;
   text-decoration: none;
   }
   
