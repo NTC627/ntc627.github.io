@@ -60,15 +60,6 @@
     text-align:center;
   }
 
-  .pagination {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 24px;
-    margin-top: 40px;
-    flex-wrap: wrap;
-  }
-
   .page-numbers {
     display: flex;
     align-items: center;
@@ -242,7 +233,12 @@
   margin-top: 30px;
   padding: 20px;
   border-top: 1px solid #333;
-  
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  margin-top: 40px;
+  flex-wrap: wrap;
   
   display: flex;
   justify-content: space-between;
@@ -259,8 +255,11 @@
       flex-direction: column;
     }
   
-    .sidebar {
+    .sidebar, aside {
       display: none !important;
+      width: 0 !important;
+      height: 0 !important;
+      overflow: hidden !important;
     }
   }
 
