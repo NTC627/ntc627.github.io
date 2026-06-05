@@ -1,6 +1,8 @@
 title: b14ckb0x's space
 description: Hack everything
-remote_theme: pages-themes/hacker@v0.2.0
+theme: 
+paginate: 10
+paginate_path: "/page:num/"
 plugins:
-  - jekyll-remote-theme
   - jekyll-feed
+  - jekyll-paginate
