@@ -1,6 +1,6 @@
 title: b14ckb0x's space
 description: Hack everything
-theme: 
+theme: jekyll-dash
 
 plugins:
   - jekyll-feed
