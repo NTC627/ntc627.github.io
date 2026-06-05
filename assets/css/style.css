@@ -255,16 +255,15 @@
   }
   
   @media (max-width: 900px) {
-  .main-layout {
+    .main-layout {
       flex-direction: column;
-  }
+    }
   
-  .sidebar {
-      width: none !important;
+    .sidebar {
+      display: none !important;
+    }
   }
-  
-  
-  }
+
   .post {
     border: 1px solid #333;
     background: #080808;
