@@ -36,9 +36,85 @@ title: index
         </div> 
         <a class="read-more" href="{{ post.url }}"> Read More >> </a> 
     </article> {% endfor %} 
-    <div class="pagination"> {% if paginator.previous_page %} 
-        <a href="{{ paginator.previous_page_path }}"> ← Newer </a> {% endif %} 
-        <span> Page {{ paginator.page }} / {{ paginator.total_pages }} </span> {% if paginator.next_page %} 
-        <a href="{{ paginator.next_page_path }}"> Older → </a> {% endif %} </div> </main>
+    <div class="pagination">
+
+        {% if paginator.previous_page %}
+            <a href="{{ paginator.previous_page_path }}">← Back</a>
+        {% endif %}
+    
+        {% assign current = paginator.page %}
+        {% assign total = paginator.total_pages %}
+    
+        {% assign start = current | minus: 2 %}
+        {% assign end = current | plus: 2 %}
+    
+        {% if start < 1 %}
+            {% assign start = 1 %}
+            {% assign end = 5 %}
+        {% endif %}
+    
+        {% if end > total %}
+            {% assign end = total %}
+            {% assign start = total | minus: 4 %}
+        {% endif %}
+    
+        {% if start < 1 %}
+            {% assign start = 1 %}
+        {% endif %}
+    
+        {% for i in (start..end) %}
+    
+            {% if i == current %}
+                <input
+                    id="pageJump"
+                    type="number"
+                    min="1"
+                    max="{{ total }}"
+                    value="{{ current }}"
+                    class="page-input"
+                    onkeydown="if(event.key==='Enter'){goToPage(this.value)}"
+                >
+            {% else %}
+                {% if i == 1 %}
+                    <a href="/"> {{ i }} </a>
+                {% else %}
+                    <a href="/page{{ i }}/"> {{ i }} </a>
+                {% endif %}
+            {% endif %}
+    
+        {% endfor %}
+    
+        <button onclick="goToPage(document.getElementById('pageJump').value)">
+            Go
+        </button>
+    
+        <span class="page-total">
+            / {{ total }}
+        </span>
+    
+        {% if paginator.next_page %}
+            <a href="{{ paginator.next_page_path }}">Forward →</a>
+        {% endif %}
+    
+    </div>
+    <script>
+        function goToPage(page) {
+            page = parseInt(page);
+        
+            if (isNaN(page)) return;
+        
+            const maxPage = {{ paginator.total_pages }};
+        
+            if (page < 1) page = 1;
+            if (page > maxPage) page = maxPage;
+        
+            if (page === 1) {
+                window.location.href = "/";
+            } else {
+                window.location.href = "/page" + page + "/";
+            }
+        }
+        </script>
+    </main>
 </div>
 </html>

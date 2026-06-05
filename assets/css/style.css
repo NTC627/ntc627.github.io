@@ -41,6 +41,42 @@
   margin: 20px auto;
   padding: 0 15px;
   }
+
+  .pagination {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 30px;
+    flex-wrap: wrap;
+  }
+
+  .pagination a {
+    padding: 6px 12px;
+    border: 1px solid #ddd;
+    text-decoration: none;
+    border-radius: 4px;
+  }
+
+  .pagination a:hover {
+    background: #f5f5f5;
+  }
+
+  .page-input {
+    width: 60px;
+    text-align: center;
+    padding: 6px;
+    border: 1px solid #409eff;
+    border-radius: 4px;
+  }
+
+  .pagination button {
+    padding: 6px 12px;
+    cursor: pointer;
+  }
+
+  .page-total {
+    color: #666;
+  }
   
   .main-layout {
   display: flex;
