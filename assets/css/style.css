@@ -11,12 +11,13 @@
   }
 
   #wrapper {
-    width: 960px;
+    max-width: 960px;
+    width: 100%;
     margin: 0 auto;
   }
   
   a {
-  color: #72ea9cfe;
+  color: #72eac4fe;
   text-decoration: none;
   }
   
@@ -259,7 +260,7 @@
   }
   
   .sidebar {
-      width: none;
+      width: none !important;
   }
   
   
