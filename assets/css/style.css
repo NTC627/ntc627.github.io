@@ -9,11 +9,22 @@
     color: #e1e1e1;
     font-family:
         "Courier New",
-        "Courier",   
+        "Courier",
+        "DejaVu Sans Mono",
+        "Liberation Mono",
+        "Menlo",
         "FangSong",
+        "STFangsong",
+        "KaiTi",
+        "STKaiti", 
+        "Kaiti SC",
+        "SimSun",
+        "Songti SC",
         "Noto Serif CJK SC", 
-        "STFangsong",       
-        "KaiTi",             
+        "Droid Serif",
+        "PingFang SC",
+        "Noto Sans CJK SC",       
+        "Microsoft YaHei",             
         monospace;           
   }
 
