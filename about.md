@@ -1,6 +1,7 @@
 ---
 layout: default
-title: 关于
+title: About
+permalink: /about/
 ---
 
 # 关于
