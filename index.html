@@ -46,32 +46,23 @@ title: index
             </a>
         {% endif %}
     
-        <div class="page-numbers">
-    
+        <div class="page-numbers">   
             {% assign current = paginator.page %}
-            {% assign total = paginator.total_pages %}
-    
+            {% assign total = paginator.total_pages %}    
             {% assign start = current | minus: 2 %}
             {% assign end = current | plus: 2 %}
-    
             {% if start < 1 %}
                 {% assign start = 1 %}
-            {% endif %}
-    
+            {% endif %}   
             {% if end > total %}
                 {% assign end = total %}
             {% endif %}
-    
             {% for i in (start..end) %}
-    
                 {% if i == current %}
-    
                     <span class="page-current">
                         {{ i }}
-                    </span>
-    
+                    </span> 
                 {% else %}
-    
                     {% if i == 1 %}
                         <a class="page-number" href="/">
                             {{ i }}
@@ -80,18 +71,14 @@ title: index
                         <a class="page-number" href="/page{{ i }}/">
                             {{ i }}
                         </a>
-                    {% endif %}
-    
+                    {% endif %} 
                 {% endif %}
-    
             {% endfor %}
     
         </div>
     
         <div class="page-jump">
-    
             <span>Jump to</span>
-    
             <input
                 id="pageJump"
                 type="number"
@@ -101,7 +88,6 @@ title: index
                 placeholder="{{ current }}"
                 onkeydown="if(event.key==='Enter'){goToPage(this.value)}"
             >
-    
             <button onclick="goToPage(document.getElementById('pageJump').value)">
                 Go
             </button>

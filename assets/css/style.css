@@ -6,11 +6,12 @@
   
   body {
     background: #000;
-    color: #ccc;
+    color: #e1e1e1;
     font-family:
         "Courier New",
-        "Microsoft YaHei",
-        "PingFang SC",
+        "FangSong",        
+        "STFangsong",   
+        "LXGW WenKai",
         monospace;
   }
 
@@ -21,7 +22,7 @@
   }
   
   a {
-  color: #72eac4fe;
+  color: #dec9bbfe;
   text-decoration: none;
   }
   
@@ -50,7 +51,7 @@
   .current-page{
     display:inline-block;
     padding:6px 12px;
-    background:#4caf50;
+    background:#6e736eea;
     color:#fff;
     border-radius:4px;
   }
@@ -89,7 +90,7 @@
   }
 
   .page-number {
-    color: #0ca02a;
+    color: #6d878a;
     transition: all 0.2s;
   }
 
@@ -98,13 +99,13 @@
   }
 
   .page-current {
-    background: #14e21b;
+    background: #6e736eea;
     color: white;
     font-weight: 600;
   }
 
   .page-nav {
-    color: #5bcd32;
+    color: #d4c3c3;
     text-decoration: none;
     white-space: nowrap;
   }
@@ -136,7 +137,7 @@
   }
 
   .page-jump input:focus {
-    border-color: #4caf50;
+    border-color: #2d332d;
   }
 
   .page-jump button {
@@ -146,7 +147,7 @@
     border: none;
     border-radius: 4px;
 
-    background: #4caf50;
+    background: #596059;
     color: white;
 
     cursor: pointer;
@@ -230,7 +231,7 @@
   }
   
   .read-more {
-  color: #0de89b;
+  color: #c0cdc8;
   }
   
   .pagination {
@@ -251,7 +252,7 @@
   }
   
   .pagination a {
-  color: #9acd32;
+  color: #e5b7b7;
   }
   
   @media (max-width: 900px) {
