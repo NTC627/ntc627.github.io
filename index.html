@@ -29,7 +29,7 @@ title: index
             {{ post.title }} </a> 
         </h2> 
         <div class="post-meta"> 
-            {{ post.date | date: "%Y-%m-%d %H:%M" }}
+            {{ post.date | date: "%Y-%m-%d" }}
         </div> 
         <div class="post-excerpt"> 
             {{ post.excerpt | strip_html | truncate: 180 }} 
