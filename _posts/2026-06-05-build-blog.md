@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "[其它]如何使用github搭建一个静态博客"
+title: "[其它]如何使用github搭建一个静态博客(一)"
 date: 2026-06-05
 ---
 # 如何使用github轻松搭建个人博客
