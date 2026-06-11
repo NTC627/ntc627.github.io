@@ -321,6 +321,8 @@
     padding: 15px;
     overflow-x: auto;
     margin: 0;
+    scrollbar-width: thin;
+    scrollbar-color: #333 #111;
   }
 
   .post-content code {
@@ -337,6 +339,23 @@
   .post-content img {
     max-width: 100%;
   }
+
+  .post-content pre::-webkit-scrollbar {
+    height: 6px;
+  }
+
+  .post-content pre::-webkit-scrollbar-track {
+    background: #111;
+  }
+
+  .post-content pre::-webkit-scrollbar-thumb {
+    background: #333;
+  }
+
+  .post-content pre::-webkit-scrollbar-thumb:hover {
+    background: #555;
+  }
+
   .main-layout {
     display: flex;
     align-items: flex-start;
