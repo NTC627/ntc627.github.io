@@ -314,12 +314,12 @@
     margin-bottom: 15px;
   }
 
-  .post-content pre {
+  .post-content .highlight pre {
     background: #111;
     border: 1px solid #333;
     padding: 15px;
     overflow-x: auto;
-    margin-bottom: 15px;
+    margin: 0;
   }
 
   .post-content code {
@@ -356,10 +356,6 @@
   margin: 1.5rem 0;
 }
 
-.highlight pre {
-  margin: 0;
-  background: transparent;
-}
 
 .highlight code {
   background: transparent;
