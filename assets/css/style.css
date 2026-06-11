@@ -101,9 +101,6 @@
     text-decoration: none;
 
     box-sizing: border-box;
-    background: #6e736eea;
-    color: white;
-    font-weight: 600;
   }
 
   .page-number {
@@ -113,6 +110,12 @@
 
   .page-number:hover {
     background: rgba(255,255,255,0.08);
+  }
+
+  .page-current {
+    background: #6e736eea;
+    color: white;
+    font-weight: 600;
   }
 
   .page-nav {
