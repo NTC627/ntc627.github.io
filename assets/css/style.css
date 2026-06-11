@@ -170,6 +170,16 @@
   .page-jump button:hover {
     opacity: 0.9;
   }
+
+  .page-jump input::-webkit-outer-spin-button,
+  .page-jump input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  .page-jump input[type="number"] {
+    -moz-appearance: textfield;
+  }
   
   .main-layout {
   display: flex;
@@ -298,6 +308,11 @@
     border-bottom: 1px solid #222;
     padding-bottom: 10px;
   }
+
+  .post-content {
+    line-height: 1.8;
+  }
+
   .post-content h1,
   .post-content h2,
   .post-content h3 {
