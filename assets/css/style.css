@@ -101,9 +101,8 @@
     text-decoration: none;
 
     box-sizing: border-box;
-    border: 1px solid #555;
-    background: #222;
-    color: #fff;
+    background: #6e736eea;
+    color: white;
     font-weight: 600;
   }
 
@@ -117,7 +116,7 @@
   }
 
   .page-nav {
-    color: #b8eeb8;
+    color: #d4c3c3;
     text-decoration: none;
     white-space: nowrap;
   }
