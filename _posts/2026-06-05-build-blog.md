@@ -66,25 +66,15 @@ plugins:
 
 ``` html
 ---
-
 layout: default
-
 title: index
-
 ---
-
 <!DOCTYPE html>
-
 <html lang="zh-CN">
-
 <head>
-
 <meta charset="UTF-8">
-
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>b14ckb0x's space</title>
-
 </head>
 ```
 
@@ -92,17 +82,12 @@ title: index
 
 ```markdown
 ---
-
 layout: post
-
 title: "Hello World"
-
 date: 2021-03-03
-
 ---
 
 # Hello world
-
 Test my blog
 ```
 
