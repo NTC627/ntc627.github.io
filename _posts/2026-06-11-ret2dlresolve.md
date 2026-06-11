@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "[pwn]ret2dlresolve学习笔记（32位程序为例子）"
+title: "[PWN]ret2dlresolve学习笔记（32位程序为例子）"
 date: 2026-06-11
 ---
 # ret2dlresolve
