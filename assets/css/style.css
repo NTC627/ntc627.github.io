@@ -113,9 +113,9 @@
   }
 
   .page-current {
-    background: #6e736eea;
-    color: white;
-    font-weight: 600;
+    border: 1px solid #555;
+    background: #222;
+    color: #fff;
   }
 
   .page-nav {
