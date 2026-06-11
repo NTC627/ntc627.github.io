@@ -342,3 +342,177 @@
     align-items: flex-start;
     gap: 20px;
   }
+
+  /* =========================
+   Rouge Syntax Highlight
+   ========================= */
+
+.highlight {
+  background: #0d1117;
+  border: 1px solid #1f2937;
+  border-radius: 8px;
+  padding: 1rem;
+  overflow-x: auto;
+  margin: 1.5rem 0;
+}
+
+.highlight pre {
+  margin: 0;
+  background: transparent;
+}
+
+.highlight code {
+  background: transparent;
+  color: #c9d1d9;
+  font-family: "JetBrains Mono",
+               "Fira Code",
+               "Cascadia Code",
+               monospace;
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+/* comments */
+
+.highlight .c,
+.highlight .cm,
+.highlight .c1,
+.highlight .cs {
+  color: #6e7681;
+  font-style: italic;
+}
+
+/* keywords */
+
+.highlight .k,
+.highlight .kc,
+.highlight .kd,
+.highlight .kn,
+.highlight .kp,
+.highlight .kr,
+.highlight .kt {
+  color: #3fb950;
+  font-weight: 600;
+}
+
+/* strings */
+
+.highlight .s,
+.highlight .sb,
+.highlight .sc,
+.highlight .sd,
+.highlight .s2,
+.highlight .se,
+.highlight .sh,
+.highlight .si,
+.highlight .sx {
+  color: #e3b341;
+}
+
+/* numbers */
+
+.highlight .m,
+.highlight .mf,
+.highlight .mh,
+.highlight .mi,
+.highlight .mo,
+.highlight .il {
+  color: #bc8cff;
+}
+
+/* functions */
+
+.highlight .nf,
+.highlight .fm {
+  color: #79c0ff;
+}
+
+/* class/type */
+
+.highlight .nc,
+.highlight .nn {
+  color: #56d364;
+}
+
+/* operators */
+
+.highlight .o,
+.highlight .ow {
+  color: #ff7b72;
+}
+
+/* variables */
+
+.highlight .nv,
+.highlight .vc,
+.highlight .vg,
+.highlight .vi {
+  color: #ffa657;
+}
+
+/* constants */
+
+.highlight .no {
+  color: #d2a8ff;
+}
+
+/* preprocessor */
+
+.highlight .cp {
+  color: #ff7b72;
+  font-weight: bold;
+}
+
+/* include path */
+
+.highlight .cpf {
+  color: #79c0ff;
+}
+
+/* punctuation */
+
+.highlight .p {
+  color: #c9d1d9;
+}
+
+/* tags */
+
+.highlight .nt {
+  color: #7ee787;
+}
+
+/* attributes */
+
+.highlight .na {
+  color: #79c0ff;
+}
+
+/* regex */
+
+.highlight .sr {
+  color: #f2cc60;
+}
+
+/* diff add */
+
+.highlight .gi {
+  color: #3fb950;
+}
+
+/* diff remove */
+
+.highlight .gd {
+  color: #f85149;
+}
+
+code {
+  background: #161b22;
+  color: #7ee787;
+  padding: 0.15em 0.4em;
+  border-radius: 4px;
+}
+
+pre code {
+  background: transparent;
+  padding: 0;
+}
