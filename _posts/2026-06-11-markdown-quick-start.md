@@ -20,7 +20,7 @@ date: 2026-06-11
 
 以Obsidian为例子，各级标题的效果是这样的，
 
-![ref1](../assets/images/2026-06-11-markdown-quick-start/ref1.png)
+![ref1](/assets/images/2026-06-11-markdown-quick-start/ref1.png)
 
 同时在使用标题时，如果你的markdown笔记软件支持（应该都支持），那么你可以在软件侧边栏看到一个和word差不多的大纲。
 
