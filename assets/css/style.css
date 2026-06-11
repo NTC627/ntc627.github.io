@@ -356,6 +356,14 @@
     background: #555;
   }
 
+  .post-content p {
+    overflow-wrap: break-word;
+  }
+
+  .post-content a {
+    overflow-wrap: anywhere;
+  }
+
   .main-layout {
     display: flex;
     align-items: flex-start;
