@@ -23,17 +23,6 @@
 <body>
 
 <div id="wrapper">
-<script>
-    SimpleJekyllSearch({
-        searchInput: document.getElementById('search-input'),
-        resultsContainer: document.getElementById('results-container'),
-        json: '{{ site.base_url }}/search.json', 
-        searchResultTemplate: '<li><a href="{url}"><strong>{title}</strong></a> <small>{date}</small></li>',
-        noResultsText: 'No Results',
-        limit: 10, 
-        fuzzy: true
-    })
-</script>
 
 <header class="navbar">
     <a href="{{ '/' | relative_url }}">Home</a>
