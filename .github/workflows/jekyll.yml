@@ -2,7 +2,7 @@ name: Deploy Jekyll site to Pages
 
 on:
   push:
-    branches: ["main"] # 如果你的默认分支是 master，请改为 "master"
+    branches: ["main"] 
   workflow_dispatch:
 
 permissions:
@@ -24,8 +24,8 @@ jobs:
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: '3.2' # 使用较新的稳定 Ruby 版本
-          bundler-cache: true # 自动运行 bundle install 并缓存
+          ruby-version: '3.2' 
+          bundler-cache: true 
       
       - name: Setup Pages
         id: pages
