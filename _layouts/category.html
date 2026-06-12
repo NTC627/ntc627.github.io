@@ -70,7 +70,7 @@ layout: default
                 id="pageJump"
                 type="number"
                 data-max-page="{{ paginator.total_pages }}"
-                data-base-path="{{ page.url | replace: 'page' | replace: paginator.page }}"
+                data-base-path="/category/{{ page.autopages.display_name | slugify }}/"
                 min="1"
                 max="{{ total }}"
                 placeholder="{{ current }}"
@@ -96,10 +96,9 @@ layout: default
         
             if (isNaN(page)) return;
         
-            const maxPage = parseInt(
-                document.getElementById("pageJump")
-                    .dataset.maxPage
-            );
+            const input = document.getElementById("pageJump");
+            const maxPage = parseInt(input.dataset.maxPage);
+            const basePath = input.dataset.basePath;
         
             if (page < 1) page = 1;
             if (page > maxPage) page = maxPage;
