@@ -47,7 +47,7 @@
   .navbar {
     background: rgba(0,0,0,.55); 
     backdrop-filter: blur(8px); 
-    border-bottom: 1px solid rgba(219, 212, 212, 0.907); 
+    border-bottom: 1px solid #333; 
     border-left: none; 
     border-right: none; 
     padding: 10px 15px;
@@ -203,7 +203,7 @@
   }
   
   .panel {
-    background: rgba(110, 110, 120, 0.95); 
+    background: rgba(97, 97, 115, 0.896); 
     border: 1px solid #333; 
     backdrop-filter: blur(6px);
     padding: 15px;
@@ -239,7 +239,7 @@
   
   .post-card {
     border: 1px solid #262a33;
-    background: rgba(110, 110, 120, 0.95); 
+    background: rgba(97, 97, 115, 0.896); 
     padding: 20px;
     margin-bottom: 20px;
     border-radius: 6px;
