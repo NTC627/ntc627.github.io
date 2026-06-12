@@ -2,114 +2,114 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    }
+}
   
-  body {
-    background: #000;
-    color: #e1e1e1;
-    font-family:
-        "Courier New",
-        "Courier",
-        "DejaVu Sans Mono",
-        "Liberation Mono",
-        "Menlo",
-        "FangSong",
-        "STFangsong",
-        "KaiTi",
-        "STKaiti", 
-        "Kaiti SC",
-        "SimSun",
-        "Songti SC",
-        "Noto Serif CJK SC", 
-        "Droid Serif",
-        "PingFang SC",
-        "Noto Sans CJK SC",       
-        "Microsoft YaHei",             
-        monospace;           
-  }
+body {
+  background: #000;
+  color: #e1e1e1;
+  font-family:
+    "Courier New",
+    "Courier",
+    "DejaVu Sans Mono",
+    "Liberation Mono",
+    "Menlo",
+    "FangSong",
+    "STFangsong",
+    "KaiTi",
+    "STKaiti", 
+    "Kaiti SC",
+    "SimSun",
+    "Songti SC",
+    "Noto Serif CJK SC", 
+    "Droid Serif",
+    "PingFang SC",
+    "Noto Sans CJK SC",       
+    "Microsoft YaHei",             
+    monospace;           
+}
 
-  #wrapper {
-    max-width: 960px;
-    width: 100%;
-    margin: 0 auto;
-  }
+#wrapper {
+  max-width: 960px;
+  width: 100%;
+  margin: 0 auto;
+}
   
-  a {
+a {
   color: #ffffff;
   text-decoration: none;
-  }
+}
   
-  a:hover {
-    color: #b0c4de;
-    text-decoration: underline;
-  }
+a:hover {
+  color: #b0c4de;
+  text-decoration: underline;
+}
   
-  .navbar {
-    background: rgba(0,0,0,.55); 
-    backdrop-filter: blur(8px); 
-    border-bottom: 1px solid #333; 
-    border-left: none; 
-    border-right: none; 
-    padding: 10px 15px;
-    margin-top: 15px;
-    margin-bottom: 15px;
-  }
+.navbar {
+  background: rgba(0,0,0,.55); 
+  backdrop-filter: blur(8px); 
+  border-bottom: 1px solid #333; 
+  border-left: none; 
+  border-right: none; 
+  padding: 10px 15px;
+  margin-top: 15px;
+  margin-bottom: 15px;
+}
 
-  .navbar a {
-    margin-right: 20px;
-  }
+.navbar a {
+  margin-right: 20px;
+}
   
-  .page-container {
+.page-container {
   max-width: 1200px;
   margin: 20px auto;
   padding: 0 15px;
-  }
+}
 
-  .current-page{
-    display:inline-block;
-    padding:6px 12px;
-    background:#6e736eea;
-    color:#fff;
-    border-radius:4px;
-  }
+.current-page{
+  display:inline-block;
+  padding:6px 12px;
+  background:#6e736eea;
+  color:#fff;
+  border-radius:4px;
+}
 
-  .jump-box{
-    margin-left:20px;
-  }
+.jump-box{
+  margin-left:20px;
+}
 
-  #pageJump{
-    width:60px;
-    text-align:center;
-  }
+#pageJump{
+  width:60px;
+  text-align:center;
+}
 
-  .page-numbers {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-  }
+.page-numbers {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
 
-  .page-number,
-  .page-current {
-    min-width: 36px;
-    height: 36px;
+.page-number,
+.page-current {
+  min-width: 36px;
+  height: 36px;
 
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
-    padding: 0 10px;
+  padding: 0 10px;
 
-    border-radius: 6px;
+  border-radius: 6px;
 
-    text-decoration: none;
+  text-decoration: none;
 
-    box-sizing: border-box;
-  }
+  box-sizing: border-box;
+}
 
-  .page-number {
-    color: #6d878a;
-    transition: all 0.2s;
-  }
+.page-number {
+  color: #6d878a;
+  transition: all 0.2s;
+}
 
   .page-number:hover {
     background: rgba(255,255,255,0.08);
@@ -540,4 +540,52 @@ code {
 pre code {
   background: transparent;
   padding: 0;
+}
+
+/* =========================
+  Category
+========================= */
+
+.category-page {
+  max-width: 800px;
+  margin: 40px auto;
+  padding: 20px;
+}
+
+.category-title {
+  font-size: 2rem;
+  margin-bottom: 30px;
+  border-bottom: 2px solid #ddd;
+  padding-bottom: 10px;
+}
+
+.category-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.category-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.category-link {
+  text-decoration: none;
+  font-size: 1.1rem;
+  color: #222;
+  transition: color 0.2s ease;
+}
+
+.category-link {
+  color: #007acc;
+}
+
+.category-date {
+  color: #888;
+  font-size: 0.9rem;
+  white-space: nowrap;
 }

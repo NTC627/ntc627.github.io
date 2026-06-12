@@ -2,18 +2,24 @@
 layout: default
 ---
 
-<article class="post">
+<section class="category-page">
 
-    <h1>{{ page.category }}</h1>
-
-    <ul>
+    <h1 class="category-title">
+        {{ page.category }} ({{ site.categories[page.category].size }})
+    </h1>
+    
+    <ul class="category-list">
     {% assign posts = site.categories[page.category] %}
     {% for post in posts %}
-        <li>
-            <a href="{{ post.url | relative_url }}">{{ post.title }}</a>
-            <small>{{ post.date | date: "%Y-%m-%d" }}</small>
+        <li class="category-item">
+            <a href="{{ post.url | relative_url }}" class="category-link">
+                {{ post.title }}
+            </a>
+            <small class="category-date">
+                {{ post.date | date: "%Y-%m-%d" }}
+            </small>
         </li>
     {% endfor %}
     </ul>
 
-</article>
+</section>

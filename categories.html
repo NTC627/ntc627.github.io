@@ -23,18 +23,21 @@ title: Categories
     <div class="panel"> <h3>Contact</h3>  <p><a href="https://space.bilibili.com/108097771?spm_id_from=333.1007.0.0">Visit my bilibili</a></p> <p><a href="https://github.com/NTC627">Visit my GitHub</a></p> 
     </div> 
 </aside> 
-    <main class="content"> 
+    <main class="content category-index">
     <h1 style="text-align: center;">Categories</h1>
-    <ul>
+    <ul class="category-index-list">
         {% for category in site.categories %}
-            <li>
-                <a href="{{ '/category/' | append: category[0] | append: '.html' | relative_url }}">
-                    {{ category[0] }} ({{ category[1].size }})
+            <li class="category-index-item">
+                <a href="{{ '/category/' | append: category[0] | append: '.html' | relative_url }}"
+                   class="category-index-link">
+                    {{ category[0] }}
                 </a>
+                <span class="category-count">
+                    ({{ category[1].size }})
+                </span>
             </li>
         {% endfor %}
-    </ul>
-        
+    </ul> 
     </main>
 </div>
 </body>
