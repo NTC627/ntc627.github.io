@@ -237,8 +237,8 @@
   }
   
   .post-card {
-  border: 1px solid #333;
-  background: #080808;
+  border: 1px solid #262a33;
+  background: rgba(18,18,24,.88);
   padding: 20px;
   margin-bottom: 20px;
   }
