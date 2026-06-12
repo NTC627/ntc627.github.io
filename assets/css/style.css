@@ -208,6 +208,7 @@
     backdrop-filter: blur(6px);
     padding: 15px;
     margin-bottom: 20px;
+    border-radius: 6px;
   }
   
   .panel h3 {
@@ -237,10 +238,11 @@
   }
   
   .post-card {
-  border: 1px solid #262a33;
-  background: rgba(18,18,24,.88);
-  padding: 20px;
-  margin-bottom: 20px;
+    border: 1px solid #262a33;
+    background: rgba(18,18,24,.88);
+    padding: 20px;
+    margin-bottom: 20px;
+    border-radius: 6px;
   }
   
   .post-card h2 {
