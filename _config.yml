@@ -1,17 +1,25 @@
 title: b14ckb0x's space
 description: Hack everything
-theme: 
+
 pagination:
   enabled: true
   per_page: 5
   permalink: "/page:num/"
-  autopages:
-    enabled: true
+  sort_field: "date"
+  sort_reverse: true
+
+autopages:
+  enabled: true
   categories:
     enabled: true
-  layouts:
-    - category
-permalink: "/category/:cat/"
+    layouts:
+      - category
+    permalink: "/category/:cat/"
+  tags:
+    enabled: false
+  collections:
+    enabled: false
+
 plugins:
   - jekyll-feed
   - jekyll-paginate-v2
