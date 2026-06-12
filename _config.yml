@@ -5,7 +5,13 @@ pagination:
   enabled: true
   per_page: 5
   permalink: "/page:num/"
-
+  autopages:
+    enabled: true
+  categories:
+    enabled: true
+  layouts:
+    - category
+permalink: "/category/:cat/"
 plugins:
   - jekyll-feed
   - jekyll-paginate-v2
