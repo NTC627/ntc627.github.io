@@ -546,46 +546,44 @@ pre code {
   Category
 ========================= */
 
-.category-page {
-  max-width: 800px;
-  margin: 40px auto;
-  padding: 20px;
-}
-
-.category-title {
-  font-size: 2rem;
-  margin-bottom: 30px;
-  border-bottom: 2px solid #ddd;
-  padding-bottom: 10px;
-}
-
-.category-list {
+.category-index-list {
   list-style: none;
   padding: 0;
-  margin: 0;
+  margin: 20px 0;
+  font-family: "Courier New", monospace;
 }
 
-.category-item {
+.category-index-item {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  padding: 14px 0;
-  border-bottom: 1px solid #eee;
+  gap: 6px;
+  padding: 8px 0;
+  border-bottom: 1px solid #222;
+  transition: all 0.2s ease;
 }
 
-.category-link {
-  text-decoration: none;
-  font-size: 1.1rem;
-  color: #222;
-  transition: color 0.2s ease;
+.category-index-item:last-child {
+  border-bottom: none;
 }
 
-.category-link {
-  color: #007acc;
-}
-
-.category-date {
+.category-index-item::before {
+  content: ">>";
   color: #888;
   font-size: 0.9rem;
-  white-space: nowrap;
+}
+
+.category-index-link {
+  color: #e0e0e0;
+  text-decoration: none;
+  transition: color 0.2s ease, text-shadow 0.2s ease;
+}
+
+.category-index-link:hover {
+  color: #ffffff;
+  text-shadow: 0 0 6px rgba(255, 255, 255, 0.35);
+}
+
+.category-count {
+  color: #777;
+  font-size: 0.95rem;
 }
