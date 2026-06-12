@@ -203,7 +203,7 @@
   }
   
   .panel {
-    background: rgba(20, 20, 25, 0.95); 
+    background: rgba(110, 110, 120, 0.95); 
     border: 1px solid #333; 
     backdrop-filter: blur(6px);
     padding: 15px;
@@ -239,9 +239,10 @@
   
   .post-card {
     border: 1px solid #262a33;
-    background: rgba(18,18,24,.88);
+    background: rgba(110, 110, 120, 0.95); 
     padding: 20px;
     margin-bottom: 20px;
+    border-radius: 6px;
   }
   
   .post-card h2 {
@@ -301,6 +302,7 @@
     border: 1px solid #333;
     background: #080808;
     padding: 25px;
+    border-radius: 6px;
   }
 
   .post h1 {
