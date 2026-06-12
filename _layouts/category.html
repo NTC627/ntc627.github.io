@@ -29,7 +29,7 @@ layout: default
 
         {% if paginator.previous_page %}
             <a class="page-nav" href="{{ paginator.previous_page_path }}">
-                ← Back
+                ← Prev
             </a>
         {% endif %}
     
@@ -51,11 +51,11 @@ layout: default
                     </span> 
                 {% else %}
                     {% if i == 1 %}
-                        <a class="page-number" href="/">
+                        <a class="page-number" href="/category/{{ page.autopages.display_name | slugify }}/">
                             {{ i }}
                         </a>
                     {% else %}
-                        <a class="page-number" href="/page{{ i }}/">
+                        <a class="page-number" href="/category/{{ page.autopages.display_name | slugify }}/page{{ i }}/">
                             {{ i }}
                         </a>
                     {% endif %} 
@@ -84,7 +84,7 @@ layout: default
     
         {% if paginator.next_page %}
             <a class="page-nav" href="{{ paginator.next_page_path }}">
-                Forward →
+                Next →
             </a>
         {% endif %}
     
@@ -98,7 +98,7 @@ layout: default
         
             const input = document.getElementById("pageJump");
             const maxPage = parseInt(input.dataset.maxPage);
-            const basePath = input.dataset.basePath;
+            const basePath = input.dataset.basePath.replace(/\/+$/, "/");
         
             if (page < 1) page = 1;
             if (page > maxPage) page = maxPage;
