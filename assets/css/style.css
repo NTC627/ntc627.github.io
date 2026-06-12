@@ -542,14 +542,11 @@ pre code {
 
 .category-page { 
   max-width: 800px; 
-  margin: 40px auto; 
   padding: 20px; 
 } 
 .category-title { 
   font-size: 2rem; 
-  margin-bottom: 30px; 
-  border-bottom: 2px solid #ddd; 
-  padding-bottom: 10px; 
+  margin-bottom: 25px; 
 } 
 .category-list { 
   list-style: none; 
