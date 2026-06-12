@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "[PWN]ret2dlresolve学习笔记（32位程序为例子）"
+title: "[PWN]ret2dlresolve学习笔记--以32位程序为例"
 date: 2026-06-11
 categories: [PWN]
 ---
