@@ -28,16 +28,88 @@ layout: default
     <div class="pagination">
 
         {% if paginator.previous_page %}
-            <a href="{{ paginator.previous_page_path | relative_url }}">Prev</a>
+            <a class="page-nav" href="{{ paginator.previous_page_path }}">
+                ← Back
+            </a>
         {% endif %}
-
-        <span>{{ paginator.page }} / {{ paginator.total_pages }}</span>
-
+    
+        <div class="page-numbers">   
+            {% assign current = paginator.page | default: 1 %}
+            {% assign total = paginator.total_pages | default: 1 %}  
+            {% assign start = current | minus: 2 %}
+            {% assign end = current | plus: 2 %}
+            {% if start < 1 %}
+                {% assign start = 1 %}
+            {% endif %}   
+            {% if end > total %}
+                {% assign end = total %}
+            {% endif %}
+            {% for i in (start..end) %}
+                {% if i == current %}
+                    <span class="page-current">
+                        {{ i }}
+                    </span> 
+                {% else %}
+                    {% if i == 1 %}
+                        <a class="page-number" href="/">
+                            {{ i }}
+                        </a>
+                    {% else %}
+                        <a class="page-number" href="/page{{ i }}/">
+                            {{ i }}
+                        </a>
+                    {% endif %} 
+                {% endif %}
+            {% endfor %}
+    
+        </div>
+    
+        <div class="page-jump">
+            <span>Jump to</span>
+            <input
+                id="pageJump"
+                type="number"
+                data-max-page="{{ paginator.total_pages }}"
+                min="1"
+                max="{{ total }}"
+                placeholder="{{ current }}"
+                onkeydown="if(event.key==='Enter'){goToPage(this.value)}"
+            >
+            <button onclick="goToPage(document.getElementById('pageJump').value)">
+                Go
+            </button>
+    
+        </div>
+    
         {% if paginator.next_page %}
-            <a href="{{ paginator.next_page_path | relative_url }}">Next</a>
+            <a class="page-nav" href="{{ paginator.next_page_path }}">
+                Forward →
+            </a>
         {% endif %}
-
+    
     </div>
+    <script>
+        function goToPage(page) {
+            
+            page = parseInt(page);
+        
+            if (isNaN(page)) return;
+        
+            const maxPage = parseInt(
+                document.getElementById("pageJump")
+                    .dataset.maxPage
+            );
+        
+            if (page < 1) page = 1;
+            if (page > maxPage) page = maxPage;
+        
+            if (page === 1) {
+                window.location.href = "/";
+            } else {
+                window.location.href = "/page" + page + "/";
+            }
+        }
+    </script>
     {% endif %}
 
 </section>
