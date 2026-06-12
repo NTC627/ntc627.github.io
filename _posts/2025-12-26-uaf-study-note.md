@@ -2,6 +2,7 @@
 layout: post
 title: "[PWN]堆漏洞利用UAF学习笔记"
 date: 2025-12-26
+categories: [PWN]
 ---
 ## UAF（释放后使用）
 听说这个漏洞算是堆漏洞里最基础的，所以先从它开始，找了一道uaf的模板题来学习。

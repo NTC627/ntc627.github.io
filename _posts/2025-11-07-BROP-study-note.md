@@ -2,6 +2,7 @@
 layout: post
 title: "[PWN]BROP学习笔记"
 date: 2025-11-07
+categories: [PWN]
 ---
 
 ### BROP原理

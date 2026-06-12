@@ -203,7 +203,7 @@
   }
   
   .panel {
-    background: rgba(97, 97, 115, 0.896); 
+    background: #080808; 
     border: 1px solid #333; 
     backdrop-filter: blur(6px);
     padding: 15px;
@@ -239,7 +239,7 @@
   
   .post-card {
     border: 1px solid #262a33;
-    background: rgba(97, 97, 115, 0.896); 
+    background: #080808;
     padding: 20px;
     margin-bottom: 20px;
     border-radius: 6px;

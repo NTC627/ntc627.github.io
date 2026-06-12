@@ -2,6 +2,7 @@
 layout: post
 title: "[PWN]ret2syscall学习笔记"
 date: 2025-10-19
+categories: [PWN]
 ---
 
 

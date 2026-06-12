@@ -2,6 +2,7 @@
 layout: post
 title: "[PWN]初次学习堆--认识堆的基本结构"
 date: 2025-12-12
+categories: [PWN]
 ---
 ### 堆的基本结构
 #### 1.堆基本概念

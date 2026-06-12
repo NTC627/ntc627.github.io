@@ -2,6 +2,7 @@
 layout: post
 title: "[Others]Markdown快速上手教学"
 date: 2026-06-11
+categories: [Others]
 ---
 # Markdown如何快速上手
 

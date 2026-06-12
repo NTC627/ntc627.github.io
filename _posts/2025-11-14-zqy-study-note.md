@@ -2,6 +2,7 @@
 layout: post
 title: "[PWN]栈迁移相关学习笔记"
 date: 2025-11-14
+categories: [PWN]
 ---
 
 ### 栈迁移

@@ -2,6 +2,7 @@
 layout: post
 title: "[PWN]ret2csu学习笔记"
 date: 2025-10-31
+categories: [PWN]
 ---
 
 ### 信息检查

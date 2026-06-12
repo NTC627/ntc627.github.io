@@ -2,6 +2,7 @@
 layout: post
 title: "[Others]如何使用github搭建一个静态博客(一)"
 date: 2026-06-05
+categories: [Others]
 ---
 # 如何使用github轻松搭建个人博客
 
@@ -85,6 +86,7 @@ title: index
 layout: post
 title: "Hello World"
 date: 2021-03-03
+categories: [Others]
 ---
 
 # Hello world

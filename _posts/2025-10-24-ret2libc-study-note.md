@@ -2,6 +2,7 @@
 layout: post
 title: "[PWN]ret2libc学习笔记"
 date: 2025-10-24
+categories: [PWN]
 ---
 
 ​	以三道题目来学学ret2libc。

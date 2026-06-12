@@ -2,6 +2,7 @@
 layout: post
 title: "[PWN]ret2shellcode学习笔记"
 date: 2025-10-19
+categories: [PWN]
 ---
 
 ### ret2shellcode
