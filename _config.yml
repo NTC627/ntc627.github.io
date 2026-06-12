@@ -2,9 +2,9 @@ title: b14ckb0x's space
 description: Hack everything
 theme: 
 pagination:
-enabled: true
-per_page: 5
-permalink: "/page:num/"
+  enabled: true
+  per_page: 5
+  permalink: "/page:num/"
 
 plugins:
   - jekyll-feed
