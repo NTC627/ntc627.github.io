@@ -19,7 +19,8 @@ autopages:
     enabled: false
   collections:
     enabled: false
-
+baseurl: ""
+url: /
 plugins:
   - jekyll-feed
   - jekyll-paginate-v2
