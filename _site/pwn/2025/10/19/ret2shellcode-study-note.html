@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="google-site-verification" content="google-site-verification=Z6RovIqZTBN_qjzIY7nw1z0pxNqSQj3D-9vXqCynCXs"/>
+
+<title>
+    
+        [PWN]ret2shellcode学习笔记 | b14ckb0x's space
+    
+</title>
+
+<link rel="stylesheet" href="/assets/css/style.css">
+
+
+</head>
+
+<body>
+
+<div id="wrapper">
+
+
+<header class="navbar">
+    <a href="/">Home</a>
+    <a href="/categories.html">Categories</a>
+    <a href="/about.html">About</a>
+    <a href="/links.html">Links</a>
+</header>
+
+<div class="container">
+    <article class="post">
+
+    <h1>[PWN]ret2shellcode学习笔记</h1>
+
+    <div class="post-info">
+        2025-10-19
+    </div>
+
+    <div class="post-content">
+        <h3 id="ret2shellcode">ret2shellcode</h3>
+
+<h4 id="1信息检查">1.信息检查</h4>
+
+<p>题目中提供的程序本应该是无NX保护的，但由于我linux的内核版本较高，因此自带保护</p>
+
+<p><img src="/assets/images/2025-10-19-ret2shellcode-study-note/ref1.png" alt="ref1" /></p>
+
+<p>可以看到，我这里的bss段是不可执行的。</p>
+
+<p><img src="/assets/images/2025-10-19-ret2shellcode-study-note/ref2.png" alt="ref2" /></p>
+
+<p>我的方案是把程序放在较低版本的ubuntu 14，然后开个端口运行该程序，再用kali远程连接这个端口去打。</p>
+
+<h4 id="2地址计算">2.地址计算</h4>
+
+<p>ret2shellcode，首先要想办法把shellcode写到可执行的bss段中，然后覆盖返回地址跳转到shellcode执行，为了计算填充到返回地址所要的字符数，需要计算变量缓冲区初始地址到ebp+4的距离（ebp是栈底，ebp+4就是返回地址的位置），计算返回地址需要通过动态调试，ida反编译中提供的变量偏移并不准确。</p>
+
+<p>为了准确的计算，可以先在main函数中打断点，然后单步运行到gets处</p>
+
+<p><img src="/assets/images/2025-10-19-ret2shellcode-study-note/ref3.png" alt="ref3" /></p>
+
+<p>此时可以有两种方法可以计算变量的偏移，第一种</p>
+
+<p><img src="/assets/images/2025-10-19-ret2shellcode-study-note/ref4.png" alt="ref4" /></p>
+
+<p>由函数调用前的esp的状态可以知道变量对于esp的偏移是0x1c，此时再去看esp和ebp分别为0xffffcf90和0xffffd018，所以变量对于ebp的偏移就是ebp-esp-0x1c=0xffffd018-0xffffcf90-0x1c=6c=108，ebp对返回地址的偏移是4，所以变量对返回地址的偏移是108+4=112。</p>
+
+<p><img src="/assets/images/2025-10-19-ret2shellcode-study-note/ref5.png" alt="ref5" /></p>
+
+<p>第二种方法，可以直接塞个变量观察一下，使用cyclic生成一个100的变量（缓冲区的大小），然后输入进去再看看栈怎么样，从下图可以看到变量覆盖到了-00c的区域，离ebp还有8的数据，离返回地址还有12的数据，所以变量应该要112才足够覆盖返回地址。</p>
+
+<p><img src="/assets/images/2025-10-19-ret2shellcode-study-note/ref6.png" alt="ref6" /></p>
+
+<h4 id="3exp编写">3.exp编写</h4>
+
+<p>exp编写如下，先把shellcode代码生成出来，然后向缓冲区发送该填充的shellcode和返回地址（填充通过ljust自动把不够112的部分补A），随后由于程序执行会把我们strncpy到buf区，所以shellcode也被复制了过去，而返回地址则被buf的地址覆盖，当程序执行到返回时，便会返回到bss段中的shellcode然后执行。</p>
+
+<p><img src="/assets/images/2025-10-19-ret2shellcode-study-note/ref7.png" alt="ref7" /></p>
+
+<p>执行后getshell。</p>
+
+<p><img src="/assets/images/2025-10-19-ret2shellcode-study-note/ref8.png" alt="ref8" /></p>
+
+
+    </div>
+
+</article>
+</div>
+
+<footer class="footer">
+    Hacked by b14ckb0x
+</footer>
+
+
+</div>
+
+</body>
+</html>

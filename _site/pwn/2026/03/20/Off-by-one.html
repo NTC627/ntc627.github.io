@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="google-site-verification" content="google-site-verification=Z6RovIqZTBN_qjzIY7nw1z0pxNqSQj3D-9vXqCynCXs"/>
+
+<title>
+    
+        [PWN]堆的Off by one学习 | b14ckb0x's space
+    
+</title>
+
+<link rel="stylesheet" href="/assets/css/style.css">
+
+
+</head>
+
+<body>
+
+<div id="wrapper">
+
+
+<header class="navbar">
+    <a href="/">Home</a>
+    <a href="/categories.html">Categories</a>
+    <a href="/about.html">About</a>
+    <a href="/links.html">Links</a>
+</header>
+
+<div class="container">
+    <article class="post">
+
+    <h1>[PWN]堆的Off by one学习</h1>
+
+    <div class="post-info">
+        2026-03-20
+    </div>
+
+    <div class="post-content">
+        <h1 id="off-by-one">Off-by-one</h1>
+
+<h2 id="原理">原理</h2>
+
+<p>Off by one指的就是只溢出了一字节，栈和堆都有这个概念，不过似乎堆的更多一点。堆中的溢出off by one，通常用来覆盖掉chunk与chunk之间的结构，使chunk重叠、以此泄漏其它块数据或覆盖其它块数据；如果溢出的一个字节为Null字节，又叫Off by null，这时候可以使size的低位prev_inuse被清空，则前一块便会被认为是free的，就可以结合其它打法去做题了。</p>
+
+<p>glibc 2.28前，prev_inuse被清空，会导致prev_size启用，可以通过伪造prev_size造成块重叠，而2,28后则会检查前一块的size和当前块的prev_size是否相同</p>
+
+<pre><code class="language-C">/* consolidate backward */ 
+if (!prev_inuse(p)) {
+	prevsize = prev_size (p);
+	size += prevsize;
+	p = chunk_at_offset(p, -((long) prevsize));
+	/* 2.28以后加入了以下代码 */
+	if (__glibc_unlikely (chunksize(p) != prevsize)) 
+		malloc_printerr ("corrupted size vs. prev_size while consolidating");
+		unlink_chunk (av, p); 
+}
+</code></pre>
+
+    </div>
+
+</article>
+</div>
+
+<footer class="footer">
+    Hacked by b14ckb0x
+</footer>
+
+
+</div>
+
+</body>
+</html>

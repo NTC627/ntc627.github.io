@@ -13,7 +13,7 @@ autopages:
   categories:
     enabled: true
     layouts:
-      - category
+      - category.html
     permalink: "/category/:cat/"
   tags:
     enabled: false

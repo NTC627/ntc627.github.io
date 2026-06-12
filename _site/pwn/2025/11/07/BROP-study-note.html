@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="google-site-verification" content="google-site-verification=Z6RovIqZTBN_qjzIY7nw1z0pxNqSQj3D-9vXqCynCXs"/>
+
+<title>
+    
+        [PWN]BROP学习笔记 | b14ckb0x's space
+    
+</title>
+
+<link rel="stylesheet" href="/assets/css/style.css">
+
+
+</head>
+
+<body>
+
+<div id="wrapper">
+
+
+<header class="navbar">
+    <a href="/">Home</a>
+    <a href="/categories.html">Categories</a>
+    <a href="/about.html">About</a>
+    <a href="/links.html">Links</a>
+</header>
+
+<div class="container">
+    <article class="post">
+
+    <h1>[PWN]BROP学习笔记</h1>
+
+    <div class="post-info">
+        2025-11-07
+    </div>
+
+    <div class="post-content">
+        <h3 id="brop原理">BROP原理</h3>
+
+<p>BROP是针对没有二进制文件或源码的程序的攻击手段。主要依赖以下技术完成对保护的绕过、对gadget的搜索。</p>
+
+<h4 id="暴力枚举">暴力枚举</h4>
+
+<p>通过输入不同长度的测试数据，来看看多少长度的数据能使程序崩溃，以判断padding</p>
+
+<h4 id="stack-reading">Stack Reading</h4>
+
+<p>即通过逐个字节覆盖的方法，读取栈上的内容，如果覆盖的内容为栈上原本的内容，程序就不会崩溃，否则说明覆盖内容与栈上内容不同。对于每个字节，最多只需要覆盖256次即可找到正确的字节。</p>
+
+<h4 id="brop-gadget">BROP Gadget</h4>
+
+<p>BROP Gadget即libc_csu_init结尾部分的一堆pop，注意其中最后的pop r14; pop r15; ret三行，这里如果从0x7的偏移（相对于第一个pop的偏移）去读的话，就可以解读出pop rsi; pop r15; ret，如果从0x9去读，就可以读出pop rdi; ret。也就是可以利用一个pop多控制两个寄存器，还是rdi、rsi这两个传参寄存器。</p>
+
+<p><img src="/assets/images/2025-11-07-BROP-study-note/ref3.png" alt="ref3" /></p>
+
+<h4 id="stoptrapprobe-gadget">Stop、Trap、Probe Gadget</h4>
+
+<p>三种Gadet的作用，分别是给攻击者正反馈、给攻击者负反馈、要探测的Gadget的地址。给攻击者正反馈即执行到Stop Gadget时程序不会崩溃，可能进入循环，可能向攻击者发送其它信息，总之不是崩溃，负反馈则是执行到就会崩溃。通过三种Gadget在栈上不同的布设顺序，我们就可以找到我们想找的Gadget。</p>
+
+<p><img src="/assets/images/2025-11-07-BROP-study-note/ref1.png" alt="ref1" /></p>
+
+<table>
+  <tbody>
+    <tr>
+      <td>参见上图（来自论文Blind Hacking），左图是通过stop gadget判断有没有找到gadget（任意），右图则是通过trap和stop的组合来判断找到的gadget是pop</td>
+      <td>ret还是普通的ret。</td>
+    </tr>
+  </tbody>
+</table>
+
+<p><img src="/assets/images/2025-11-07-BROP-study-note/ref2.png" alt="ref2" /></p>
+
+<table>
+  <tbody>
+    <tr>
+      <td>此外还有其它组合，比如上图，probe + stop + traps就能找出ret的gadget，probe + trap + stop + traps就能找到pop</td>
+      <td>ret型，probe + stop + stop + stop + stop  + stop + stop + stop + traps就能找到六连pop。</td>
+    </tr>
+  </tbody>
+</table>
+
+<h4 id="gadget识别">Gadget识别</h4>
+
+<table>
+  <tbody>
+    <tr>
+      <td>找到pop ret还不够，因为不知道是pop了哪些寄存器。这里就依靠系统调用来识别，首先系统调用靠的是rax来传递系统调用号，所以必须要先找出哪个是rax，这里使用无参的系统调用pause()来确定，给找到的所有pop</td>
+      <td>ret gadget都试试看传这个系统调用号，执行成功了的话，系统会暂停（不是崩溃），那么也就找到了rax。其它寄存器也是用系统调用逐个去找，下面列出一张表来展示找的顺序与寄存器与系统调用的关系。</td>
+    </tr>
+  </tbody>
+</table>
+
+<table>
+  <thead>
+    <tr>
+      <th>Order</th>
+      <th>Reg</th>
+      <th>Syscalll</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1</td>
+      <td>rax</td>
+      <td>pause()</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>rdi</td>
+      <td>nanosleep(len, rem)</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>rsi</td>
+      <td>kill(pid, sig)</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>rdx</td>
+      <td>clock_nano_sleep(clock, flags, len, rem)</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>其中2的和4的rem参数其实可以不用管，所以可以看到每一个系统调用的参数都是逐个递增加1的。注意kill的话需要杀掉进程，我们可以多开几个连接到服务端的程序，然后杀掉我们自己的进程来验证有没有触发系统调用。</p>
+
+<h3 id="brop攻击流程">BROP攻击流程</h3>
+
+<p>有了上述的技术就可以开始攻击了，攻击流程如下</p>
+
+<p>1.构造暴力枚举数据，枚举出溢出长度</p>
+
+<p>2.通过栈读取读取栈的信息，有canary就读canary，没有可以读读后面的返回地址之类的。</p>
+
+<p>3.通过全代码从头扫描的模式，找到Stop Gadget（Trap Gadget很好找，或者随便编一个不存在的地址就行）</p>
+
+<table>
+  <tbody>
+    <tr>
+      <td>4.利用Stop、Trap，去找真正可以用来攻击的gadget（pop</td>
+      <td>ret）。</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>5.由于rdx一般不好找，如果找不到的话，我们可以先找PLT表，然后调用strcmp，这个函数会藏有rdx的gadget，PLT表的找法也是利用stop、trap、probe组合，顺便也可以找找write或puts的PLT用于泄露，找不到也没关系可以系统调用。</p>
+
+<p>6.找好gadget后，用识别技术来识别。</p>
+
+<p>7.构造payload调用write或puts，把整个.text段的二进制dump出来，以便构造后续的攻击，前面信息够了直接开打也行。</p>
+
+<p>8.根据dump构造后续payload。</p>
+
+<h3 id="来个真题">来个真题！</h3>
+
+<p>题目来自BUUCTF的axb_2019_brop64。</p>
+
+<h4 id="测padding">测padding</h4>
+
+<p>开局先别急，先连接服务上去看看到底怎么个事儿。</p>
+
+<p><img src="/assets/images/2025-11-07-BROP-study-note/ref5.png" alt="ref5" /></p>
+
+<p>从反应来看，它一进去就接收了一个输入，然后又输出。那么我们可以开始试试看它接收输入的时候有没有溢出了。</p>
+
+<p><img src="/assets/images/2025-11-07-BROP-study-note/ref6.png" alt="ref6" /></p>
+
+<p>来个512长的直接触发core dump了，看来是有的，接下来找找padding在哪里，可以根据它结尾的Goodbye判断溢出了没有</p>
+
+<p><img src="/assets/images/2025-11-07-BROP-study-note/ref7.png" alt="ref7" /></p>
+
+<p>测出来的结果是这样</p>
+
+<p><img src="/assets/images/2025-11-07-BROP-study-note/ref8.png" alt="ref8" /></p>
+
+<p>所以应该是217字节（sendlineafter自动加了个’\n’）的时候把返回地址覆盖了，那我们的padding构造216就够了。另外从报错来看没有触发任何栈溢出检测，所以不用stack reading。</p>
+
+<h4 id="找stop-gadget">找Stop Gadget</h4>
+
+<p>这个东西不要从0x400000开始遍历，会非常慢，哪怕只用测不到十万个，每次连接和断开都要耗掉两三秒。找的思想大概就是从最初的起始地址开始遍历，看看什么时候遍历到main，如果遍历到，应该会出现之前对话中的字符串，这时候就可以停下了。</p>
+
+<p><img src="/assets/images/2025-11-07-BROP-study-note/ref9.png" alt="ref9" /></p>
+
+<p>最后找到了main函数位置做为stop gadget，可以看到在发送完payload后，程序重新发送了最开始的内容。</p>
+
+<p><img src="/assets/images/2025-11-07-BROP-study-note/ref10.png" alt="ref10" /></p>
+
+<h4 id="找brop-gadget">找BROP Gadget</h4>
+
+<p>虽然本机跑会少掉连接的延迟，会很快，但是同时也会产生大量运行错误的dump，一定要注意，否则可能会直接跑崩。。。。。本人机器已经恢复快照过一次了，稳妥起见我还是远程打容器的吧，可以看到这里端口都和前面不一样了，就是因为容器dump多了也会直接崩的无法重启。</p>
+
+<p><img src="/assets/images/2025-11-07-BROP-study-note/ref11.png" alt="ref11" /></p>
+
+<p>跑出来0x40095a，就是要找的libc_csu_init的六连pop的地址。这里可以不用判断什么是什么gadget，可以直接根据libc_csu_init中每个pop的偏移，直接使用对应的寄存器。</p>
+
+<p><img src="/assets/images/2025-11-07-BROP-study-note/ref12.png" alt="ref12" /></p>
+
+<h4 id="找putsplt">找puts@plt</h4>
+
+<p>plt表中的元素都是16字节对齐的，所以找的时候可以把步长设为16。同时rdi给puts传参，如果是puts的话，它应该会把0x400000里的东西打出来，接收到的响应会有ELF字样并且程序仍能正常返回到main函数。</p>
+
+<p><img src="/assets/images/2025-11-07-BROP-study-note/ref13.png" alt="ref13" /></p>
+
+<p>找到了，在0x400640。</p>
+
+<p><img src="/assets/images/2025-11-07-BROP-study-note/ref14.png" alt="ref14" /></p>
+
+<h4 id="泄露内存">泄露内存</h4>
+
+<p>把数据dump出来，说着简单，处理的时候还是有点点小麻烦的，写脚本的时候要结合debug，看看到底哪里是dump出来的有用的字节，还要注意处理不可见字符。因为已经知道了puts的plt在0x400640，所以dump一下附近范围的数据就行，全dump完会很浪费时间，因为puts一定会被我们的ROP调用，所以读到0x400640时，这里的内容会是puts的got表位置。</p>
+
+<p><img src="/assets/images/2025-11-07-BROP-study-note/ref15.png" alt="ref15" /></p>
+
+<p>读出来是这样</p>
+
+<p><img src="/assets/images/2025-11-07-BROP-study-note/ref16.png" alt="ref16" /></p>
+
+<p>拖进IDA，rebase设为我们开始读的地址0x400630，然后去看看0x400640，这里的jmp就是got表，之后再用puts把got表里的内容泄露出来，就得到了puts在内存中的地址，然后就可以找一下libc，ret2libc了。</p>
+
+<p><img src="/assets/images/2025-11-07-BROP-study-note/ref17.png" alt="ref17" /></p>
+
+<h4 id="getshellgetflag">Getshell&amp;Getflag</h4>
+
+<p><img src="/assets/images/2025-11-07-BROP-study-note/ref18.png" alt="ref18" /></p>
+
+<p>Pwn！！！</p>
+
+<p><img src="/assets/images/2025-11-07-BROP-study-note/ref19.png" alt="ref19" /></p>
+
+
+    </div>
+
+</article>
+</div>
+
+<footer class="footer">
+    Hacked by b14ckb0x
+</footer>
+
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="google-site-verification" content="google-site-verification=Z6RovIqZTBN_qjzIY7nw1z0pxNqSQj3D-9vXqCynCXs"/>
+
+<title>
+    
+        [PWN]堆的Unlink学习 | b14ckb0x's space
+    
+</title>
+
+<link rel="stylesheet" href="/assets/css/style.css">
+
+
+</head>
+
+<body>
+
+<div id="wrapper">
+
+
+<header class="navbar">
+    <a href="/">Home</a>
+    <a href="/categories.html">Categories</a>
+    <a href="/about.html">About</a>
+    <a href="/links.html">Links</a>
+</header>
+
+<div class="container">
+    <article class="post">
+
+    <h1>[PWN]堆的Unlink学习</h1>
+
+    <div class="post-info">
+        2026-03-20
+    </div>
+
+    <div class="post-content">
+        <h1 id="unlink">Unlink</h1>
+
+<p>unlink是一个把空闲chunk从双向链表拿出来的过程，基本就是数据结构中双向链表的删除。在ptmalloc 2中Unsorted bin、Small bins、Large bins都采用双向链表结构。unlink操作会在malloc或者free时触发，malloc很好理解，分配一个空闲块自然会从链表中取一个空闲块下来；而free的话，虽然是放一个空闲块进列表，但是由于存在相邻空闲块的合并操作，放之前会把相邻空闲块从链表中取出，然后合并了再放回列表，因此也有unlink操作。后者的利用较为容易。</p>
+
+<h2 id="原理利用">原理&amp;利用</h2>
+
+<p>首先先讲一下unlink的操作，分为以下几步</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>FD = P-&gt;fd
+BK = P-&gt;bk
+
+FD-&gt;bk = BK
+BK-&gt;fd = FD
+</code></pre></div></div>
+
+<p>第一步，分别取当前chunk指针P的fd位和bk位，找到P的前一个chunk和后一个chunk；</p>
+
+<p>第二步，令前一块FD的bk指针指向P的后一块，再令后一块BK的指针fd指向P的前一块，这样P的前后两块就能互相连接了。</p>
+
+<p>在glibc 2.3.4（不是2.34哦）之前，这个过程可以被利用来往任意地址写东西，利用如下：</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>32 bit system
+FD = P-&gt;fd, and P-&gt;fd = target_addr - 12
+BK = P-&gt;bk, and P-&gt;bk = expect_value
+
+FD-&gt;bk = BK
+BK-&gt;fd = FD
+</code></pre></div></div>
+
+<p>首先，通过一些漏洞，把P的fd和bk覆盖了，这样unlink的时候，FD就会被设置为target_addr - 12，BK则是expect_value；</p>
+
+<p>重点在FD-&gt;bk = BK，因为FD-&gt;bk实际上是取FD的指针的地址在加上bk的偏移，在32位中偏移就是12，而FD是等于target_addr - 12的，一加一减抵消了，赋值符号左边其实就是target_addr，而BK是expect_value，所以整个FD-&gt;bk = BK的语句，实际上执行的是target_addr = expect_value ，就形成了任意地址写。不过注意BK-&gt;fd = FD，其实也会往*(expect_value + 8)的地方写target_addr，必须要确保这个expect_value + 8的位置也是可写的，否则会unlink不了。</p>
+
+<p>简单的原理弄完后来看复杂的，在2.3.4后，有了一条检查：</p>
+
+<pre><code class="language-C">if (__builtin_expect (FD-&gt;bk != P || BK-&gt;fd != P, 0))                     
+  malloc_printerr (check_action, "corrupted double-linked list", P, AV);  
+</code></pre>
+
+<p>会检查FD当前的后一个和BK的前一个指针指向的到底是不是P，漏洞虽然还能用，但是只能写特定地址了：</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>64 bit system
+FD = P-&gt;fd, and P-&gt;fd = P - 0x18
+BK = P-&gt;bk, and P-&gt;bk = P - 0x10
+
+FD-&gt;bk = BK
+BK-&gt;fd = FD
+</code></pre></div></div>
+
+<p>将fd和bk覆盖为上述值之后，能通过检查，因为FD  =  P - 0x18，所以FD-&gt;bk = P-0x18 + 0x18 = P，而BK-&gt;fd = P - 0x10 + 0x10 = P，满足前后都是P的约束。最终赋值，FD-&gt;bk = BK，使P = P - 0x10，而下一条会接着覆盖，使P = P - 0x18。基本上，现在的unlink利用就只能使一个块指针，指向它原本的位置-0x18了。</p>
+
+    </div>
+
+</article>
+</div>
+
+<footer class="footer">
+    Hacked by b14ckb0x
+</footer>
+
+
+</div>
+
+</body>
+</html>

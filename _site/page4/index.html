@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="google-site-verification" content="google-site-verification=Z6RovIqZTBN_qjzIY7nw1z0pxNqSQj3D-9vXqCynCXs"/>
+
+<title>
+    
+        Home - page 4 | b14ckb0x's space
+    
+</title>
+
+<link rel="stylesheet" href="/assets/css/style.css">
+
+
+</head>
+
+<body>
+
+<div id="wrapper">
+
+
+<header class="navbar">
+    <a href="/">Home</a>
+    <a href="/categories.html">Categories</a>
+    <a href="/about.html">About</a>
+    <a href="/links.html">Links</a>
+</header>
+
+<div class="container">
+    <!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>b14ckb0x's space</title>
+</head>
+<body>
+<div class="main-layout">
+<aside class="sidebar">
+    <div class="panel">
+        <h3>Author</h3> 
+        <img src="/assets/avatar.jpg" alt="avatar" class="avatar"> 
+        <p style="text-align: center;">b14ckb0x</p>
+    </div> 
+    <div class="panel">
+         <h3>Statistics</h3> <p>Posts: 20</p> 
+    </div> 
+    <div class="panel"> <h3>Contact</h3>  <p><a href="https://space.bilibili.com/108097771?spm_id_from=333.1007.0.0">Visit my bilibili</a></p> <p><a href="https://github.com/NTC627">Visit my GitHub</a></p> 
+    </div> 
+</aside> 
+    <main class="content"> 
+    <h1 style="text-align: center;">Welcome to b14ckb0x's blog</h1>
+    
+    
+    <article class="post-card"> 
+        <h2> <a href="/pwn/2025/10/31/ret2csu-study-note.html"> 
+            [PWN]ret2csu学习笔记 </a> 
+        </h2> 
+        <div class="post-meta"> 
+            2025-10-31
+        </div> 
+        <div class="post-excerpt"> 
+            信息检查
+
+checksec。
+
+
+
+反汇编。这回又更加不同了，main函数里没有get，直到返回处才调用了一个vulnerable_function，函数里的返回处又调用了read，从标准输入中读512个无符号长长整数到容量为128的buf中，所以肯定是栈溢出，那么考虑溢出的ROP链的构造。
+
+
+
+
+
+首先由于NX保护，ret2shellcode肯定... 
+        </div> 
+        <a class="read-more" href="/pwn/2025/10/31/ret2csu-study-note.html"> Read More >> </a> 
+    </article> 
+    <article class="post-card"> 
+        <h2> <a href="/pwn/2025/10/24/ret2libc-study-note.html"> 
+            [PWN]ret2libc学习笔记 </a> 
+        </h2> 
+        <div class="post-meta"> 
+            2025-10-24
+        </div> 
+        <div class="post-excerpt"> 
+            ​	以三道题目来学学ret2libc。
+
+ret2libc1
+
+信息检查
+
+先进行程序信息的检查，开启了NX保护
+
+
+
+然后看IDA反汇编，可以看到gets函数没有限制，所以依旧是栈溢出。
+
+
+
+Ret2libc
+
+还是先看看返回地址怎么样，毕竟无论怎么溢出，至少都要先把返回地址覆盖了，可以看到依旧是需要覆盖112的数据。
+
+
+
+这题应该不能使用ROP... 
+        </div> 
+        <a class="read-more" href="/pwn/2025/10/24/ret2libc-study-note.html"> Read More >> </a> 
+    </article> 
+    <article class="post-card"> 
+        <h2> <a href="/pwn/2025/10/19/ret2syscall-study-note.html"> 
+            [PWN]ret2syscall学习笔记 </a> 
+        </h2> 
+        <div class="post-meta"> 
+            2025-10-19
+        </div> 
+        <div class="post-excerpt"> 
+            1.信息检查
+
+这一题开启了NX保护
+
+
+
+IDA反汇编可以看到，这回不自带shell函数，也提示无法注入shellcode，但是gets无任何限制，所以依然是依靠栈溢出。
+
+
+
+所以这题要用的打法是ret2syscall，利用的是syscall系统调用的执行原理–当寄存器的值满足一定值，并且触发int 0x80中断时，程序就会转去执行系统调用，执行的... 
+        </div> 
+        <a class="read-more" href="/pwn/2025/10/19/ret2syscall-study-note.html"> Read More >> </a> 
+    </article> 
+    <article class="post-card"> 
+        <h2> <a href="/pwn/2025/10/19/ret2shellcode-study-note.html"> 
+            [PWN]ret2shellcode学习笔记 </a> 
+        </h2> 
+        <div class="post-meta"> 
+            2025-10-19
+        </div> 
+        <div class="post-excerpt"> 
+            ret2shellcode
+ 
+        </div> 
+        <a class="read-more" href="/pwn/2025/10/19/ret2shellcode-study-note.html"> Read More >> </a> 
+    </article> 
+    <article class="post-card"> 
+        <h2> <a href="/2021/06/27/hello-world.html"> 
+            Hello World </a> 
+        </h2> 
+        <div class="post-meta"> 
+            2021-06-27
+        </div> 
+        <div class="post-excerpt"> 
+            Test my blog
+ 
+        </div> 
+        <a class="read-more" href="/2021/06/27/hello-world.html"> Read More >> </a> 
+    </article>  
+    <div class="pagination">
+
+        
+            <a class="page-nav" href="/page3/">
+                ← Back
+            </a>
+        
+    
+        <div class="page-numbers">   
+            
+              
+            
+            
+               
+            
+            
+                
+                    
+                        <a class="page-number" href="/page2/">
+                            2
+                        </a>
+                     
+                
+            
+                
+                    
+                        <a class="page-number" href="/page3/">
+                            3
+                        </a>
+                     
+                
+            
+                
+                    <span class="page-current">
+                        4
+                    </span> 
+                
+            
+    
+        </div>
+    
+        <div class="page-jump">
+            <span>Jump to</span>
+            <input
+                id="pageJump"
+                type="number"
+                data-max-page="4"
+                min="1"
+                max="4"
+                placeholder="4"
+                onkeydown="if(event.key==='Enter'){goToPage(this.value)}"
+            >
+            <button onclick="goToPage(document.getElementById('pageJump').value)">
+                Go
+            </button>
+    
+        </div>
+    
+        
+    
+    </div>
+    <script>
+        function goToPage(page) {
+            
+            page = parseInt(page);
+        
+            if (isNaN(page)) return;
+        
+            const maxPage = parseInt(
+                document.getElementById("pageJump")
+                    .dataset.maxPage
+            );
+        
+            if (page < 1) page = 1;
+            if (page > maxPage) page = maxPage;
+        
+            if (page === 1) {
+                window.location.href = "/";
+            } else {
+                window.location.href = "/page" + page + "/";
+            }
+        }
+    </script>
+    </main>
+</div>
+</body>
+</html>
+</div>
+
+<footer class="footer">
+    Hacked by b14ckb0x
+</footer>
+
+
+</div>
+
+</body>
+</html>
