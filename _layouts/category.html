@@ -70,6 +70,7 @@ layout: default
                 id="pageJump"
                 type="number"
                 data-max-page="{{ paginator.total_pages }}"
+                data-base-path="{{ page.url | replace: 'page' | replace: paginator.page }}"
                 min="1"
                 max="{{ total }}"
                 placeholder="{{ current }}"
@@ -104,9 +105,9 @@ layout: default
             if (page > maxPage) page = maxPage;
         
             if (page === 1) {
-                window.location.href = "/";
+                window.location.href = basePath;
             } else {
-                window.location.href = "/page" + page + "/";
+                window.location.href = basePath + "page" + page + "/";
             }
         }
     </script>
