@@ -28,7 +28,7 @@ title: Categories
     <ul class="category-index-list">
         {% for category in site.categories %}
             <li class="category-index-item">
-                <a href="{{ '/category/' | append: category[0] | append: '/' | relative_url }}"
+                <a href="{{ '/category/' | append: category[0] | slugify | append: '/' | relative_url }}"
                    class="category-index-link">
                     {{ category[0] }}
                 </a>
