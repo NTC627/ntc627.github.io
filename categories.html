@@ -28,8 +28,9 @@ title: Categories
     <ul class="category-index-list">
         {% for category in site.categories %}
             <li class="category-index-item">
-                <a href="{{ '/category/' | append: category[0] | slugify: 'pretty' | append: '/' | relative_url }}"
-                   class="category-index-link">
+                {% assign cat_slug = category[0] | slugify %}
+                <a href="{{ '/category/' | append: cat_slug | append: '/' | relative_url }}"
+                    class="category-index-link">
                     {{ category[0] }}
                 </a>
                 <span class="category-count">
