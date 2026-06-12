@@ -1,6 +1,7 @@
 document.addEventListener("DOMContentLoaded", async function () {
   const input = document.getElementById("search-input");
   const results = document.getElementById("results-container");
+  const MAX_SEARCH_RESULTS = 15;
 
   if (!input || !results) return;
 
@@ -56,7 +57,9 @@ document.addEventListener("DOMContentLoaded", async function () {
           return;
       }
 
-      matched.forEach(post => {
+      const limitedMatched = matched.slice(0, MAX_SEARCH_RESULTS);
+
+      limitedMatched.forEach(post => {
           const li = document.createElement("li");
           li.innerHTML = `
               <a href="${post.url}">
