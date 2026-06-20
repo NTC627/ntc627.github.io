@@ -2,8 +2,7 @@
 layout: post
 title: "[MAZE-SEC]SourceCode靶机个人复盘与学习"
 date: 2026-06-17
-categories:
-  - MAZE-SEC
+categories: [MAZE-SEC]
 ---
 ```
 靶机：SourceCode
