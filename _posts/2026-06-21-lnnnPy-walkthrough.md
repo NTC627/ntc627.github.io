@@ -4,6 +4,13 @@ title: "[MAZE-SEC]lnnnPy靶机通关记录"
 date: 2026-06-21
 categories: [MAZE-SEC]
 ---
+```
+靶机：lnnnPy
+作者：lnnn (QQ: 3467412796)
+靶机ID：686
+类型：Linux - Baby
+```
+
 # User
 
 nmap扫一下，
