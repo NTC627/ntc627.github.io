@@ -298,9 +298,9 @@ a:hover {
     overflow: hidden !important;
   }
   .search-box {
-    position: absolute;
-    right: 15px;
-    top: 50%;
+    position: relative;
+    right: auto;
+    top: auto;
     transform: translateY(-50%);
     display: flex;
     align-items: center;
@@ -698,7 +698,9 @@ pre code {
   border-radius: 4px;
   transition: all 0.3s ease;
   height: 32px;
+  line-height: 0;
 }
+
 .search-icon-btn:hover {
   background: rgba(255,255,255,0.1);
 }
