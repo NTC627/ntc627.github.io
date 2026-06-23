@@ -50,10 +50,9 @@ a:hover {
   border-bottom: 1px solid #333; 
   border-left: none; 
   border-right: none; 
-  padding: 10px 15px;
+  padding: 12px 15px;
   margin-top: 15px;
   margin-bottom: 15px;
-  position: relative;
 }
 
 .navbar a {
@@ -293,15 +292,8 @@ a:hover {
     height: 0 !important;
     overflow: hidden !important;
   }
-
-  .search-toggle {
-    display: block;
-  }
   
   .search-box {
-    position: absolute;
-    right: 15px;
-    top: 100%;
     display: inline-block;
     width: 0;
     overflow: hidden;
@@ -654,7 +646,7 @@ pre code {
 ------------------*/
 
 .search-toggle {
-  display: none;
+  display: block;
   background: none;
   border: none;
   color: #fff;
