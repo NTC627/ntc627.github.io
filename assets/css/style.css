@@ -308,9 +308,7 @@ a:hover {
   }
 
   .search-box:focus-within .search-icon-btn {
-    visibility: hidden; 
     opacity: 0;
-    pointer-events: none;
   }
 
   .search-box:focus-within #search-input {
@@ -329,12 +327,10 @@ a:hover {
     z-index: 10001;
   }
 
-
   .search-box:focus-within #search-input:focus {
     border-color: #007bff;
     background: rgba(0, 0, 0, 0.95);
   }
-
 
   #results-container {
     width: 100%;
