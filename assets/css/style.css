@@ -53,6 +53,7 @@ a:hover {
   padding: 10px 15px;
   margin-top: 15px;
   margin-bottom: 15px;
+  position: relative;
 }
 
 .navbar a {
@@ -242,6 +243,8 @@ a:hover {
   background: #080808;
   padding: 20px;
   margin-bottom: 20px;
+  margin-left: 10px;
+  margin-right: 10px;
   border-radius: 6px;
 }
   
@@ -296,6 +299,9 @@ a:hover {
   }
   
   .search-box {
+    position: absolute;
+    right: 15px;
+    top: 100%;
     display: inline-block;
     width: 0;
     overflow: hidden;
@@ -304,6 +310,7 @@ a:hover {
     transition: all .25s ease;
     margin-top: 0;
     margin-left: 0;
+    margin-bottom: 10px;
     float: none;
   }
   
@@ -660,7 +667,8 @@ pre code {
 .search-box {
   position: relative;
   float: right;              
-  margin-left: 20px;        
+  margin-left: 20px;  
+  margin-bottom: 10px;      
   z-index: 10000;
 }
 
