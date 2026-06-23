@@ -36,19 +36,14 @@
     </div>
 </header>
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const toggleBtn = document.querySelector('.search-toggle');
-        const searchBox = document.querySelector('.search-box');
-        const searchInput = document.querySelector('#search-input');
+    const searchToggle = document.querySelector('.search-toggle');   
+    const searchBox = document.querySelector('.search-box');         
+    const searchInput = document.querySelector('#search-input');     
 
-        if (!toggleBtn || !searchBox || !searchInput) return;
-
-        toggleBtn.addEventListener('click', function (e) {
-            e.stopPropagation(); 
+    searchToggle.addEventListener('click', function () {
         if (document.activeElement === searchInput) {
             searchInput.blur();
         } else {
-            searchBox.classList.add('active');
             searchInput.focus();
         }
     });
@@ -58,19 +53,8 @@
     });
 
     searchInput.addEventListener('blur', function () {
-        setTimeout(function () {
-            if (!searchBox.contains(document.activeElement)) {
-                searchBox.classList.remove('active');
-            }
-        }, 0);
+        searchBox.classList.remove('active');
     });
-
-    document.addEventListener('click', function (e) {
-        if (!searchBox.contains(e.target) && e.target !== toggleBtn) {
-             searchBox.classList.remove('active');
-        }
-     });
-});
 </script>
 <div class="container">
     {{ content }}
