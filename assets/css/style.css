@@ -54,8 +54,10 @@ a:hover {
   margin-top: 15px;
   margin-bottom: 15px;
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-start;
+  gap: 20px;
   align-items: center;
+  position: relative;
 }
 
 .navbar a {
@@ -303,10 +305,6 @@ a:hover {
     display: flex;
     align-items: center;
     z-index: 100;
-  }
-
-  .navbar {
-    position: relative;
   }
 
   .search-box:focus-within {
