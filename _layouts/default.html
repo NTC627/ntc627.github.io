@@ -36,9 +36,40 @@
     </div>
 </header>
 <script>
-    document.querySelector('.search-toggle').addEventListener('click', function() {
-    document.querySelector('.search-box').classList.toggle('active');
-    document.querySelector('#search-input').focus();
+    document.addEventListener('DOMContentLoaded', function () {
+        const toggleBtn = document.querySelector('.search-toggle');
+        const searchBox = document.querySelector('.search-box');
+        const searchInput = document.querySelector('#search-input');
+
+        if (!toggleBtn || !searchBox || !searchInput) return;
+
+        toggleBtn.addEventListener('click', function (e) {
+            e.stopPropagation(); 
+        if (document.activeElement === searchInput) {
+            searchInput.blur();
+        } else {
+            searchBox.classList.add('active');
+            searchInput.focus();
+        }
+    });
+
+    searchInput.addEventListener('focus', function () {
+        searchBox.classList.add('active');
+    });
+
+    searchInput.addEventListener('blur', function () {
+        setTimeout(function () {
+            if (!searchBox.contains(document.activeElement)) {
+                searchBox.classList.remove('active');
+            }
+        }, 0);
+    });
+
+    document.addEventListener('click', function (e) {
+        if (!searchBox.contains(e.target) && e.target !== toggleBtn) {
+             searchBox.classList.remove('active');
+        }
+     });
 });
 </script>
 <div class="container">

@@ -290,6 +290,25 @@ a:hover {
     height: 0 !important;
     overflow: hidden !important;
   }
+
+  .search-toggle {
+    display: block;
+  }
+  
+  .search-box {
+    display: none;
+    width: 100%;
+    margin-top: 10px;
+    margin-left: 0;
+  }
+  
+  .search-box.active {
+    display: block;
+  }
+  
+  #search-input {
+    width: 100%;
+  }
 }
 
 .post {
@@ -630,27 +649,6 @@ pre code {
   cursor: pointer;
   margin-left: auto;
   padding: 5px;
-}
-
-@media (max-width: 768px) {
-  .search-toggle {
-      display: block;
-  }
-  
-  .search-box {
-      display: none;
-      width: 100%;
-      margin-top: 10px;
-      margin-left: 0;
-  }
-  
-  .search-box.active {
-      display: block;
-  }
-  
-  #search-input {
-      width: 100%;
-  }
 }
 
 .search-box {
