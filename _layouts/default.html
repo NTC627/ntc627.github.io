@@ -44,6 +44,7 @@
         if (document.activeElement === searchInput) {
             searchInput.blur();
         } else {
+            searchBox.classList.add('active');
             searchInput.focus();
         }
     });
