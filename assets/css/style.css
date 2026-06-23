@@ -53,6 +53,10 @@ a:hover {
   padding: 30px 15px;
   margin-top: 15px;
   margin-bottom: 15px;
+
+  display: flex;
+  align-items: center; 
+  flex-wrap: wrap;
 }
 
 .navbar a {
