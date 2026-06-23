@@ -29,34 +29,12 @@
     <a href="{{ '/categories.html' | relative_url }}">Categories</a>
     <a href="{{ '/about.html' | relative_url }}">About</a>
     <a href="{{ '/links.html' | relative_url }}">Links</a>
-    <button class="search-toggle">🔍</button>
     <div class="search-box">
         <input type="text" id="search-input" placeholder="Search">
         <ul id="results-container"></ul>
     </div>
 </header>
-<script>
-    const searchToggle = document.querySelector('.search-toggle');   
-    const searchBox = document.querySelector('.search-box');         
-    const searchInput = document.querySelector('#search-input');     
 
-    searchToggle.addEventListener('click', function () {
-        if (document.activeElement === searchInput) {
-            searchInput.blur();
-        } else {
-            searchBox.classList.add('active');
-            searchInput.focus();
-        }
-    });
-
-    searchInput.addEventListener('focus', function () {
-        searchBox.classList.add('active');
-    });
-
-    searchInput.addEventListener('blur', function () {
-        searchBox.classList.remove('active');
-    });
-</script>
 <div class="container">
     {{ content }}
 </div>

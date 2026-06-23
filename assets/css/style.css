@@ -292,28 +292,7 @@ a:hover {
     height: 0 !important;
     overflow: hidden !important;
   }
-  
-  .search-box {
-    display: inline-block;
-    width: 0;
-    overflow: hidden;
-    opacity: 0;
-    vertical-align: middle;
-    transition: all .25s ease;
-    margin-top: 0;
-    margin-left: 0;
-    margin-bottom: 10px;
-    float: none;
-  }
-  
-  .search-box.active {
-    width: 180px;
-    opacity: 1;
-  }
-  
-  #search-input {
-    width: 100%;
-  }
+
 }
 
 .post {
@@ -644,17 +623,6 @@ pre code {
 /* ---------------
  Search
 ------------------*/
-
-.search-toggle {
-  display: block;
-  background: none;
-  border: none;
-  color: #fff;
-  font-size: 18px;
-  cursor: pointer;
-  margin-left: auto;
-  padding: 5px;
-}
 
 .search-box {
   position: relative;
