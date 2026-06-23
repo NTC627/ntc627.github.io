@@ -307,34 +307,30 @@ a:hover {
     z-index: 100;
   }
 
-  .search-box:focus-within {
-    position: absolute;
-    top: 50%;
-    left: auto;
-    transform: translateY(-50%);
-    right: 15px;
-    width: auto;
-    max-width: calc(100% - 100px); 
-    background: rgba(0, 0, 0, 0.95); 
-    z-index: 10001; 
-}
-
+  .search-box:focus-within .search-icon-btn {
+    visibility: hidden; 
+    opacity: 0;
+    pointer-events: none;
+  }
 
   .search-box:focus-within #search-input {
-    display: block;
-    width: 100%; 
+    position: absolute;
+    top: 50%;
+    right: 0; 
+    transform: translateY(-50%);
+    width: 200px; 
+    max-width: calc(100vw - 40px); 
     opacity: 1;
-    min-width: 150px;
     padding: 8px 12px;
     border: 1px solid #444;
     margin-left: 0;
     background: rgba(0, 0, 0, 0.95);
     box-sizing: border-box;
+    z-index: 10001;
   }
 
 
   .search-box:focus-within #search-input:focus {
-    width: 100%; 
     border-color: #007bff;
     background: rgba(0, 0, 0, 0.95);
   }
