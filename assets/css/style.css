@@ -287,36 +287,27 @@ a:hover {
 }
   
 @media (max-width: 900px) {
+  navbar {
+    gap: 10px; /* 缩小元素间距 */
+    flex-wrap: wrap; /* 屏幕太窄时允许换行，而不是撑开页面 */
+    padding: 12px 10px; /* 稍微减小左右 padding */
+  }
+  .navbar a {
+    margin-right: 10px; /* 缩小链接右边距 */
+    white-space: nowrap; /* 防止文字被挤换行 */
+    flex-shrink: 0; /* 防止链接被压缩变形 */
+  }
+/* ======================================================================== */
+
   .main-layout {
     flex-direction: column;
   }
-  
+
   .sidebar, aside {
     display: none !important;
     width: 0 !important;
     height: 0 !important;
     overflow: hidden !important;
-  }
-
-  .navbar {
-    gap: 10px; /* 缩小间距 */
-    overflow-x: auto; /* 如果屏幕太窄，允许横向滚动，而不是撑开页面 */
-    flex-wrap: nowrap; /* 强制不换行 */
-    -webkit-overflow-scrolling: touch; /* 保证滚动平滑 */
-    
-    /* 隐藏滚动条，保持美观 */
-    scrollbar-width: none; 
-    -ms-overflow-style: none;
-  }
-
-  .navbar::-webkit-scrollbar {
-    display: none;
-  }
-
-  .navbar a {
-    margin-right: 10px; /* 缩小链接右边距 */
-    white-space: nowrap; /* 防止文字被挤换行 */
-    flex-shrink: 0; /* 防止链接被压缩变形 */
   }
 
   #search-input {
@@ -329,7 +320,7 @@ a:hover {
     right: auto;
     top: auto;
     transform: none;
-    flex-shrink: 0;
+    flex-shrink: 0; /* 防止搜索框被压缩 */
   }
 
   .search-box:focus-within .search-icon-btn {
@@ -340,6 +331,7 @@ a:hover {
     overflow: visible;
   }
 
+  /* 2. 输入框展开 */
   .search-box:focus-within #search-input {
     position: fixed;
     top: 12px; 
@@ -360,10 +352,22 @@ a:hover {
     background: rgba(0, 0, 0, 0.95);
   }
 
+  /* ================= 3. 搜索结果容器改为 fixed，彻底解决被裁剪问题 ================= */
   #results-container {
-    width: 100%;
-    right: 0;
-    left: auto;
+    position: fixed; /* 改为 fixed，脱离 navbar 的裁剪边界 */
+    top: 60px; /* 定位在输入框正下方 (12px + 输入框高度约 40px) */
+    left: 15px;
+    right: 15px;
+    width: auto; /* 宽度由 left 和 right 决定 */
+    max-height: 60vh; /* 限制最大高度，防止超出手机屏幕底部 */
+    overflow-y: auto; /* 内容过多时内部滚动 */
+    z-index: 10002; /* 确保层级高于输入框和文章 */
+    display: none; /* 默认隐藏 */
+  }
+
+  /* 聚焦且有结果时显示 */
+  .search-box:focus-within #results-container:not(:empty) {
+    display: block;
   }
 
 }
