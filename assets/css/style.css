@@ -677,10 +677,19 @@ pre code {
   align-items: center;
   justify-content: center;
   border-radius: 4px;
-  transition: background 0.2s;
+  transition: all 0.3s ease;
 }
 .search-icon-btn:hover {
   background: rgba(255,255,255,0.1);
+}
+
+.search-box:focus-within .search-icon-btn {
+  width: 0;           
+  padding: 0;         
+  margin: 0;          
+  opacity: 0;         
+  overflow: hidden;   
+  pointer-events: none; 
 }
 
 #search-input {
@@ -703,10 +712,6 @@ pre code {
   padding: 6px 12px;
   border: 1px solid #444;
   margin-left: 8px;
-}
-
-.search-box:focus-within .search-icon-btn {
-  display: none;
 }
 
 #search-input:focus {
