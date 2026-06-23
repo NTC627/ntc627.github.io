@@ -297,6 +297,12 @@ a:hover {
     height: 0 !important;
     overflow: hidden !important;
   }
+
+  #search-input {
+    display: block;
+    transition: opacity 0.3s ease, width 0s 0.3s, padding 0s 0.3s, border 0s 0.3s; 
+  }
+
   .search-box {
     position: relative;
     right: auto;
@@ -312,22 +318,20 @@ a:hover {
   }
 
   .search-box:focus-within #search-input {
-    position: absolute;
-    top: 50%;
-    right: 0; 
-    transform: translateY(-50%);
-    width: 200px; 
-    max-width: calc(100vw - 40px); 
+    display: block;
+    width: 100%;
     opacity: 1;
+    min-width: 150px;
     padding: 8px 12px;
     border: 1px solid #444;
     margin-left: 0;
     background: rgba(0, 0, 0, 0.95);
     box-sizing: border-box;
-    z-index: 10001;
+    transition: all 0.3s ease; 
   }
 
   .search-box:focus-within #search-input:focus {
+    width: 100%;
     border-color: #007bff;
     background: rgba(0, 0, 0, 0.95);
   }
