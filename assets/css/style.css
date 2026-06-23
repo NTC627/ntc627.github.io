@@ -301,7 +301,7 @@ a:hover {
     position: relative;
     right: auto;
     top: auto;
-    transform: translateY(-50%);
+    transform: none;
     display: flex;
     align-items: center;
     z-index: 100;
