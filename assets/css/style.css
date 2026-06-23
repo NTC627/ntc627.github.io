@@ -308,30 +308,32 @@ a:hover {
     right: auto;
     top: auto;
     transform: none;
-    display: flex;
-    align-items: center;
-    z-index: 100;
   }
 
   .search-box:focus-within .search-icon-btn {
+    width: 32px;
+    padding: 6px;
     opacity: 0;
+    pointer-events: auto;
+    overflow: visible;
   }
 
   .search-box:focus-within #search-input {
-    display: block;
-    width: 100%;
+    position: fixed;
+    top: 12px; 
+    right: 15px;
+    width: calc(100% - 30px);
     opacity: 1;
-    min-width: 150px;
     padding: 8px 12px;
     border: 1px solid #444;
     margin-left: 0;
     background: rgba(0, 0, 0, 0.95);
     box-sizing: border-box;
-    transition: all 0.3s ease; 
+    z-index: 10001;
+    transition: all 0.3s ease;
   }
 
   .search-box:focus-within #search-input:focus {
-    width: 100%;
     border-color: #007bff;
     background: rgba(0, 0, 0, 0.95);
   }
