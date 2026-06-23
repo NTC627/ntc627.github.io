@@ -301,10 +301,10 @@ a:hover {
     top: 0;
     left: 0;
     right: 0;
-    background: #000; /* 不透明黑色背景，盖住左侧的 Home/Categories 等链接 */
+    background: #000; 
     padding: 12px 15px;
     border-bottom: 1px solid #333;
-    z-index: 10001; /* 确保层级最高 */
+    z-index: 10001; 
 }
 
 
@@ -703,6 +703,10 @@ pre code {
   padding: 6px 12px;
   border: 1px solid #444;
   margin-left: 8px;
+}
+
+.search-box:focus-within .search-icon-btn {
+  display: none;
 }
 
 #search-input:focus {
