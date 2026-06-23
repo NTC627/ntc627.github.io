@@ -296,6 +296,39 @@ a:hover {
     overflow: hidden !important;
   }
 
+  .search-box:focus-within {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: #000; /* 不透明黑色背景，盖住左侧的 Home/Categories 等链接 */
+    padding: 12px 15px;
+    border-bottom: 1px solid #333;
+    z-index: 10001; /* 确保层级最高 */
+}
+
+
+  .search-box:focus-within #search-input {
+    width: 100%; 
+    opacity: 1;
+    padding: 8px 12px;
+    border: 1px solid #444;
+    margin-left: 10px;
+  }
+
+
+  .search-box:focus-within #search-input:focus {
+    width: 100%; 
+    border-color: #007bff;
+  }
+
+
+  #results-container {
+    width: 100%;
+    right: 0;
+    left: 0;
+  }
+
 }
 
 .post {
@@ -635,20 +668,45 @@ pre code {
   z-index: 10000;
 }
 
+.search-icon-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition: background 0.2s;
+}
+.search-icon-btn:hover {
+  background: rgba(255,255,255,0.1);
+}
+
 #search-input {
-  padding: 6px 12px;
-  border: 1px solid #444;
+  width: 0;
+  opacity: 0;
+  padding: 0;
+  border: none;
   border-radius: 4px;
   font-size: 14px;
-  width: 100px;
-  background-color: #1a1a1a;  
-  color: #e0e0e0;            
+  background-color: #1a1a1a;
+  color: #e0e0e0;
   outline: none;
   transition: all 0.3s ease;
+  margin-left: 0;
+}
+
+.search-box:focus-within #search-input {
+  width: 180px;
+  opacity: 1;
+  padding: 6px 12px;
+  border: 1px solid #444;
+  margin-left: 8px;
 }
 
 #search-input:focus {
-  width: 120px;
+  width: 220px;
   border-color: #007bff;
   background-color: #252525;
 }
