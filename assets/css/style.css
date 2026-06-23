@@ -298,6 +298,27 @@ a:hover {
     overflow: hidden !important;
   }
 
+  .navbar {
+    gap: 10px; /* 缩小间距 */
+    overflow-x: auto; /* 如果屏幕太窄，允许横向滚动，而不是撑开页面 */
+    flex-wrap: nowrap; /* 强制不换行 */
+    -webkit-overflow-scrolling: touch; /* 保证滚动平滑 */
+    
+    /* 隐藏滚动条，保持美观 */
+    scrollbar-width: none; 
+    -ms-overflow-style: none;
+  }
+
+  .navbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .navbar a {
+    margin-right: 10px; /* 缩小链接右边距 */
+    white-space: nowrap; /* 防止文字被挤换行 */
+    flex-shrink: 0; /* 防止链接被压缩变形 */
+  }
+
   #search-input {
     display: block;
     transition: opacity 0.3s ease, width 0s 0.3s, padding 0s 0.3s, border 0s 0.3s; 
@@ -308,6 +329,7 @@ a:hover {
     right: auto;
     top: auto;
     transform: none;
+    flex-shrink: 0;
   }
 
   .search-box:focus-within .search-icon-btn {
