@@ -310,6 +310,7 @@ a:hover {
     scrollbar-width: none;
     -webkit-overflow-scrolling: touch;
     margin-top: 0;
+    backdrop-filter: none;
     margin-bottom: 0;
   }
 
