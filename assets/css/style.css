@@ -63,6 +63,12 @@ a:hover {
 .navbar a {
   margin-right: 20px;
 }
+
+.nav-links {
+  overflow-x: auto;
+  display: flex;
+  flex-wrap: nowrap;
+}
   
 .page-container {
   max-width: 1200px;
@@ -304,8 +310,7 @@ a:hover {
     z-index: 9999;
     gap: 10px;
     flex-wrap: nowrap;
-    overflow-x: auto;
-    overflow-y: visible;
+    overflow: visible;
     max-height: 52px;
     scrollbar-width: none;
     -webkit-overflow-scrolling: touch;
