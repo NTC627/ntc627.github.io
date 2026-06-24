@@ -55,8 +55,6 @@ a:hover {
   margin-bottom: 15px;
   display: flex;
   justify-content: flex-start;
-  gap: 20px;
-  align-items: center;
   position: relative;
 }
 
@@ -65,9 +63,11 @@ a:hover {
 }
 
 .nav-links {
-  overflow-x: auto;
   display: flex;
   flex-wrap: nowrap;
+  flex: 1 1 auto;
+  min-width: 0;
+  gap: 20px;
 }
   
 .page-container {
@@ -309,14 +309,10 @@ a:hover {
     top: 0;
     z-index: 9999;
     gap: 10px;
-    flex-wrap: nowrap;
     overflow: visible;
     max-height: 52px;
     scrollbar-width: none;
-    -webkit-overflow-scrolling: touch;
-    margin-top: 0;
     backdrop-filter: none;
-    margin-bottom: 0;
   }
 
   .navbar::-webkit-scrollbar {
@@ -329,17 +325,36 @@ a:hover {
     flex-shrink: 0; /* 防止链接被压缩变形 */
   }
 
+  .nav-links {
+    display: flex;
+    flex-wrap: nowrap;
+    flex: 1 1 auto;
+    min-width: 0;
+    gap: 10px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .nav-links::-webkit-scrollbar {
+    display: none;
+  }
+
+  .nav-links a {
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
   #search-input {
     display: block;
     transition: opacity 0.3s ease, width 0s 0.3s, padding 0s 0.3s, border 0s 0.3s; 
   }
 
   .search-box {
+    flex: 0 0 auto;
     position: relative;
-    right: auto;
-    top: auto;
-    transform: none;
-    flex-shrink: 0;
+    margin-left: auto;
   }
 
   .search-box:focus-within .search-icon-btn {
@@ -717,9 +732,9 @@ pre code {
 ------------------*/
 
 .search-box {
-  position: relative;        
-  margin-left: auto;  
-  display: flex;
+  flex: 0 0 auto;
+  position: relative;
+  margin-left: auto;
   align-items: center;
   z-index: 10000;
 }
