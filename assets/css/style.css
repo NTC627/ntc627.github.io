@@ -301,12 +301,17 @@ a:hover {
   .navbar {
     gap: 10px; /* 缩小间距 */
     overflow-x: auto; /* 如果屏幕太窄，允许横向滚动，而不是撑开页面 */
+    overflow-y: visible;
+    position: sticky;
+    top: 0;
     flex-wrap: nowrap; /* 强制不换行 */
     -webkit-overflow-scrolling: touch; /* 保证滚动平滑 */
-    z-index: 1000;
+    z-index: 9999;
     /* 隐藏滚动条，保持美观 */
     scrollbar-width: none; 
     -ms-overflow-style: none;
+    margin-top: 0;
+    margin-bottom: 0;
   }
 
   .navbar::-webkit-scrollbar {
@@ -361,9 +366,16 @@ a:hover {
   }
 
   #results-container {
+    position: fixed;
     width: 100%;
+    max-height: calc(100vh - 52px);
+    overflow-y: auto;
+    overflow-x: hidden;
+    z-index: 10002;
     right: 0;
     left: auto;
+    -webkit-overflow-scrolling: touch;
+    top: 52px;
   }
 
 }

@@ -5,7 +5,7 @@ date: 2025-10-31
 categories: [PWN]
 ---
 
-### 信息检查
+# 信息检查
 
 这次是64位的ret2libc，做题前先把它的链接器和链接库改成题目给的。
 
@@ -17,7 +17,7 @@ categories: [PWN]
 
 
 
-### Ret2libc_x64
+# Ret2libc_x64
 
 我们采取的策略依然是通过puts函数泄露出libc_start_main的地址，然后由版本和偏移算出基地址，再跳转回main函数重新执行，第二次发送getshell的payload。
 
@@ -29,7 +29,7 @@ categories: [PWN]
 
 
 
-### exp编写
+# exp编写
 
 exp编写如下
 

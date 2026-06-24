@@ -5,7 +5,7 @@ date: 2025-10-31
 categories: [PWN]
 ---
 
-### 信息检查
+# 信息检查
 
 checksec。
 
@@ -25,13 +25,13 @@ checksec。
 
 
 
-### Ret2csu
+# Ret2csu
 
 简单来说就是去找gadget的gadget。具体来说就是有个初始化libc的函数libc_csu_init，从它里面去找任何能改变寄存器且可控的gadget，不要求是直接从栈上pop然后ret了，也不要求直接能改rdi等，利用mov等语句间接更改rdi的也行，甚至不要求改完整个寄存器，利用edi等直接改rdi低位也可以，总之就是非常灵活。要注意不同版本的libc_csu_init的汇编也不同。
 
 
 
-### exp编写
+# exp编写
 
 具体exp思路很简单，一共分三段，第一段payload负责找到libc基址，第二段负责写入/bin/sh，第三段getshell。
 

@@ -5,13 +5,13 @@ date: 2025-11-14
 categories: [PWN]
 ---
 
-### 栈迁移
+# 栈迁移
 
 用两个例子来学习栈迁移。
 
 
 
-#### 案例一
+## 案例一
 
 第一个例子随便看看就得了，不是很实用，可以看到它直接给了可读可写可执行的段，NX保护又没开，栈还可执行，就是让我们直接在栈上写东西的。
 
@@ -29,7 +29,7 @@ categories: [PWN]
 
 
 
-#### 案例二
+## 案例二
 
 第二题回归正常（简单）的防护水平，NX开了，不过没有PIE，没有PIE算是栈迁移一个比较重要的点，如果地址是变动的话，迁移的地方就不好找了。
 
@@ -45,7 +45,7 @@ categories: [PWN]
 
 ![ref6](/assets/images/2025-11-14-zqy-study-note/ref6.png)
 
-rsp执行栈顶，rbp指向栈底，两者相减就可以得到栈的空间是0x70，我们要让把rbp迁移到rsp的位置，所以就是要让rbp指向rsp，用当前rbp-0x70就能得到我们要迁移的位置stack，也就是把rbp迁移到栈顶
+rsp指向栈顶，rbp指向栈底，两者相减就可以得到栈的空间是0x70，我们要让把rbp迁移到rsp的位置，所以就是要让rbp指向rsp，用当前rbp-0x70就能得到我们要迁移的位置stack，也就是把rbp迁移到栈顶
 
 ![ref7](/assets/images/2025-11-14-zqy-study-note/ref7.png)
 
@@ -55,7 +55,7 @@ rsp执行栈顶，rbp指向栈底，两者相减就可以得到栈的空间是0x
 
 接下来说说这条payload是怎么构造的，原理是什么。
 
-##### 原理部分
+### 原理部分
 
 首先，每个函数执行完后，都会执行leave和ret指令，ret指令就是pop然后返回到对应地址，重点是leave，leave这个指令相当于mov rsp, rbp; pop rbp;也就是先通过mov rsp, rbp把rsp的值设为rbp，达到清空栈的目的，然后pop rbp把原来的栈底变成栈顶，也就是恢复成上一个调用函数的栈帧。由于这个操作会同时控制rsp和rbp两个关于栈的重要指针，因此栈迁移的核心实现就靠它们。
 
@@ -91,7 +91,7 @@ sh.sendafter(b">", flat([b'deadbeef', pop_rdi, elf.got['puts'], elf.plt['puts'],
 
 
 
-##### 实操部分
+### 实操部分
 
 实际操作的话，对我们来说最重要的是找到迁移的位置。如何确定迁移的位置，主要是看你payload的构造，这里payload是直接写在栈上了，那肯定就是迁移到栈，那要迁移多少，也就是要看你一开始的元素是怎么样的，如果像上面的payload，deadbeef、pop啥的直接往栈顶写了，那就得把rbp的值变成栈顶才能触发溢出；也可以先填充，最后写deadbeef、pop啥的，那此时rbp和rsp就是要指向填充完后有意义的那一段rop的栈上的地址了。我们这里payload都是从栈顶开始布置，所以rbp和rsp都要迁移到栈顶。完整exp如下
 
@@ -113,7 +113,7 @@ sh.sendafter(b">", flat([b'deadbeef', pop_rdi, elf.got['puts'], elf.plt['puts'],
 
 ![ref13](/assets/images/2025-11-14-zqy-study-note/ref13.png)
 
-##### 关于栈迁移的其他理解
+### 关于栈迁移的其他理解
 如图
 ![ref14](/assets/images/2025-11-14-zqy-study-note/ref14.png)
 
