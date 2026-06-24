@@ -751,7 +751,7 @@ pre code {
   align-items: center;
   justify-content: center;
   border-radius: 4px;
-  transition: all 0.3s ease;
+  transition: opacity .2s ease, transform .2s ease;
   height: 32px;
   line-height: 0;
   flex-shrink: 0;
@@ -767,9 +767,8 @@ pre code {
   margin: 0;          
   opacity: 0;         
   overflow: hidden;
-  visibility: hidden;
   pointer-events: none; 
-  position: absolute;
+  transform: scale(0.8);
 }
 
 #search-input {
