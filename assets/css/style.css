@@ -65,6 +65,7 @@ a:hover {
 .nav-links {
   display: flex;
   flex-wrap: nowrap;
+  justify-content: center;
   flex: 1 1 auto;
   min-width: 0;
   gap: 20px;
@@ -358,11 +359,16 @@ a:hover {
   }
 
   .search-box:focus-within .search-icon-btn {
-    width: 32px;
+    /*width: 32px;
     padding: 6px;
     opacity: 0;
     pointer-events: auto;
-    overflow: visible;
+    overflow: visible;*/
+    margin: 0;          
+    opacity: 0;         
+    overflow: hidden;
+    pointer-events: none; 
+    transform: scale(0.8);
   }
 
   .search-box:focus-within #search-input {
