@@ -735,8 +735,11 @@ pre code {
   flex: 0 0 auto;
   position: relative;
   margin-left: auto;
+  display: flex;
   align-items: center;
+  justify-content: flex-end;
   z-index: 10000;
+  height: 32px;
 }
 
 .search-icon-btn {
@@ -751,6 +754,7 @@ pre code {
   transition: all 0.3s ease;
   height: 32px;
   line-height: 0;
+  flex-shrink: 0;
 }
 
 .search-icon-btn:hover {
@@ -758,12 +762,14 @@ pre code {
 }
 
 .search-box:focus-within .search-icon-btn {
-  width: 0;           
-  padding: 0;         
+  /*width: 0;           
+  padding: 0;*/
   margin: 0;          
   opacity: 0;         
-  overflow: hidden;   
+  overflow: hidden;
+  visibility: hidden;
   pointer-events: none; 
+  position: absolute;
 }
 
 #search-input {
@@ -778,6 +784,9 @@ pre code {
   outline: none;
   transition: all 0.3s ease;
   margin-left: 0;
+  height: 32px;
+  line-height: 32px;
+  box-sizing: border-box;
 }
 
 .search-box:focus-within #search-input {
