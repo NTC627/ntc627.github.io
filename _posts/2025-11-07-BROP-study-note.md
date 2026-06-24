@@ -5,25 +5,25 @@ date: 2025-11-07
 categories: [PWN]
 ---
 
-### BROP原理
+# BROP原理
 
 BROP是针对没有二进制文件或源码的程序的攻击手段。主要依赖以下技术完成对保护的绕过、对gadget的搜索。
 
 
 
-#### 暴力枚举
+## 暴力枚举
 
 通过输入不同长度的测试数据，来看看多少长度的数据能使程序崩溃，以判断padding
 
 
 
-#### Stack Reading
+## Stack Reading
 
 即通过逐个字节覆盖的方法，读取栈上的内容，如果覆盖的内容为栈上原本的内容，程序就不会崩溃，否则说明覆盖内容与栈上内容不同。对于每个字节，最多只需要覆盖256次即可找到正确的字节。
 
 
 
-#### BROP Gadget
+## BROP Gadget
 
 BROP Gadget即libc_csu_init结尾部分的一堆pop，注意其中最后的pop r14; pop r15; ret三行，这里如果从0x7的偏移（相对于第一个pop的偏移）去读的话，就可以解读出pop rsi; pop r15; ret，如果从0x9去读，就可以读出pop rdi; ret。也就是可以利用一个pop多控制两个寄存器，还是rdi、rsi这两个传参寄存器。
 
@@ -31,7 +31,7 @@ BROP Gadget即libc_csu_init结尾部分的一堆pop，注意其中最后的pop r
 
 
 
-#### Stop、Trap、Probe Gadget
+## Stop、Trap、Probe Gadget
 
 三种Gadet的作用，分别是给攻击者正反馈、给攻击者负反馈、要探测的Gadget的地址。给攻击者正反馈即执行到Stop Gadget时程序不会崩溃，可能进入循环，可能向攻击者发送其它信息，总之不是崩溃，负反馈则是执行到就会崩溃。通过三种Gadget在栈上不同的布设顺序，我们就可以找到我们想找的Gadget。
 
@@ -45,7 +45,7 @@ BROP Gadget即libc_csu_init结尾部分的一堆pop，注意其中最后的pop r
 
 
 
-#### Gadget识别
+## Gadget识别
 
 找到pop ret还不够，因为不知道是pop了哪些寄存器。这里就依靠系统调用来识别，首先系统调用靠的是rax来传递系统调用号，所以必须要先找出哪个是rax，这里使用无参的系统调用pause()来确定，给找到的所有pop|ret gadget都试试看传这个系统调用号，执行成功了的话，系统会暂停（不是崩溃），那么也就找到了rax。其它寄存器也是用系统调用逐个去找，下面列出一张表来展示找的顺序与寄存器与系统调用的关系。
 
@@ -60,7 +60,7 @@ BROP Gadget即libc_csu_init结尾部分的一堆pop，注意其中最后的pop r
 
 
 
-### BROP攻击流程
+# BROP攻击流程
 
 有了上述的技术就可以开始攻击了，攻击流程如下
 
@@ -82,11 +82,11 @@ BROP Gadget即libc_csu_init结尾部分的一堆pop，注意其中最后的pop r
 
 
 
-### 来个真题！
+# 来个真题！
 
 题目来自BUUCTF的axb_2019_brop64。
 
-#### 测padding
+## 测padding
 
 开局先别急，先连接服务上去看看到底怎么个事儿。
 
@@ -108,7 +108,7 @@ BROP Gadget即libc_csu_init结尾部分的一堆pop，注意其中最后的pop r
 
 
 
-#### 找Stop Gadget
+## 找Stop Gadget
 
 这个东西不要从0x400000开始遍历，会非常慢，哪怕只用测不到十万个，每次连接和断开都要耗掉两三秒。找的思想大概就是从最初的起始地址开始遍历，看看什么时候遍历到main，如果遍历到，应该会出现之前对话中的字符串，这时候就可以停下了。
 
@@ -118,7 +118,7 @@ BROP Gadget即libc_csu_init结尾部分的一堆pop，注意其中最后的pop r
 
 ![ref10](/assets/images/2025-11-07-BROP-study-note/ref10.png)
 
-#### 找BROP Gadget
+## 找BROP Gadget
 
 虽然本机跑会少掉连接的延迟，会很快，但是同时也会产生大量运行错误的dump，一定要注意，否则可能会直接跑崩。。。。。本人机器已经恢复快照过一次了，稳妥起见我还是远程打容器的吧，可以看到这里端口都和前面不一样了，就是因为容器dump多了也会直接崩的无法重启。
 
@@ -130,7 +130,7 @@ BROP Gadget即libc_csu_init结尾部分的一堆pop，注意其中最后的pop r
 
 
 
-#### 找puts@plt
+## 找puts@plt
 
 plt表中的元素都是16字节对齐的，所以找的时候可以把步长设为16。同时rdi给puts传参，如果是puts的话，它应该会把0x400000里的东西打出来，接收到的响应会有ELF字样并且程序仍能正常返回到main函数。
 
@@ -142,7 +142,7 @@ plt表中的元素都是16字节对齐的，所以找的时候可以把步长设
 
 
 
-#### 泄露内存
+## 泄露内存
 
 把数据dump出来，说着简单，处理的时候还是有点点小麻烦的，写脚本的时候要结合debug，看看到底哪里是dump出来的有用的字节，还要注意处理不可见字符。因为已经知道了puts的plt在0x400640，所以dump一下附近范围的数据就行，全dump完会很浪费时间，因为puts一定会被我们的ROP调用，所以读到0x400640时，这里的内容会是puts的got表位置。
 
@@ -158,7 +158,7 @@ plt表中的元素都是16字节对齐的，所以找的时候可以把步长设
 
 
 
-#### Getshell&Getflag
+## Getshell&Getflag
 
 ![ref18](/assets/images/2025-11-07-BROP-study-note/ref18.png)
 

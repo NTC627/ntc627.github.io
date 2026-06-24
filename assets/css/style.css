@@ -299,17 +299,16 @@ a:hover {
   }
 
   .navbar {
-    gap: 10px; /* 缩小间距 */
-    overflow-x: auto; /* 如果屏幕太窄，允许横向滚动，而不是撑开页面 */
-    overflow-y: visible;
     position: sticky;
     top: 0;
-    flex-wrap: nowrap; /* 强制不换行 */
-    -webkit-overflow-scrolling: touch; /* 保证滚动平滑 */
     z-index: 9999;
-    /* 隐藏滚动条，保持美观 */
-    scrollbar-width: none; 
-    -ms-overflow-style: none;
+    gap: 10px;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    overflow-y: visible;
+    max-height: 52px;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
     margin-top: 0;
     margin-bottom: 0;
   }
