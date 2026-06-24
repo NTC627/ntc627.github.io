@@ -700,6 +700,16 @@ pre code {
   font-family: "Courier New", monospace;
 }
 
+.category-index {
+  border: 1px solid #262a33;
+  background: #080808;
+  padding: 20px;
+  margin-bottom: 20px;
+  margin-left: 10px;
+  margin-right: 10px;
+  border-radius: 6px;
+}
+
 .category-index-item {
   display: flex;
   align-items: center;
