@@ -53,6 +53,8 @@ a:hover {
   padding: 12px 15px;
   margin-top: 15px;
   margin-bottom: 15px;
+  margin-right: 10px;
+  margin-left: 10px;
   display: flex;
   justify-content: flex-start;
   position: relative;
@@ -205,6 +207,7 @@ a:hover {
 .sidebar {
   width: 260px;
   flex-shrink: 0;
+  margin-left: 10px;
 }
 
 .footer {
