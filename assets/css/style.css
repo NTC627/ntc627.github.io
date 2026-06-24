@@ -198,6 +198,7 @@ a:hover {
   
 .main-layout {
   display: flex;
+  align-items: flex-start;
   gap: 20px;
 }
   
@@ -243,10 +244,14 @@ a:hover {
 .content {
   flex: 1;
   min-width: 0;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 16px;
 }
   
 .content h1 {
   margin-bottom: 25px;
+  text-align: center;
 }
   
 .post-card {
@@ -498,12 +503,6 @@ a:hover {
   overflow-wrap: anywhere;
 }
 
-.main-layout {
-  display: flex;
-  align-items: flex-start;
-  gap: 20px;
-}
-
 /* =========================
   Rouge Syntax Highlight
 ========================= */
@@ -698,16 +697,6 @@ pre code {
   padding: 0;
   margin: 20px 0;
   font-family: "Courier New", monospace;
-}
-
-.category-index {
-  border: 1px solid #262a33;
-  background: #080808;
-  padding: 20px;
-  margin-bottom: 20px;
-  margin-left: 10px;
-  margin-right: 10px;
-  border-radius: 6px;
 }
 
 .category-index-item {
