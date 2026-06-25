@@ -6,7 +6,7 @@ categories: [Reverse]
 ---
 IDAPython允许用户创建自定义脚本和插件，以增强IDA核心功能，官方文档位置：https://python.docs.hex-rays.com/。本文将对常用函数进行说明。ea指的是有效地址，effective address。
 
-# 基础API
+# 一、基础API
 
 ## 1. here() / get_screen_ea
 
@@ -54,7 +54,7 @@ Python>print_operand(0x804852E, 1)
 '10h'
 ```
 
-# 段
+# 二、段
 
 ## 1. Segments()
 
@@ -128,7 +128,7 @@ Python>get_segm_end(0x0804853B)
 0x8048542
 ```
 
-# 函数
+# 三、函数
 
 ## 1. Functions()
 
@@ -232,7 +232,7 @@ for ea in FuncItems(here()):
         print(f"0x{hex(ea)} {generate_disasm_line(ea, 0)}")
 ```
 
-# 指令
+# 四、指令
 
 ## 1. idaapi.decode_insn(out, ea)
 
@@ -251,7 +251,7 @@ for ea in FuncItems(here()):
         print(f"0x{hex(ea)} {generate_disasm_line(ea, 0)}")
 ```
 
-# 操作数
+# 五、操作数
 
 可以用get_operand_type(ea, n)得到操作数的类型，用get_operand_value(ea, n)得到操作数的值，其中n表示操作数的索引。
 
@@ -283,7 +283,7 @@ Python>get_operand_value(0x0804846F, 1)
 7      o_near   表示操作数是立即数近地址
 ```
 
-# 数据
+# 六、数据
 
 获取数据与写数据，看名字就知道干什么的，没什么好说的，比如获取bytes类型的数据什么的，有这些指令
 
@@ -300,7 +300,7 @@ ida_bytes.patch_dword(ea, val)
 ida_bytes.patch_qword(ea, val)
 ```
 
-# 调试
+# 七、调试
 
 调试相关的，这些和在ida里手动操作的效果是一样，也没什么好说的
 
