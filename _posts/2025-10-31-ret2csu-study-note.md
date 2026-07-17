@@ -6,6 +6,10 @@ categories: [PWN]
 ---
 在实际操作中，常常很难在程序中找到特定的gadget，这时候就需要用到ret2csu技术了。
 
+
+
+
+
 # 信息检查
 
 使用checksec检查题目程序。

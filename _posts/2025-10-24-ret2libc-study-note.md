@@ -7,6 +7,9 @@ categories: [PWN]
 ​ret2libc，即返回到libc库，libc是c语言的动态链接库，包含了许多函数，比如常见的printf、scanf、puts，也包含了我们通常ROP要利用的system和execve，ret2libc就是通过返回到这个库的方式来调用这些函数。多说无用，直接以三道题目来看看ret2libc吧。
 
 
+
+
+
 # ret2libc1
 
 ## 信息检查
