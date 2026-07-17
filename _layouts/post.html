@@ -5,24 +5,19 @@ layout: default
 <article class="post">
 
     <h1>{{ page.title }}</h1>
-
+    {% assign chars = post.content | strip_html | size %}
+    {% assign minutes = chars | divided_by: 800 | plus: 1 %}
     <div class="post-info">
-        {{ post.date | date: "%Y-%m-%d" }}
+        {{ page.date | date: "%Y-%m-%d" }}
 
         ·
 
-        {% assign chars = post.content | strip_html | size %}
+        {{ chars }} 字
 
         ·
 
-        {% assign minutes = chars | divided_by: 800 | plus: 1 %}
+        {{ minutes }} 分钟
     </div>
-
-    {% if page.excerpt %}
-    <div class="post-summary">
-        {{ page.excerpt }}
-    </div>
-    {% endif %}
 
     <div class="post-content">
         {{ content }}
