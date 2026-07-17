@@ -507,6 +507,47 @@ a:hover {
 }
 
 /* =========================
+   Markdown Table
+========================= */
+
+.post-content table {
+  width: 100%;
+  margin: 20px 0;
+  border-collapse: collapse;
+  background: #111;
+  border: 1px solid #333;
+  border-radius: 6px;
+  overflow: hidden;
+  display: block;
+  overflow-x: auto;
+}
+
+.post-content th {
+  background: #161616;
+  color: #e1e1e1;
+  padding: 12px 16px;
+  border: 1px solid #333;
+  text-align: left;
+  font-weight: bold;
+  white-space: nowrap;
+}
+
+.post-content td {
+  padding: 10px 16px;
+  border: 1px solid #2a2a2a;
+  color: #cfcfcf;
+}
+
+.post-content tr:nth-child(even) {
+  background: #0d0d0d;
+}
+
+.post-content tr:hover {
+  background: #1a1a1a;
+  transition: background 0.2s ease;
+}
+
+/* =========================
   Rouge Syntax Highlight
 ========================= */
 

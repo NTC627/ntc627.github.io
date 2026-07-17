@@ -4,8 +4,7 @@ title: "[PWN]ret2libc学习笔记"
 date: 2025-10-24
 categories: [PWN]
 ---
-
-​	以三道题目来学学ret2libc。
+​ret2libc，即返回到libc库，libc是c语言的动态链接库，包含了许多函数，比如常见的printf、scanf、puts，也包含了我们通常ROP要利用的system和execve，ret2libc就是通过返回到这个库的方式来调用这些函数。多说无用，直接以三道题目来看看ret2libc吧。
 
 
 # ret2libc1
@@ -16,7 +15,7 @@ categories: [PWN]
 
 ![ref1.1](/assets/images/2025-10-24-ret2libc-study-note/ref1.1.png)
 
-然后看IDA反汇编，可以看到gets函数没有限制，所以依旧是栈溢出。
+然后看IDA反汇编，可以看到gets函数没有限制，所以存在栈溢出。
 
 ![ref1.2](/assets/images/2025-10-24-ret2libc-study-note/ref1.2.png)
 

@@ -4,8 +4,7 @@ title: "[PWN]FastbinAttack之Double free学习"
 date: 2026-03-20
 categories: [PWN]
 ---
-# FastbinAttack-Double free
-## 分析
+# 分析
 
 先来逆向看看，可以看到有个后门函数，触发方式是qword_602090等于0，而这个值默认是1。
 ![ref1](/assets/images/2026-03-20-FastbinAttack-Double-free-note/ref1.png)
@@ -22,7 +21,7 @@ categories: [PWN]
 
 ![ref6](/assets/images/2026-03-20-FastbinAttack-Double-free-note/ref6.png)
 
-## 原理
+# 原理
 
 首先来看看一段代码
 ```c
@@ -61,7 +60,7 @@ int main(void) {
 
 ![ref4](/assets/images/2026-03-20-FastbinAttack-Double-free-note/ref4.png)
 
-## Exploit
+# Exploit
 
 double_free的方法来做是这样：
 

@@ -4,6 +4,7 @@ title: "[PWN]BROP学习笔记"
 date: 2025-11-07
 categories: [PWN]
 ---
+不是所有情况都能获取到程序二进制文件，一些内部程序在网上永远也不会公开，这时候就只能依靠盲打的技术去进行ROP攻击。BROP即Blind ROP，是一种无需二进制文件的远程攻击技术，该技术公开于2014年的一篇论文*Hacking Blind*，文中详细描述了攻击的技术，可阅读以获取详细内容，本文内容基于论文，但不如原文详细。
 
 # BROP原理
 
@@ -37,24 +38,26 @@ BROP Gadget即libc_csu_init结尾部分的一堆pop，注意其中最后的pop r
 
 ![ref1](/assets/images/2025-11-07-BROP-study-note/ref1.png)
 
-参见上图（来自论文Blind Hacking），左图是通过stop gadget判断有没有找到gadget（任意），右图则是通过trap和stop的组合来判断找到的gadget是pop|ret还是普通的ret。
+参见上图（来自论文Blind Hacking），左图是通过stop gadget判断有没有找到gadget（任意），右图则是通过trap和stop的组合来判断找到的gadget是`pop|ret`还是普通的ret。
 
 ![ref2](/assets/images/2025-11-07-BROP-study-note/ref2.png)
 
-此外还有其它组合，比如上图，probe + stop + traps就能找出ret的gadget，probe + trap + stop + traps就能找到pop|ret型，probe + stop + stop + stop + stop  + stop + stop + stop + traps就能找到六连pop。
+此外还有其它组合，比如上图，`probe + stop + traps`就能找出ret的gadget，`probe + trap + stop + traps`就能找到pop|ret型，`probe + stop + stop + stop + stop  + stop + stop + stop + traps`就能找到六连pop。
 
 
 
 ## Gadget识别
 
-找到pop ret还不够，因为不知道是pop了哪些寄存器。这里就依靠系统调用来识别，首先系统调用靠的是rax来传递系统调用号，所以必须要先找出哪个是rax，这里使用无参的系统调用pause()来确定，给找到的所有pop|ret gadget都试试看传这个系统调用号，执行成功了的话，系统会暂停（不是崩溃），那么也就找到了rax。其它寄存器也是用系统调用逐个去找，下面列出一张表来展示找的顺序与寄存器与系统调用的关系。
+找到pop ret还不够，因为不知道是pop了哪些寄存器。这里就依靠系统调用来识别，首先系统调用靠的是rax来传递系统调用号，所以必须要先找出哪个是rax，这里使用无参的系统调用pause()来确定，给找到的所有`pop|ret` gadget都试试看传这个系统调用号，执行成功了的话，系统会暂停（不是崩溃），那么也就找到了rax。其它寄存器也是用系统调用逐个去找，下面列出一张表来展示找的顺序与寄存器与系统调用的关系。
 
-| Order | Reg  | Syscalll                                 |
+
+| Order | Reg  | Syscall                                  |
 | ----- | ---- | ---------------------------------------- |
 | 1     | rax  | pause()                                  |
 | 2     | rdi  | nanosleep(len, rem)                      |
 | 3     | rsi  | kill(pid, sig)                           |
 | 4     | rdx  | clock_nano_sleep(clock, flags, len, rem) |
+
 
 其中2的和4的rem参数其实可以不用管，所以可以看到每一个系统调用的参数都是逐个递增加1的。注意kill的话需要杀掉进程，我们可以多开几个连接到服务端的程序，然后杀掉我们自己的进程来验证有没有触发系统调用。
 
@@ -70,7 +73,7 @@ BROP Gadget即libc_csu_init结尾部分的一堆pop，注意其中最后的pop r
 
 3.通过全代码从头扫描的模式，找到Stop Gadget（Trap Gadget很好找，或者随便编一个不存在的地址就行）
 
-4.利用Stop、Trap，去找真正可以用来攻击的gadget（pop|ret）。
+4.利用Stop、Trap，去找真正可以用来攻击的gadget（`pop|ret`）。
 
 5.由于rdx一般不好找，如果找不到的话，我们可以先找PLT表，然后调用strcmp，这个函数会藏有rdx的gadget，PLT表的找法也是利用stop、trap、probe组合，顺便也可以找找write或puts的PLT用于泄露，找不到也没关系可以系统调用。
 

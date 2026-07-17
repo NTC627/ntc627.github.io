@@ -4,7 +4,7 @@ title: "[PWN]ret2syscall学习笔记"
 date: 2025-10-19
 categories: [PWN]
 ---
-
+ret2syscall是一种比ret2shellcode更通用的技术，它无需向内存中注入恶意代码，而是通过找程序原本的代码片段，拼接构造出控制寄存器布局的恶意指令，并由恶意寄存器布局去触发系统调用。接下来以一道题目看看ret2syscall如何使用。
 
 # 1.信息检查
 
@@ -12,7 +12,7 @@ categories: [PWN]
 
 ![ref1](/assets/images/2025-10-19-ret2syscall-study-note/ref1.png)
 
-IDA反汇编可以看到，这回不自带shell函数，也提示无法注入shellcode，但是gets无任何限制，所以依然是依靠栈溢出。
+IDA反汇编可以看到，这回不自带shell函数，也提示无法注入shellcode，但是gets无任何限制，所以存在栈溢出。
 
 ![ref2](/assets/images/2025-10-19-ret2syscall-study-note/ref2.png)
 
@@ -22,7 +22,7 @@ IDA反汇编可以看到，这回不自带shell函数，也提示无法注入she
 
 # 2.Gadgets拼接
 
-先尝试跟着ctf wiki的思路来，使用execve("/bin/sh",NULL,NULL)这一系统调用，直接获取shell，为了执行这个系统调用，寄存器的值应为下列值
+使用execve("/bin/sh",NULL,NULL)这一系统调用，可以直接获取shell，为了执行这个系统调用，寄存器的值应为下列值
 
 ```
 eax=0xb
