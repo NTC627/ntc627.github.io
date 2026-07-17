@@ -507,6 +507,15 @@ a:hover {
   overflow-wrap: anywhere;
 }
 
+.post-summary {
+  margin-bottom: 24px;
+  padding: 14px 18px;
+  background: #111;
+  border-left: 3px solid #444;
+  color: #bbb;
+  line-height: 1.8;
+}
+
 /* =========================
    Markdown Table
 ========================= */
