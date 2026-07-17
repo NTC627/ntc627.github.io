@@ -3,7 +3,10 @@ layout: post
 title: "[PWN]堆的Unsorted Bin Attack学习"
 date: 2026-04-28
 categories: [PWN]
+excerpt: "简单介绍一下Unsorted Bin Attack的原理与两种利用方式"
 ---
+
+
 # Unsorted Bin Attack
 
 首先，和fastbin的结构不同，unsorted bin的结构是一个双向循环链表，FIFO。和fastbin的指定大小也不同，以下介绍其来源：

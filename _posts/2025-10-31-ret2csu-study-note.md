@@ -3,11 +3,8 @@ layout: post
 title: "[PWN]ret2csu学习笔记"
 date: 2025-10-31
 categories: [PWN]
+excerpt: "在实际操作中，常常很难在程序中找到特定的gadget，这时候就需要用到ret2csu技术了。"
 ---
-在实际操作中，常常很难在程序中找到特定的gadget，这时候就需要用到ret2csu技术了。
-
-
-
 
 
 # 信息检查

@@ -3,8 +3,11 @@ layout: post
 title: "[PWN]堆的LargebinAttack学习"
 date: 2026-04-28
 categories: [PWN]
+excerpt: "简单介绍一下LargebinAttack的原理与利用"
 ---
-# LargebinAttack
+
+
+# 原理&利用
 
 和其它堆漏洞的利用差不多，largebin attack也是通过其他可写漏洞改写指针来进行往指定的位置写指定的内容，先来说说largebin 特有的一些机制。
 largebin使用的也是双向链表，但比起unsortedbin，多出来了一个跳表机制。

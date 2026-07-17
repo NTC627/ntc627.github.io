@@ -3,11 +3,8 @@ layout: post
 title: "[PWN]ret2syscall学习笔记"
 date: 2025-10-19
 categories: [PWN]
+excerpt: "ret2syscall是一种比ret2shellcode更通用的技术，它无需向内存中注入恶意代码，而是通过找程序原本的代码片段，拼接构造出控制寄存器布局的恶意指令，并由恶意寄存器布局去触发系统调用。接下来以一道题目看看ret2syscall如何使用。"
 ---
-ret2syscall是一种比ret2shellcode更通用的技术，它无需向内存中注入恶意代码，而是通过找程序原本的代码片段，拼接构造出控制寄存器布局的恶意指令，并由恶意寄存器布局去触发系统调用。接下来以一道题目看看ret2syscall如何使用。
-
-
-
 
 
 # 1.信息检查

@@ -10,9 +10,11 @@ layout: default
         {{ page.date | date: "%Y-%m-%d" }}
     </div>
 
+    {% if page.excerpt %}
     <div class="post-summary">
         {{ page.excerpt }}
     </div>
+    {% endif %}
 
     <div class="post-content">
         {{ content }}
