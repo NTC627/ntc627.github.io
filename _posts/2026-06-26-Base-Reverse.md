@@ -3,8 +3,9 @@ layout: post
 title: "[Reverse]Base系列编码算法逆向"
 date: 2026-06-26
 categories: [Reverse]
+excerpt: "Base系列编码，采用有限可打印的的ASCII字符集作为编码表，将数据按固定长度比特映射为对应字符。不同的Base编码的核心区别在于编码表长度。"
 ---
-Base系列编码，采用有限可打印的的ASCII字符集作为编码表，将数据按固定长度比特映射为对应字符。不同的Base编码的核心区别在于编码表长度。
+
 
 # 常见成员
 

@@ -3,7 +3,10 @@ layout: post
 title: "[MAZE-SEC]lnnnPy靶机通关记录"
 date: 2026-06-21
 categories: [MAZE-SEC]
+excerpt: "MAZE-SEC社区靶机lnnnPy的通关记录。"
 ---
+
+
 ```
 靶机：lnnnPy
 作者：lnnn (QQ: 3467412796)

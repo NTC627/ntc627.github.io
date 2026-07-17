@@ -3,8 +3,9 @@ layout: post
 title: "[Reverse]IDAPython常用函数简介"
 date: 2026-06-25
 categories: [Reverse]
+excerpt: "IDAPython允许用户创建自定义脚本和插件，以增强IDA核心功能，官方文档位置：https://python.docs.hex-rays.com/。本文将对常用函数进行说明。ea指的是有效地址，effective address。"
 ---
-IDAPython允许用户创建自定义脚本和插件，以增强IDA核心功能，官方文档位置：https://python.docs.hex-rays.com/。本文将对常用函数进行说明。ea指的是有效地址，effective address。
+
 
 # 一、基础API
 

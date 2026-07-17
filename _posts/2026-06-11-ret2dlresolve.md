@@ -3,12 +3,13 @@ layout: post
 title: "[PWN]ret2dlresolve学习笔记--以32位程序为例"
 date: 2026-06-11
 categories: [PWN]
+excerpt: "以32位程序为例子，来看看ret2dlresolve的利用吧。"
 ---
-# ret2dlresolve
 
-本次学习以32位为例子，linux的动态链接使用的是\_dl\_runtime\_resolve(link\_map\_obj, reloc\_offset)。先来看看相关原理。
 
-## 相关原理
+linux的动态链接使用的是\_dl\_runtime\_resolve(link\_map\_obj, reloc\_offset)。先来看看相关原理。
+
+# 相关原理
 （1）.dynamic的结构类似一个键值对数组，重定位表项、动态符号表、动态字符串表在其中的结构类似：
 
 ```bash
@@ -29,7 +30,7 @@ DT_RELA 7 d_ptr //重定位表，指向.rela.dyn
 
 来看看不同情况的具体题目吧
 
-## NoRelro 32
+# NoRelro 32
 
 xdctf 2015 pwn200
 
@@ -116,7 +117,7 @@ p.interactive()
 
 顺便说说pwntools的这个rop对象，这个就相当于把平时p64自动打包好了，不用自己手写完整的链条了。
 
-## PartialRelro 32
+# PartialRelro 32
 
 开了部分relro后，.dynamic就不可写了，需要自己伪造重定位表项。这里先简单说说大概怎么个伪造方法，其实和堆里面伪造一个fake chunk的原理差不多，在内存中找一个空的位置，根据重定位表的结构，伪造相关的数据，再让\_dl\_runtime\_resolve的reloc_offset参数指向我们伪造的那片内存的重定位项就可以了。pwntools里有自动构造dlresolve的payload的工具了，这里就来讲讲这个工具的使用的方式，和其构造的payload具体是怎么样的吧
 
@@ -239,12 +240,12 @@ Elf32_Rel fake_rel = {
 
 最后该把两串payload连起来看的，看看\_dl\_runtime\_resolve是怎么找到伪造的Elf32_Rel的，其实很简单，我们触发plt0时，栈上的reloc_arg是0x4a9c，这个偏移值是和.rel.plt的0x08048380相加的（参考上一副图里的值吧），加起来就是0x0804ce1c，从read进去的偏移来算，刚好就是伪造的Elf32_Rel的地方，到这里PartialRelro 32的利用就算结束了。
 
-## Full RELRO 32
+# Full RELRO 32
 
 这个模式下，REL相关的东西完全不可写了，程序开始执行前就会把函数地址解析完毕，\_dl\_runtime\_resolve也不使用了，不过应该还是存在绕过方法的，毕竟\_dl\_runtime\_resolve只是不用了，又不是删了，我查的资料中，似乎存在full relro下手动调用\_dl\_runtime\_resolve，手动构造重定位表的方法，某种特定的情况下也许确实能用，等做题多一点应该就知道了。
 
 
-## 64位
+# 64位
 
 64位的总体利用思路是和32差不多吧，这里只记录一下不同点，具体的题目做的时候再看吧（延迟绑定这一块）。
 

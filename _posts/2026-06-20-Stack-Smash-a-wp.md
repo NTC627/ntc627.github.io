@@ -3,7 +3,10 @@ layout: post
 title: "[PWN]Stack Smash题目分析--wdb2018_guess"
 date: 2026-06-20
 categories: [PWN]
+excerpt: "以一道题目介绍stack smash相关技术"
 ---
+
+
 以wdb2018的GUESS为例子，反汇编后的伪代码如下
 
 ![ref1](/assets/images/2026-06-20-Stack-Smash-a-wp/ref1.png)

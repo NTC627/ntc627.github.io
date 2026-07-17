@@ -3,7 +3,7 @@ layout: post
 title: "[PWN]FastbinAttack之Double free学习"
 date: 2026-03-20
 categories: [PWN]
-excerpt: "Double free指的是同一块内存地址连续调用两次free，使得bin管理的链表中出现了两个同一元素，通常用于篡改fastbin链表，具体介绍来看一道题吧"
+excerpt: "Double free指的是同一块内存地址连续调用两次free，使得bin管理的链表中出现了两个同一元素，通常用于篡改fastbin链表，具体介绍来看一道题吧。"
 ---
 # 分析
 

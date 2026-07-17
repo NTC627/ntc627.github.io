@@ -3,7 +3,7 @@ layout: post
 title: "[PWN]堆的Unsorted Bin Attack学习"
 date: 2026-04-28
 categories: [PWN]
-excerpt: "简单介绍一下Unsorted Bin Attack的原理与两种利用方式"
+excerpt: "简单介绍一下Unsorted Bin Attack的原理与两种利用方式。"
 ---
 
 

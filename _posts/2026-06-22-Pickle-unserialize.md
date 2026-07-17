@@ -3,8 +3,9 @@ layout: post
 title: "[PrivEsc]Pickle反序列化提权学习笔记"
 date: 2026-06-22
 categories: [PrivEsc]
+excerpt: "笔者对Pickle以及反序列化漏洞的相关知识有限，故仅以个人笔记的形式在此记录个人所学。详细的Pickle反序列化相关的知识请移步大佬博客 [Pickle反序列化](https://goodapple.top/archives/1069) ，本篇文章只进行简单的概念介绍和漏洞利用说明。"
 ---
-笔者对Pickle以及反序列化漏洞的相关知识有限，故仅以个人笔记的形式在此记录个人所学。详细的Pickle反序列化相关的知识请移步大佬博客 [Pickle反序列化](https://goodapple.top/archives/1069) ，本篇文章只进行简单的概念介绍和漏洞利用说明。
+
 
 # Pickle
 

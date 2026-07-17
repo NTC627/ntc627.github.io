@@ -3,8 +3,9 @@ layout: post
 title: "[Others]Markdown快速上手教学"
 date: 2026-06-11
 categories: [Others]
+excerpt: "介绍一下Markdown的基础语法。"
 ---
-# Markdown如何快速上手
+# Markdown快速上手
 
 先简单介绍一下markdown，这是一种轻量级标记语言，比起格式复杂的docx等，markdown可以直接用纯文本格式编写，简单，就是它最大的优势。标记语言的意思就是，只要你使用特定的标记，那么markdown就能对特定的标记的内容进行自动渲染，下面来快速学学常用的标记吧。
 

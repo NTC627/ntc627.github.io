@@ -3,8 +3,9 @@ layout: post
 title: "[Reverse]TEA系列加密算法逆向"
 date: 2026-07-13
 categories: [Reverse]
+excerpt: "TEA，Tiny Encryption Algorithm，也被称作茶，属于分组加密算法。TEA被设计为一个轻量的加密算法，具有代码量少、运行速度快、占用内存少的特点。基于TEA，又有XTEA、XXTEA两种针对加密效果等问题提出的改进算法，本文将对这些算法做逆向分析。"
 ---
-TEA，Tiny Encryption Algorithm，也被称作茶，属于分组加密算法。TEA被设计为一个轻量的加密算法，具有代码量少、运行速度快、占用内存少的特点。基于TEA，又有XTEA、XXTEA两种针对加密效果等问题提出的改进算法，本文将对这些算法做逆向分析。
+
 
 # TEA
 
