@@ -6,6 +6,7 @@ categories: [PWN]
 ---
 不是所有情况都能获取到程序二进制文件，一些内部程序在网上永远也不会公开，这时候就只能依靠盲打的技术去进行ROP攻击。BROP即Blind ROP，是一种无需二进制文件的远程攻击技术，该技术公开于2014年的一篇论文*Hacking Blind*，文中详细描述了攻击的技术，可阅读以获取详细内容，本文内容基于论文，但不如原文详细。
 
+
 # BROP原理
 
 BROP是针对没有二进制文件或源码的程序的攻击手段。主要依赖以下技术完成对保护的绕过、对gadget的搜索。
@@ -42,7 +43,7 @@ BROP Gadget即libc_csu_init结尾部分的一堆pop，注意其中最后的pop r
 
 ![ref2](/assets/images/2025-11-07-BROP-study-note/ref2.png)
 
-此外还有其它组合，比如上图，`probe + stop + traps`就能找出ret的gadget，`probe + trap + stop + traps`就能找到pop|ret型，`probe + stop + stop + stop + stop  + stop + stop + stop + traps`就能找到六连pop。
+此外还有其它组合，比如上图，`probe + stop + traps`就能找出ret的gadget，`probe + trap + stop + traps`就能找到`pop|ret`型，`probe + stop + stop + stop + stop  + stop + stop + stop + traps`就能找到六连pop。
 
 
 

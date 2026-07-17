@@ -438,6 +438,7 @@ a:hover {
 
 .post-content {
   line-height: 1.8;
+  overflow-x: auto;
 }
 
 .post-content h1,
@@ -511,15 +512,12 @@ a:hover {
 ========================= */
 
 .post-content table {
-  width: 100%;
   margin: 20px 0;
   border-collapse: collapse;
   background: #111;
   border: 1px solid #333;
   border-radius: 6px;
   overflow: hidden;
-  display: block;
-  overflow-x: auto;
 }
 
 .post-content th {
