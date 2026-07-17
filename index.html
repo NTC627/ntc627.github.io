@@ -27,7 +27,7 @@ pagination:
     {% assign posts = paginator.posts | default: site.posts %}
     {% for post in posts %}
     {% assign chars = post.content | strip_html | size %}
-    {% assign minutes = chars | divided_by: 800 | plus: 1 %}
+    {% assign minutes = chars | divided_by: 1000 | plus: 5 %}
     <article class="post-card"> 
         <h2> <a href="{{ post.url }}"> 
             {{ post.title }} </a> 
