@@ -6,7 +6,7 @@ layout: default
 
     <h1>{{ page.title }}</h1>
     {% assign chars = page.content | strip_html | size %}
-    {% assign minutes = chars | divided_by: 800 | plus: 1 %}
+    {% assign minutes = chars | divided_by: 200 | plus: 1 %}
     <div class="post-info">
         {{ page.date | date: "%Y-%m-%d" }}
         · {{ chars }} 字
