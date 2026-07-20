@@ -11,7 +11,12 @@ title: About
         <p style="text-align: center;">b14ckb0x</p>
     </div> 
     <div class="panel">
-         <h3>Statistics</h3> <p>Posts: {{ site.posts.size }}</p> 
+         <h3>Statistics</h3> 
+         <p>Posts: {{ site.posts.size }}</p> 
+         <p>Categories: {{ site.categories.size }}</p>
+         <p>Last Update:
+            {{ site.posts.first.date | date: "%Y-%m-%d" }}
+        </p>
     </div> 
     <div class="panel"> <h3>Contact</h3>  <p><a href="https://space.bilibili.com/108097771?spm_id_from=333.1007.0.0">Visit my bilibili</a></p> <p><a href="https://github.com/NTC627">Visit my GitHub</a></p> 
     </div> 
