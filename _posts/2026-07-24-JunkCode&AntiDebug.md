@@ -153,6 +153,7 @@ int main()
 
 IDA不会直接对原文件进行修改，一般来说，在IDA里的操作都是对IDA的数据库进行操作，想要获得patch后的程序，得在IDA里选择Apply patches to input file然后保存为新应用，分析完后的main：
 
+{% raw %}
 ```c
 void __fastcall main(int a1, char **a2, char **a3)
 {
@@ -259,6 +260,7 @@ void __fastcall main(int a1, char **a2, char **a3)
   }
 }
 ```
+{% endraw %}
 
 # 反调试 Anti-Debug
 
