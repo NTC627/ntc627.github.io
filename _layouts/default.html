@@ -9,9 +9,9 @@
 
 <title>
     {% if page.title %}
-        {{ page.title }} | b14ckb0x's space
+        {{ page.title }} | {{ site.title }}
     {% else %}
-        b14ckb0x's space
+        {{ site.title }}
     {% endif %}
 </title>
 
@@ -48,7 +48,7 @@
 </div>
 
 <footer class="footer">
-    Hacked by b14ckb0x
+    Hacked by {{ site.author }}
 </footer>
 
 

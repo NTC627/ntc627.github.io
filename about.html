@@ -4,25 +4,9 @@ title: About
 ---
 <body>
 <div class="main-layout">
-<aside class="sidebar">
-    <div class="panel">
-        <h3>Author</h3> 
-        <img src="/assets/avatar.jpg" alt="avatar" class="avatar"> 
-        <p style="text-align: center;">b14ckb0x</p>
-    </div> 
-    <div class="panel">
-         <h3>Statistics</h3> 
-         <p>Posts: {{ site.posts.size }}</p> 
-         <p>Categories: {{ site.categories.size }}</p>
-         <p>Last Update:
-            {{ site.posts.first.date | date: "%Y-%m-%d" }}
-        </p>
-    </div> 
-    <div class="panel"> <h3>Contact</h3>  <p><a href="https://space.bilibili.com/108097771?spm_id_from=333.1007.0.0">Visit my bilibili</a></p> <p><a href="https://github.com/NTC627">Visit my GitHub</a></p> 
-    </div> 
-</aside> 
+{% include sidebar.html %}
     <main class="content"> 
     <h1>About</h1>
-    <p>这里是 b14ckb0x 的个人技术博客，内容偏向个人记录与分析，如果对来到此处的你有一些帮助，那就再好不过了。联系本人请前往本人<a href="https://space.bilibili.com/108097771?spm_id_from=333.1007.0.0">bilibili</a>处留言。</p>
+    <p>这里是 {{ site.author }} 的个人技术博客，内容偏向个人记录与分析，如果对来到此处的你有一些帮助，那就再好不过了。联系本人请前往本人<a href="https://space.bilibili.com/108097771?spm_id_from=333.1007.0.0">bilibili</a>处留言。</p>
     </main>
 </div>
