@@ -23,84 +23,43 @@ pagination:
             {{ post.excerpt | strip_html | truncate: 180 }} 
         </div> 
     </article> {% endfor %} 
+    {% if paginator.total_pages > 1 %}
     <div class="pagination">
 
         {% if paginator.previous_page %}
-            <a class="page-nav" href="{{ paginator.previous_page_path }}">
-                ← Prev
-            </a>
+            <a class="page-nav" href="{{ paginator.previous_page_path }}">前一页</a>
+        {% else %}
+            <span class="page-nav page-nav-disabled">处于首页</span>
         {% endif %}
-    
-        <div class="page-numbers">   
-            {% assign current = paginator.page | default: 1 %}
-            {% assign total = paginator.total_pages | default: 1 %}  
-            {% assign start = current | minus: 2 %}
-            {% assign end = current | plus: 2 %}
-            {% if start < 1 %}
-                {% assign start = 1 %}
-            {% endif %}   
-            {% if end > total %}
-                {% assign end = total %}
-            {% endif %}
-            {% for i in (start..end) %}
-                {% if i == current %}
-                    <span class="page-current">
-                        {{ i }}
-                    </span> 
-                {% else %}
-                    {% if i == 1 %}
-                        <a class="page-number" href="/">
-                            {{ i }}
-                        </a>
-                    {% else %}
-                        <a class="page-number" href="/page{{ i }}/">
-                            {{ i }}
-                        </a>
-                    {% endif %} 
-                {% endif %}
-            {% endfor %}
-    
-        </div>
-    
+
         <div class="page-jump">
-            <span>Jump to</span>
+            <span>跳转到</span>
             <input
                 id="pageJump"
-                type="number"
+                type="text"
+                value="{{ paginator.page }}/{{ paginator.total_pages }}"
                 data-max-page="{{ paginator.total_pages }}"
-                min="1"
-                max="{{ total }}"
-                placeholder="{{ current }}"
+                onfocus="var m=this.dataset.maxPage;this.dataset.display=this.value;this.value=parseInt(this.value)||1;this.select()"
+                onblur="var v=parseInt(this.value);var d=parseInt(this.dataset.display)||1;var m=parseInt(this.dataset.maxPage);if(isNaN(v))v=d;if(v<1)v=1;if(v>m)v=m;this.value=v+'/'+m"
                 onkeydown="if(event.key==='Enter'){goToPage(this.value)}"
             >
-            <button onclick="goToPage(document.getElementById('pageJump').value)">
-                Go
-            </button>
-    
+            <button onclick="goToPage(document.getElementById('pageJump').value)">前往</button>
         </div>
-    
+
         {% if paginator.next_page %}
-            <a class="page-nav" href="{{ paginator.next_page_path }}">
-                Next →
-            </a>
+            <a class="page-nav" href="{{ paginator.next_page_path }}">后一页</a>
+        {% else %}
+            <span class="page-nav page-nav-disabled">处于尾页</span>
         {% endif %}
-    
+
     </div>
     <script>
         function goToPage(page) {
-            
             page = parseInt(page);
-        
             if (isNaN(page)) return;
-        
-            const maxPage = parseInt(
-                document.getElementById("pageJump")
-                    .dataset.maxPage
-            );
-        
+            const maxPage = parseInt(document.getElementById("pageJump").dataset.maxPage);
             if (page < 1) page = 1;
             if (page > maxPage) page = maxPage;
-        
             if (page === 1) {
                 window.location.href = "/";
             } else {
@@ -108,5 +67,6 @@ pagination:
             }
         }
     </script>
+    {% endif %}
     </main>
 </div>

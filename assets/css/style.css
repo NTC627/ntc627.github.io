@@ -412,11 +412,11 @@ pre code {
 }
 
 .pagination a {
-    color: var(--color-accent);
+    color: #8c7a6b;
 }
 
 .page-nav {
-    color: var(--color-accent);
+    color: #8c7a6b;
     text-decoration: none;
     white-space: nowrap;
 }
@@ -425,39 +425,11 @@ pre code {
     opacity: 0.8;
 }
 
-.page-numbers {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-}
-
-.page-number,
-.page-current {
-    min-width: 36px;
-    height: 36px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0 10px;
-    border-radius: 6px;
-    text-decoration: none;
-    box-sizing: border-box;
-}
-
-.page-number {
-    color: var(--color-text-secondary);
-    transition: all 0.2s;
-}
-
-.page-number:hover {
-    color: var(--color-accent);
-    background: rgba(74, 127, 181, 0.08);
-}
-
-.page-current {
-    border: 1px solid var(--color-accent);
-    background: transparent;
-    color: var(--color-accent);
+.page-nav-disabled {
+    color: var(--color-text-secondary) !important;
+    opacity: 0.6;
+    cursor: default;
+    pointer-events: none;
 }
 
 /* Jump box */
@@ -470,28 +442,20 @@ pre code {
 }
 
 .page-jump input {
-    width: 70px;
+    width: 72px;
     height: 34px;
     background: var(--color-bg-code);
-    color: var(--color-text-inverse);
+    color: var(--color-text);
     border: 1px solid var(--color-border-input);
     border-radius: 4px;
     text-align: center;
     outline: none;
+    font-family: var(--font-mono);
+    font-size: 13px;
 }
 
 .page-jump input:focus {
     border-color: var(--color-accent);
-}
-
-.page-jump input::-webkit-outer-spin-button,
-.page-jump input::-webkit-inner-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
-}
-
-.page-jump input[type="number"] {
-    -moz-appearance: textfield;
 }
 
 .page-jump button {
@@ -499,34 +463,14 @@ pre code {
     padding: 0 14px;
     border: none;
     border-radius: 4px;
-    background: var(--color-accent);
-    color: var(--color-text-inverse);
+    background: #8c7a6b;
+    color: #fff;
     cursor: pointer;
 }
 
 .page-jump button:hover {
     opacity: 0.9;
 }
-
-/* Legacy helpers (not actively used in templates) */
-
-.current-page {
-    display: inline-block;
-    padding: 6px 12px;
-    background: var(--color-accent);
-    color: var(--color-text-inverse);
-    border-radius: 4px;
-}
-
-.jump-box {
-    margin-left: 20px;
-}
-
-#pageJump {
-    width: 60px;
-    text-align: center;
-}
-
 
 /* ========================================
    10. Category
@@ -543,6 +487,9 @@ pre code {
 }
 
 .category-index-list {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
     list-style: none;
     padding: 0;
     margin: 20px 0;
@@ -552,36 +499,41 @@ pre code {
 .category-index-item {
     display: flex;
     align-items: center;
-    gap: 6px;
-    padding: 8px 0;
-    border-bottom: 1px solid var(--color-border);
+    justify-content: space-between;
+    padding: 14px 16px;
+    background: var(--color-bg-card);
+    border: 1px solid var(--color-border);
+    border-radius: 6px;
+    border-left: 3px solid #8c7a6b;
     transition: all 0.2s ease;
 }
 
-.category-index-item:last-child {
-    border-bottom: none;
-}
-
-.category-index-item::before {
-    content: ">>";
-    color: var(--color-text-secondary);
-    font-size: 0.9rem;
+.category-index-item:hover {
+    border-left-color: #a08060;
+    background: var(--color-bg);
 }
 
 .category-index-link {
     color: var(--color-text);
     text-decoration: none;
-    transition: color 0.2s ease, text-shadow 0.2s ease;
+    font-weight: bold;
+    transition: color 0.2s ease;
 }
 
 .category-index-link:hover {
     color: var(--color-accent);
-    text-shadow: none;
 }
 
 .category-count {
     color: var(--color-text-meta);
-    font-size: 0.95rem;
+    font-size: 0.9rem;
+    flex-shrink: 0;
+    margin-left: 12px;
+}
+
+.category-count::before {
+    content: "共 ";
+    font-size: 0.8rem;
 }
 
 /* Legacy (auto-generated autopage, not actively used) */
