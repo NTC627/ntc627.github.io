@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "[Reverse]花指令与反调试 - JunkCode&AntiDebug"
+title: "[Reverse]花指令与反调试-JunkCode&AntiDebug"
 date: 2026-07-24
 categories: [Reverse]
 excerpt: "花指令和反调试都是重要的混淆技术。花指令主要反静态分析，通过代码中混入无关指令影响分析；反调试则是通过检测程序调试状态，判断是否在被调试，从而影响动态调试分析"
@@ -298,7 +298,7 @@ windows中每个进程还有进程环境块PEB，是用来记录每一个进程�
 
 ![ref13](/assets/images/2026-07-24-JunkCode&AntiDebug/ref13.png)
 
-这种最好弄，修改最后的跳转jnz逻辑横真即可，或者修改cmp判断结果，反正随便改改就能绕开，这里我改cmp和0比较，比把jnz改成jmp等其它指令好，这样改的字节数少，不容易出问题。
+这种最好弄，修改最后的跳转jnz逻辑恒真即可，或者修改cmp判断结果，反正随便改改就能绕开，这里我改cmp和0比较，比把jnz改成jmp等其它指令好，这样改的字节数少，不容易出问题。
 
 ![ref14](/assets/images/2026-07-24-JunkCode&AntiDebug/ref14.png)
 
