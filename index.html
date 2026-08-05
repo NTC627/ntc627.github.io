@@ -7,7 +7,7 @@ pagination:
 <div class="main-layout">
 {% include sidebar.html %}
     <main class="content"> 
-    <h1>Welcome to {{ site.author }}'s blog</h1>
+    <h1>欢迎来到{{ site.author }}的博客</h1>
     {% assign posts = paginator.posts | default: site.posts %}
     {% for post in posts %}
     {% assign chars = post.content | strip_html | size %}
@@ -17,7 +17,7 @@ pagination:
         </h2> 
         <div class="post-meta"> 
             {{ post.date | date: "%Y-%m-%d" }}
-            · {{ chars }} 字
+            {{ chars }}字
         </div> 
         <div class="post-excerpt"> 
             {{ post.excerpt | strip_html | truncate: 180 }} 
