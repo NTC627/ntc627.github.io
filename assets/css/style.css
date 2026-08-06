@@ -969,16 +969,19 @@ pre code {
         margin-left: auto;
     }
 
+    .search-icon-btn {
+        transition: opacity 0.2s ease, transform 0.2s ease;
+    }
+
     #search-input {
-        position: fixed;
-        top: 12px;
-        right: 15px;
-        width: calc(100% - 30px);
-        max-width: 300px;
+        position: absolute;
+        top: 50%;
+        right: 0;
+        transform: translateY(-50%);
+        width: 0;
+        max-width: calc(100vw - 40px);
         opacity: 0;
-        transform: translateY(-8px);
-        pointer-events: none;
-        padding: 6px 12px;
+        padding: 0;
         border: 1px solid var(--color-border-input);
         border-radius: 4px;
         font-size: 16px;
@@ -987,9 +990,11 @@ pre code {
         outline: none;
         box-sizing: border-box;
         z-index: 10001;
-        transition: opacity 0.2s ease, transform 0.25s ease;
-        height: 36px;
-        line-height: 24px;
+        transition: width 0.3s ease, opacity 0.2s ease, padding 0.3s ease;
+        height: 32px;
+        line-height: 20px;
+        overflow: hidden;
+        white-space: nowrap;
     }
 
     .search-box:focus-within .search-icon-btn {
@@ -1001,11 +1006,10 @@ pre code {
     }
 
     .search-box:focus-within #search-input {
-        width: calc(100% - 30px);
-        max-width: 300px;
+        width: 220px;
+        max-width: calc(100vw - 40px);
         opacity: 1;
-        transform: translateY(0);
-        pointer-events: all;
+        padding: 4px 8px;
     }
 
     .search-box:focus-within #search-input:focus {
@@ -1014,16 +1018,13 @@ pre code {
     }
 
     #results-container {
-        position: fixed;
-        width: calc(100% - 30px);
-        max-width: 300px;
-        max-height: calc(100vh - 62px);
+        position: absolute;
+        top: 100%;
+        right: 0;
+        width: 280px;
+        max-width: calc(100vw - 40px);
+        max-height: 400px;
         overflow-y: auto;
-        overflow-x: hidden;
         z-index: 10002;
-        right: 15px;
-        left: auto;
-        -webkit-overflow-scrolling: touch;
-        top: 52px;
     }
 }

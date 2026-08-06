@@ -12,7 +12,7 @@ document.addEventListener("DOMContentLoaded", async function () {
       posts = await response.json();
   } catch (error) {
       console.error("Load search.json Failed", error);
-      results.innerHTML = "<li>Load search.json Failed</li>";
+      results.innerHTML = "<li>搜索结果加载失败，请刷新页面重试</li>";
       return;
   }
 
