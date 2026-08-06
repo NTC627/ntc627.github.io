@@ -970,8 +970,26 @@ pre code {
     }
 
     #search-input {
-        display: block;
-        transition: opacity 0.3s ease, width 0s 0.3s, padding 0s 0.3s, border 0s 0.3s;
+        position: fixed;
+        top: 12px;
+        right: 15px;
+        width: calc(100% - 30px);
+        max-width: 300px;
+        opacity: 0;
+        transform: translateY(-8px);
+        pointer-events: none;
+        padding: 6px 12px;
+        border: 1px solid var(--color-border-input);
+        border-radius: 4px;
+        font-size: 16px;
+        background: var(--color-bg-card);
+        color: var(--color-text);
+        outline: none;
+        box-sizing: border-box;
+        z-index: 10001;
+        transition: opacity 0.2s ease, transform 0.25s ease;
+        height: 36px;
+        line-height: 24px;
     }
 
     .search-box:focus-within .search-icon-btn {
@@ -983,20 +1001,9 @@ pre code {
     }
 
     .search-box:focus-within #search-input {
-        position: fixed;
-        top: 12px;
-        right: 15px;
-        width: calc(100% - 30px);
         opacity: 1;
-        padding: 6px 12px;
-        border: 1px solid var(--color-border-input);
-        margin-left: 0;
-        background: var(--color-bg-card);
-        box-sizing: border-box;
-        z-index: 10001;
-        transition: all 0.3s ease;
-        height: 36px;
-        line-height: 24px;
+        transform: translateY(0);
+        pointer-events: all;
     }
 
     .search-box:focus-within #search-input:focus {
@@ -1006,12 +1013,13 @@ pre code {
 
     #results-container {
         position: fixed;
-        width: 100%;
+        width: calc(100% - 30px);
+        max-width: 300px;
         max-height: calc(100vh - 62px);
         overflow-y: auto;
         overflow-x: hidden;
         z-index: 10002;
-        right: 0;
+        right: 15px;
         left: auto;
         -webkit-overflow-scrolling: touch;
         top: 52px;
