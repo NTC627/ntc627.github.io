@@ -1,0 +1,13 @@
+{% assign chars = include.post.content | smart_word_count %}
+<article class="post-card">
+    <h2>
+        <a href="{{ include.post.url | relative_url }}">{{ include.post.title }}</a>
+    </h2>
+    <div class="post-meta">
+        {{ include.post.date | date: "%Y-%m-%d" }}
+        {{ chars }}字
+    </div>
+    <div class="post-excerpt">
+        {{ include.post.excerpt | strip_html | truncate: 180 | normalize_whitespace }}
+    </div>
+</article>

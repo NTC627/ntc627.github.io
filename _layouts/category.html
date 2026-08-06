@@ -13,19 +13,7 @@ layout: default
     </h1>
 
     {% for post in paginator.posts %}
-    <article class="post-card">
-        <h2>
-            <a href="{{ post.url | relative_url }}">{{ post.title }}</a>
-        </h2>
-
-        <div class="post-meta">
-            {{ post.date | date: "%Y-%m-%d" }}
-        </div>
-
-        <div class="post-excerpt">
-            {{ post.excerpt | strip_html | truncate: 180 }}
-        </div>
-    </article>
+    {% include post-card.html post=post %}
     {% endfor %}
 
     {% if paginator.total_pages > 1 %}

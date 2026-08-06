@@ -158,13 +158,14 @@ code {
 .navbar a {
     display: inline-flex;
     align-items: center;
+    gap: 6px;
     position: relative;
 }
 
 .navbar a:not(:last-child)::after {
     content: "";
     position: absolute;
-    right: -7px;
+    right: -10px;
     top: 50%;
     transform: translateY(-50%);
     width: 1px;
@@ -245,6 +246,8 @@ code {
 .post-excerpt {
     color: var(--color-text-excerpt);
     margin-bottom: 12px;
+    overflow-wrap: break-word;
+    word-break: break-word;
 }
 
 
@@ -906,6 +909,11 @@ pre code {
         text-shadow: none;
         white-space: nowrap;
         flex-shrink: 0;
+        gap: 6px;
+    }
+
+    .navbar a span {
+        display: none;
     }
 
     .nav-links {
