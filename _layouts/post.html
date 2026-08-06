@@ -2,23 +2,35 @@
 layout: default
 ---
 
-<article class="post">
+<div class="main-layout">
+    <aside class="sidebar toc-sidebar">
+        <div class="panel toc-panel">
+            <h3>目录</h3>
+            <nav id="toc"></nav>
+        </div>
+    </aside>
+    <main class="content">
+        <article class="post">
 
-    <h1>{{ page.title }}</h1>
-    {% assign chars = page.content | smart_word_count %}
-    <div class="post-info">
-        {{ page.date | date: "%Y-%m-%d" }}
-        {{ chars }}字
-    </div>
+            <h1>{{ page.title }}</h1>
+            {% assign chars = page.content | smart_word_count %}
+            <div class="post-info">
+                {{ page.date | date: "%Y-%m-%d" }}
+                {{ chars }}字
+            </div>
 
-    {% if page.excerpt %}
-    <div class="post-summary">
-        {{ page.excerpt | markdownify }}
-    </div>
-    {% endif %}
+            {% if page.excerpt %}
+            <div class="post-summary">
+                {{ page.excerpt | markdownify }}
+            </div>
+            {% endif %}
 
-    <div class="post-content">
-        {{ content }}
-    </div>
+            <div class="post-content">
+                {{ content }}
+            </div>
 
-</article>
+        </article>
+    </main>
+</div>
+
+<script src="{{ '/assets/js/toc.js' | relative_url }}"></script>
