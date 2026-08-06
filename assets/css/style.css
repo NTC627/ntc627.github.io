@@ -1001,6 +1001,8 @@ pre code {
     }
 
     .search-box:focus-within #search-input {
+        width: calc(100% - 30px);
+        max-width: 300px;
         opacity: 1;
         transform: translateY(0);
         pointer-events: all;
