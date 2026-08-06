@@ -9,7 +9,7 @@ excerpt: "以一道题目介绍stack smash相关技术"
 
 以wdb2018的GUESS为例子，反汇编后的伪代码如下
 
-![ref1](/assets/images/2026-06-20-Stack-Smash-a-wp/ref1.png)
+![ref1](/assets/images/2026-06-20-Stack-Smash-a-wp/ref1.webp)
 
 简单分析一下就是会把flag读入内存，准确的说是读入栈的区域，然后又给了个溢出漏洞，同时这题开了canary，那就没法rop
 
@@ -62,15 +62,15 @@ b14ckb0x@b14ckb0x:~/Desktop/temp/GUESS$ ldd GUESS
 	./ld-linux-x86-64.so.2 => /lib64/ld-linux-x86-64.so.2 (0x00007fbc719f1000)
 ```
 
-开gdb调试，在main函数（0x400a40）下断点，运行到gets函数，输入deadbeef，然后查看栈
+开gdb调试，在main函数（`0x400a40`）下断点，运行到gets函数，输入deadbeef，然后查看栈
 
-![ref2](/assets/images/2026-06-20-Stack-Smash-a-wp/ref2.png)
+![ref2](/assets/images/2026-06-20-Stack-Smash-a-wp/ref2.webp)
 
-0x7fffffffdaa8就是argv\[0\]，0x7fffffffd980是我们输入的位置，0x7fffffffd950是flag的位置，接下来的思路很简单，在0x7fffffffd980构造足够覆盖到argv\[0\]的长度的payload，并把argv\[0\]覆盖成某个函数的地址，这样就可以通过泄漏的函数算出libc基地址，然后利用libc中的一个叫environ的东西泄漏出栈的基地址（environ的地址和栈地址有固定偏移），在调试中可以算出flag的地址0x7fffffffd950和environ之间的偏移，然后就可以最终泄漏出flag了。
+`0x7fffffffdaa8`就是argv\[0\]，`0x7fffffffd980`是我们输入的位置，`0x7fffffffd950`是flag的位置，接下来的思路很简单，在`0x7fffffffd980`构造足够覆盖到argv\[0\]的长度的payload，并把argv\[0\]覆盖成某个函数的地址，这样就可以通过泄漏的函数算出libc基地址，然后利用libc中的一个叫environ的东西泄漏出栈的基地址（environ的地址和栈地址有固定偏移），在调试中可以算出flag的地址`0x7fffffffd950`和environ之间的偏移，然后就可以最终泄漏出flag了。
 
-![ref3](/assets/images/2026-06-20-Stack-Smash-a-wp/ref3.png)
+![ref3](/assets/images/2026-06-20-Stack-Smash-a-wp/ref3.webp)
 
-通过调试可以看到environ的地址是0x7fffffffdab8，据此算出和flag之间的偏移。
+通过调试可以看到environ的地址是`0x7fffffffdab8`，据此算出和flag之间的偏移。
 
 完整exp
 

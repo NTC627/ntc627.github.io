@@ -13,11 +13,11 @@ excerpt: "IDAPython允许用户创建自定义脚本和插件，以增强IDA核�
 
 返回光标所在位置的地址
 
-![ref1](/assets/images/2026-06-25-IDAPython/ref1.png)
+![ref1](/assets/images/2026-06-25-IDAPython/ref1.webp)
 
 ## 2.get_inf_attr(INF_MIN_EA) / get_inf_attr(INF_MAX_EA)
 
-获取最小有效地址或最大有效地址，比如linux上的不开随机化的程序，get_inf_attr(INF_MIN_EA)就是0x8048000
+获取最小有效地址或最大有效地址，比如linux上的不开随机化的程序，`get_inf_attr`(INF_MIN_EA)就是`0x8048000`
 
 ```python
 Python>get_inf_attr(INF_MIN_EA)
@@ -185,7 +185,7 @@ while start < end:
 
 打开IDA里的File->Execute script即可执行脚本
 
-![ref2](/assets/images/2026-06-25-IDAPython/ref2.png)
+![ref2](/assets/images/2026-06-25-IDAPython/ref2.webp)
 ## 5.get_next_func(ea) / get_prev_func(ea)
 
 获取下、上一个函数
@@ -254,7 +254,7 @@ for ea in FuncItems(here()):
 
 # 五、操作数
 
-可以用get_operand_type(ea, n)得到操作数的类型，用get_operand_value(ea, n)得到操作数的值，其中n表示操作数的索引。
+可以用`get_operand_type`(ea, n)得到操作数的类型，用`get_operand_value`(ea, n)得到操作数的值，其中n表示操作数的索引。
 
 ```python
 0x0804846F  and     esp, 0FFFFFFF0h
@@ -268,7 +268,7 @@ Python>get_operand_value(0x0804846F, 1)
 0xfffffffffffffff0
 ```
 
-类型比较多，所以先讲值，对于立即数来说，get_operand_value(ea, n)就是直接取立即数的值，而对于寄存器来说，get_operand_value(ea, n)会取寄存器的内部编号，比如esp就是0x4。不过如果是`[reg + 0x8]`这样的形式的话，IDA就只能静态分析推断出它的值或者直接无法推断。
+类型比较多，所以先讲值，对于立即数来说，`get_operand_value`(ea, n)就是直接取立即数的值，而对于寄存器来说，`get_operand_value`(ea, n)会取寄存器的内部编号，比如`esp`就是0x4。不过如果是`[reg + 0x8]`这样的形式的话，IDA就只能静态分析推断出它的值或者直接无法推断。
 
 接下来重点讲讲类型。不同ida版本等所有的操作数类型数量不同，比如`o_idpspec0`、`o_idpspec1`这种不是固定有的类型，但是有8种是固定的
 
@@ -340,4 +340,4 @@ ida_bytes.patch_qword(ea, val)
 - `WFNE_CONT` – 等待进程继续运行（一般不用）。
 - `WFNE_ANY` – 等待任何事件。
 - `WFNE_SUSP | WFNE_NOWAIT` – 检查但不挂起，立即返回是否有事件。
-timeout可以设置超时，取-1可以无限等待。注意这里说的等待是让脚本等待程序执行，而不是控制程序的暂停，一般是用来暂停脚本，直到程序运行到了断点的时候，再配合get_reg_value等去分析程序当前的各个值。
+timeout可以设置超时，取-1可以无限等待。注意这里说的等待是让脚本等待程序执行，而不是控制程序的暂停，一般是用来暂停脚本，直到程序运行到了断点的时候，再配合`get_reg_value`等去分析程序当前的各个值。

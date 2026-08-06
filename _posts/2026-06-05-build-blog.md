@@ -21,11 +21,11 @@ Github是支持个人部署静态页面的，这个功能叫做github pages，�
 
 1.第一步，需要创建一个新的仓库，仓库名字为xxx.github.io，这个xxx最好和你的github名字一样，我猜你可能想自己命名网站的域名为bbb.github.io，但是实际上如果这样命名，那么访问时的链接其实会是https://xxx.github.io/bbb.github.io/index.html，很长的一串，而不是你想的https://bbb.github.io/index.html，所以还是正常命名为你的github名字。
 
-![ref1](/assets/images/2026-06-05-build-blog/ref1.png)
+![ref1](/assets/images/2026-06-05-build-blog/ref1.webp)
 
 2.接下来，在仓库的设置中，按如下设置，这样，仓库的根目录，就成了网站的根目录，这时候在仓库的根目录里放一个index.html，然后再访问https://xxx.github.io/，那么此时网站的内容就是index.html了，如果404可以多刷新几次，网站的部署相对仓库这边有延迟。
 
-![ref2](/assets/images/2026-06-05-build-blog/ref2.png)
+![ref2](/assets/images/2026-06-05-build-blog/ref2.webp)
 
 # Jekyll搭建步骤
 
@@ -50,7 +50,7 @@ b14ckb0x@b14ckb0x:~/ntc627.github.io$ tree -L 2
 
 如果你的目录按我如上进行设置，那么现在github仓库看到的文件与文件夹应该类似这样
 
-![ref3](/assets/images/2026-06-05-build-blog/ref3.png)
+![ref3](/assets/images/2026-06-05-build-blog/ref3.webp)
 
 2.我的_config.yml设置，theme我选择自己编写css，所以空着了，此外还有插件以及一些插件设置，用于控制博客的分页等。
 
@@ -127,7 +127,7 @@ ssh-keygen -t ed25519
 
 创建好后，打开公钥文件.pub，把里面的内容复制到github的ssh key设置页面：
 
-![ref4](/assets/images/2026-06-05-build-blog/ref4.png)
+![ref4](/assets/images/2026-06-05-build-blog/ref4.webp)
 
 之后在本地，git clone下来的那个文件的根目录里执行，把与远程仓库的互动方式从https改成ssh
 

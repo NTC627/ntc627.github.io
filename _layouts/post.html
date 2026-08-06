@@ -8,7 +8,7 @@ layout: default
     {% assign chars = page.content | smart_word_count %}
     <div class="post-info">
         {{ page.date | date: "%Y-%m-%d" }}
-        · {{ chars }} 字
+        {{ chars }}字
     </div>
 
     {% if page.excerpt %}

@@ -19,27 +19,27 @@ excerpt: "Base系列编码，采用有限可打印的的ASCII字符集作为编�
 
 这里主要以Base64编码的逆向进行讲解，首先先看base64编码的计算，一般可以分为刚好每个字符完全编码，和需要填充两种情况，见下图，这是刚刚好完全编码的情况，每个字符转换成8位二进制，然后以每6个比特为一组去编码表找对应的编码即可。
 
-![ref1](/assets/images/2026-06-26-Base-Reverse/ref1.png)
+![ref1](/assets/images/2026-06-26-Base-Reverse/ref1.webp)
 
 这是需要填充的情况，由于8比特编码为6比特的数字关系，需要填充的只会分为两种情况，一种是需要补4个0，然后以等于号的形式再补充剩下的值，一种是补两个0，然后以等号的形式补充剩下的值，在解码的时候，根据等号的数量，就能知道要丢弃多少的补0比特。也就是说base64的填充只有三种情况，不进行填充，填充4比特0，填充2比特0。
 
-![ref2](/assets/images/2026-06-26-Base-Reverse/ref2.png)
+![ref2](/assets/images/2026-06-26-Base-Reverse/ref2.webp)
 
 # Base64逆向特征
 
 base64在IDA里的特征还是很明显的，一个特征是6-8按位映射，另一个特征是编码表。这里随便找一题，以下是其main函数
 
-![ref3](/assets/images/2026-06-26-Base-Reverse/ref3.png)
+![ref3](/assets/images/2026-06-26-Base-Reverse/ref3.webp)
 
-整个逻辑非常简单，利用某个输入函数把我们的输入传入Str变量，然后用sub_4110be函数对我们输入做了某种处理，并且这个处理之前还需要计算Str的长度，总之得到v4，v4又复制给Destination，然后遍历Destination每一位的同时做加法，最后与Str2做比较判断flag是否正确。
+整个逻辑非常简单，利用某个输入函数把我们的输入传入Str变量，然后用`sub_4110be`函数对我们输入做了某种处理，并且这个处理之前还需要计算Str的长度，总之得到v4，v4又复制给Destination，然后遍历Destination每一位的同时做加法，最后与Str2做比较判断flag是否正确。
 
-点开sub_4110be，找到真正处理逻辑的sub_411ab0，这里的处理就很明显了，可以看出三个base64的特征，首先是三个case，对应base64的三种填充情况。
+点开`sub_4110be`，找到真正处理逻辑的`sub_411ab0`，这里的处理就很明显了，可以看出三个base64的特征，首先是三个case，对应base64的三种填充情况。
 
-![ref4](/assets/images/2026-06-26-Base-Reverse/ref4.png)
+![ref4](/assets/images/2026-06-26-Base-Reverse/ref4.webp)
 
 其二是编码表，这个aAbcdefg...的变量，是IDA直接用字符串的内容命名的变量名，可以点开在数据段中查看，发现其字符集和base64完全符合。
 
-![ref5](/assets/images/2026-06-26-Base-Reverse/ref5.png)
+![ref5](/assets/images/2026-06-26-Base-Reverse/ref5.webp)
 
 其三是决定性的特征，8变6查表，`algn_41A145[0] & 0xF0) >> 4`取低4位，`(16 * (byte_41A144[0] & 3))`取高2位，之后用异或把两部分拼起来一共六位拿去查表得值，因此这就是base64。
 

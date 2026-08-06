@@ -213,6 +213,6 @@ H7 = 0x5be0cd19;
 
 随便找一题，一开始就能看到MD5的四个向量，算法也就基本确认了，不过注意IDA不一定总是以十六进制显示的，记得自己转换一下。
 
-![ref1](/assets/images/2026-07-13-Hash-Reverse/ref1.png)
+![ref1](/assets/images/2026-07-13-Hash-Reverse/ref1.webp)
 
 知道算法后，一般就是看flag是怎么处理的，然后具体情况具体分析，如果是需要破解哈希的话，可以用一些在线网站比如https://www.cmd5.com/，或者电脑配置好的话可以用hashcat本地破解。

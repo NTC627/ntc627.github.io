@@ -13,7 +13,7 @@ excerpt: "分组加密和序列加密都属于对称加密的方法，序列加�
 
 先来张图片看看CBC模式的加解密，
 
-![ref1](/assets/images/2026-07-15-AES-Reverse/ref1.png)
+![ref1](/assets/images/2026-07-15-AES-Reverse/ref1.webp)
 
 在CBC中，除了密钥，还会使用一个叫初始化向量的东西，即图中的IV，IV可以公开，但应该取随机值。在加密时，IV用来异或第一个明文块，后续的明文块则和前一个加密块的内容异或；解密时，IV则可以得到第一个明文块。可以看出来，CBC中的前一块的内容会对后面的加密产生影响，而IV的使用就是因为第一块明文没有前一块。
 
@@ -43,7 +43,7 @@ AES不采用Feistel的轮换结构了，而是基于替换-置换网络（SPN）
 
 S盒的值如下图。
 
-![ref2](/assets/images/2026-07-15-AES-Reverse/ref2.png)
+![ref2](/assets/images/2026-07-15-AES-Reverse/ref2.webp)
 
 最终轮，只执行字节替换，行移位，轮密钥加。
 
@@ -209,13 +209,13 @@ int __fastcall main(int argc, const char **argv, const char **envp)
 
 打开主函数，一个个sub_xxx的看过去，然后有byte_xxx的点开看看，这里很明显就是AES的S盒了，0x63，0x7c，0x77 。。。
 
-![ref3](/assets/images/2026-07-15-AES-Reverse/ref3.png)
+![ref3](/assets/images/2026-07-15-AES-Reverse/ref3.webp)
 
-此外，点开sub_140001FE0，还可以看到四个明显的常量，这个明显是MD5的四个IV，所以这题还用到了MD5
+此外，点开`sub_140001FE0`，还可以看到四个明显的常量，这个明显是MD5的四个IV，所以这题还用到了MD5
 
-![ref4](/assets/images/2026-07-15-AES-Reverse/ref4.png)
+![ref4](/assets/images/2026-07-15-AES-Reverse/ref4.webp)
 
-再看看sub_140001E60，
+再看看`sub_140001E60`，
 
 ```c
 __int64 __fastcall sub_140001E60(__int64 a1, char *a2, unsigned __int64 a3)
@@ -238,7 +238,7 @@ __int64 __fastcall sub_140001E60(__int64 a1, char *a2, unsigned __int64 a3)
 }
 ```
 
-其中sub_140001E00，里面的核心操作只有异或
+其中`sub_140001E00`，里面的核心操作只有异或
 
 ```c
 __int64 __fastcall sub_140001E00(__int64 a1, __int64 a2)
@@ -257,7 +257,7 @@ __int64 __fastcall sub_140001E00(__int64 a1, __int64 a2)
 }
 ```
 
-与sub_140001D70，这个sub_140001D70就有更明显的AES加密特征了，可以看到for循环里面有4个函数，而for循环执行到第十次时，只会做其中两个，对应到AES-128，第11轮（按初始轮是第1轮来算）也就是最终轮，只执行字节替换、行移位、轮密钥加，少了一个列混合。并且开头有一个sub_1400015e0，循环体也有，最终结束也有，对应了每一轮都要做的轮密钥加
+与`sub_140001D70`，这个`sub_140001D70`就有更明显的AES加密特征了，可以看到for循环里面有4个函数，而for循环执行到第十次时，只会做其中两个，对应到AES-128，第11轮（按初始轮是第1轮来算）也就是最终轮，只执行字节替换、行移位、轮密钥加，少了一个列混合。并且开头有一个`sub_1400015e0`，循环体也有，最终结束也有，对应了每一轮都要做的轮密钥加
 
 ```c
 __int64 __fastcall sub_140001D70(__int64 a1, __int64 a2)
@@ -280,7 +280,7 @@ __int64 __fastcall sub_140001D70(__int64 a1, __int64 a2)
 }
 ```
 
-此处，sub_1400015e0可以看到是异或操作，刚好对应轮密钥加
+此处，`sub_1400015e0`可以看到是异或操作，刚好对应轮密钥加
 
 ```c
 __int64 __fastcall sub_1400015E0(unsigned __int8 a1, __int64 a2, __int64 a3)
@@ -301,7 +301,7 @@ __int64 __fastcall sub_1400015E0(unsigned __int8 a1, __int64 a2, __int64 a3)
 }
 ```
 
-sub_140001690对应字节替换，这里用byte_140004660的数组进行替换，而这个位置也就是上面发现的S盒。
+`sub_140001690`对应字节替换，这里用`byte_140004660`的数组进行替换，而这个位置也就是上面发现的S盒。
 
 ```c
 __int64 __fastcall sub_140001690(__int64 a1)
@@ -322,7 +322,7 @@ __int64 __fastcall sub_140001690(__int64 a1)
 }
 ```
 
-sub_140001710对应行移位
+`sub_140001710`对应行移位
 
 ```c
 _BYTE *__fastcall sub_140001710(_BYTE *a1)
@@ -408,7 +408,7 @@ __int64 __fastcall sub_140001D70(__int64 a1, __int64 a2)
 }
 ```
 
-sub_140001D70也可以重新命名为AES_encrypt，之前我们还看到了另一个核心操作只有异或的函数sub_140001E00，既然它不是轮密钥加，那么就是对应CBC加密时，用初始向量以及前一个加密块去异或后一块明文的步骤了，可以发现整个sub_140001E600就是CBC的分组模式，i的步进是16，对应的应该是AES是对`4*4`一共16字节的状态矩阵，同时也是128位的明文分组大小。
+`sub_140001D70`也可以重新命名为AES_encrypt，之前我们还看到了另一个核心操作只有异或的函数`sub_140001E00`，既然它不是轮密钥加，那么就是对应CBC加密时，用初始向量以及前一个加密块去异或后一块明文的步骤了，可以发现整个`sub_140001E600`就是CBC的分组模式，i的步进是16，对应的应该是AES是对`4*4`一共16字节的状态矩阵，同时也是128位的明文分组大小。
 
 a3是明文的总长度，a2对应的应该是明文输入，v5是异或用的向量，取值一开始是从a1中取的，后面是取自加密后的a2，那么a1代表的就是AES的上下文，包含轮密钥（176也对应11个轮密钥乘密钥长度16字节）与初始化IV，都对得上，而且这里没有轮密钥之类的初始化过程，那么在主函数中，这个函数的前一个函数就是AES的初始化了。
 
@@ -575,8 +575,8 @@ int __fastcall main(int argc, const char **argv, const char **envp)
 
 可以解出来md5是1314
 
-![ref5](/assets/images/2026-07-15-AES-Reverse/ref5.png)
+![ref5](/assets/images/2026-07-15-AES-Reverse/ref5.webp)
 
 输入的明文是01234567891234560123456789123456
 
-![ref6](/assets/images/2026-07-15-AES-Reverse/ref6.png)
+![ref6](/assets/images/2026-07-15-AES-Reverse/ref6.webp)

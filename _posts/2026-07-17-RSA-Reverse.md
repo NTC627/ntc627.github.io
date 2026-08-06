@@ -33,11 +33,11 @@ M表示明文，C表示密文
 
 加密：
 
-![ref1](/assets/images/2026-07-17-RSA-Reverse/ref1.png)
+![ref1](/assets/images/2026-07-17-RSA-Reverse/ref1.webp)
 
 解密：
 
-![ref2](/assets/images/2026-07-17-RSA-Reverse/ref2.png)
+![ref2](/assets/images/2026-07-17-RSA-Reverse/ref2.webp)
 
 RSA的安全性来自于大质数分解问题，现实中知道n，很难分解出两个质数p和q，然而随机计算能力的提升，现在如果n取值较小的话，完全可以被分解，而当下e基本都是固定取值，因此可以通过已知的p和q，像生成密钥一样求解私钥d。
 
@@ -45,17 +45,17 @@ RSA的安全性来自于大质数分解问题，现实中知道n，很难分解�
 
 C语言中，实现RSA中的大数字运算，需要使用到大数库GMP，下面来道题目看看。
 
-一进来就没给我们好脸色，连main函数都找不到，但是熟悉C逆向的人就知道了，程序执行时，最开始运行的不是main函数，而是start函数，也就是我们下图看到的这个函数，而这个函数又会运行着`libc_start_main`，也就是sub_42BE70。而`libc_start_main`这个函数的第一个参数，就是main函数。
+一进来就没给我们好脸色，连main函数都找不到，但是熟悉C逆向的人就知道了，程序执行时，最开始运行的不是main函数，而是start函数，也就是我们下图看到的这个函数，而这个函数又会运行着`libc_start_main`，也就是`sub_42BE70`。而`libc_start_main`这个函数的第一个参数，就是main函数。
 
-![ref3](/assets/images/2026-07-17-RSA-Reverse/ref3.png)
+![ref3](/assets/images/2026-07-17-RSA-Reverse/ref3.webp)
 
 进去main函数以后也是一个符号没有，不过总体分析比较简单，而分析过程又比较麻烦，先附上一张逆向前的图片：
 
-![ref4](/assets/images/2026-07-17-RSA-Reverse/ref4.png)
+![ref4](/assets/images/2026-07-17-RSA-Reverse/ref4.webp)
 
 然后是逆向后的：
 
-![ref5](/assets/images/2026-07-17-RSA-Reverse/ref5.png)
+![ref5](/assets/images/2026-07-17-RSA-Reverse/ref5.webp)
 
 接下来是每个函数的逆向思路，把逆向前和逆向后的函数一一对应：
 
@@ -67,7 +67,7 @@ C语言中，实现RSA中的大数字运算，需要使用到大数库GMP，下�
 
 看图就知道为什么是TEA了，核心操作就是循环内先用DELTA加一个sum值，然后进行feistel轮操作，feistel轮的特点就是两行又有移位，又有异或等操作的代码，并且两行代码的变量相互交织，上面的运算会使用到下面运算的变量，下面的运算同理。
 
-![ref6](/assets/images/2026-07-17-RSA-Reverse/ref6.png)
+![ref6](/assets/images/2026-07-17-RSA-Reverse/ref6.webp)
 
 ## sub_401F50->mpz_cmp
 
@@ -107,7 +107,7 @@ mpz_import(T, 16, 1, 1, 0, 0, S);
 
 此外，还有一个决定性的特征，IDA里shift+f12打开字符串窗口。
 
-![ref7](/assets/images/2026-07-17-RSA-Reverse/ref7.png)
+![ref7](/assets/images/2026-07-17-RSA-Reverse/ref7.webp)
 
 
 ## 其它GMP函数
@@ -116,9 +116,9 @@ mpz_import(T, 16, 1, 1, 0, 0, S);
 
 ## 基本流程与题解
 
-就以逆向后的来说吧，变量名是主要是依据输入、输出判断出来谁是明文，谁是密文，再由mpz_powm函数的计算以及mpz_set_ui的初始化，判断出谁是e谁是n这些RSA的基本常量。
+就以逆向后的来说吧，变量名是主要是依据输入、输出判断出来谁是明文，谁是密文，再由mpz_powm函数的计算以及`mpz_set_ui`的初始化，判断出谁是e谁是n这些RSA的基本常量。
 
-![ref8](/assets/images/2026-07-17-RSA-Reverse/ref8.png)
+![ref8](/assets/images/2026-07-17-RSA-Reverse/ref8.webp)
 
 基本的反混淆结束后，就该看看流程了，首先先接受输入，然后判断输入长度，符合16字节就交给TEA加密，（这里的TEA加密从前面也可以看到，虽然feistel结构没变，但是在数字的处理上，有细微的区别，因此之后逆向不能直接用标准库），之后由gmp来初始化、赋值大数变量，（这里521如果换成65537的话，能更快发现是RSA），之后用mpz_powm计算了`C=M^e mod n`，这里计算后的值直接覆盖原本的明文，最后比较加密后的明文与程序中的密文是否一致。
 

@@ -22,7 +22,7 @@ excerpt: "介绍一下Markdown的基础语法。"
 
 以Obsidian为例子，各级标题的效果是这样的，
 
-![ref1](/assets/images/2026-06-11-markdown-quick-start/ref1.png)
+![ref1](/assets/images/2026-06-11-markdown-quick-start/ref1.webp)
 
 同时在使用标题时，如果你的markdown笔记软件支持（应该都支持），那么你可以在软件侧边栏看到一个和word差不多的大纲。
 
@@ -31,8 +31,8 @@ excerpt: "介绍一下Markdown的基础语法。"
 图片应该是使用第二多的，和word不同，由于markdown是纯文本格式，所以里面没法粘贴图片，所以markdown只能引用外部的图片，其格式如下
 
 ```markdown
-![ImageName](/path/to/Image.png)
-![ref1](/assets/images/2026-06-11-markdown-quick-start/ref1.png)
+![ImageName](/path/to/Image.webp)
+![ref1](/assets/images/2026-06-11-markdown-quick-start/ref1.webp)
 ```
 
 一旦你移动了图片，markdown里的图片路径就需要跟着改，否则就会找不到图片，无法显示了。此外，一般这个路径不需要自己写，粘贴剪切板的图片时，你的markdown编辑软件一般会帮你把图片保存到特定位置，然后自动填写路径，一般也可以靠设置或者插件来设定图片保存的位置。如果使用Obsidian，那么粘贴的图片格式会是非标准的markdown格式，\!\[\[ImagePath\]\]，这个有点烦人，会导致你换个软件打开markdown就无法显示图片，可以在Obsidian设置里下一个第三方插件解决这个问题。
@@ -61,7 +61,7 @@ print "hello world"
 
 这里是图，我用了四个反引号来包裹
 
-![ref2](/assets/images/2026-06-11-markdown-quick-start/ref2.png)
+![ref2](/assets/images/2026-06-11-markdown-quick-start/ref2.webp)
 
 ## 转义
 

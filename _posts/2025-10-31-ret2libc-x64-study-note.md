@@ -9,25 +9,25 @@ excerpt: "64位的pwn利用和32位有很大不同，32位通过栈来传递函�
 
 # 信息检查
 
-这次是64位的ret2libc，做题前先把它的链接器和链接库改成题目给的。
+这次是64位的`ret2libc`，做题前先把它的链接器和链接库改成题目给的。
 
-![ref1](/assets/images/2025-10-31-ret2libc-x64-study-note/ref1.png)
+![ref1](/assets/images/2025-10-31-ret2libc-x64-study-note/ref1.webp)
 
 再看看保护
 
-![ref2](/assets/images/2025-10-31-ret2libc-x64-study-note/ref2.png)
+![ref2](/assets/images/2025-10-31-ret2libc-x64-study-note/ref2.webp)
 
 
 
 # Ret2libc_x64
 
-我们采取的策略依然是通过puts函数泄露出libc_start_main的地址，然后由版本和偏移算出基地址，再跳转回main函数重新执行，第二次发送getshell的payload。
+我们采取的策略依然是通过puts函数泄露出`libc_start_main`的地址，然后由版本和偏移算出基地址，再跳转回main函数重新执行，第二次发送getshell的payload。
 
-64位和32位的不同点主要在于函数传参，32位的函数参数在返回地址后面，但是64位复杂的多，它依次使用RDI, RSI, RDX, RCX, R8 和 R9六个寄存器来传参，当参数个数大于六时，才使用栈传参。
+64位和32位的不同点主要在于函数传参，32位的函数参数在返回地址后面，但是64位复杂的多，它依次使用`RDI`, `RSI`, `RDX`, `RCX`, `R8` 和 `R9`六个寄存器来传参，当参数个数大于六时，才使用栈传参。
 
-因此当我们构造ROP链时，不仅需要把参数设置在栈上，还需要使用ROPgadget去找pop到相应寄存器的指令，这样寄存器才能把参数正确的传给函数。由于本次使用到的system、puts函数都只有一个参数，所以我们只用到pop rdi这个gadget传第一个参数就好，此外我们还需要ret，做栈对齐用。
+因此当我们构造ROP链时，不仅需要把参数设置在栈上，还需要使用ROPgadget去找pop到相应寄存器的指令，这样寄存器才能把参数正确的传给函数。由于本次使用到的system、puts函数都只有一个参数，所以我们只用到pop `rdi`这个gadget传第一个参数就好，此外我们还需要ret，做栈对齐用。
 
-![ref3](/assets/images/2025-10-31-ret2libc-x64-study-note/ref3.png)
+![ref3](/assets/images/2025-10-31-ret2libc-x64-study-note/ref3.webp)
 
 
 
@@ -77,20 +77,20 @@ sh.interactive()
 
 ```
 
-注意ROP链的构造顺序，这里和之前的ret2syscall很像，在调用函数前先把参数pop到寄存器里，而不是调用函数后才pop。
+注意ROP链的构造顺序，这里和之前的`ret2syscall`很像，在调用函数前先把参数pop到寄存器里，而不是调用函数后才pop。
 
-还有一个知识点叫栈对齐，栈对齐是指在函数调用时，栈指针（RSP）需要满足特定的内存地址对齐要求，函数调用时，栈指针必须是16字节对齐的，平常则是8字节对齐。注意看下面的情况，system函数的地址末尾是8，而下一个deadbeef的地址末尾是0，所以system函数并没有采用16字节的对齐方式，因此会调用失败，这里要调用成功需要把ret删了，让system函数的地址末尾是0。
+还有一个知识点叫栈对齐，栈对齐是指在函数调用时，栈指针（`RSP`）需要满足特定的内存地址对齐要求，函数调用时，栈指针必须是16字节对齐的，平常则是8字节对齐。注意看下面的情况，system函数的地址末尾是8，而下一个deadbeef的地址末尾是0，所以system函数并没有采用16字节的对齐方式，因此会调用失败，这里要调用成功需要把ret删了，让system函数的地址末尾是0。
 
-![ref4](/assets/images/2025-10-31-ret2libc-x64-study-note/ref4.png)
+![ref4](/assets/images/2025-10-31-ret2libc-x64-study-note/ref4.webp)
 
 栈对不对齐可以很轻松的检查出来，不对齐时运行到最后会有提示not aligned to 16 bytes。
 
-![ref5](/assets/images/2025-10-31-ret2libc-x64-study-note/ref5.png)
+![ref5](/assets/images/2025-10-31-ret2libc-x64-study-note/ref5.webp)
 
-前一段payload中加ret即是为了栈对齐，调试时可以看到栈的结构，由于有ret的存在，puts的调用是0x7ffec73984d0，所以是16字节的栈对齐的，可以正常调用，简单来说就是保证调用的函数的栈的末位地址是0就行。
+前一段payload中加ret即是为了栈对齐，调试时可以看到栈的结构，由于有ret的存在，puts的调用是`0x7ffec73984d0`，所以是16字节的栈对齐的，可以正常调用，简单来说就是保证调用的函数的栈的末位地址是0就行。
 
-![ref6](/assets/images/2025-10-31-ret2libc-x64-study-note/ref6.png)
+![ref6](/assets/images/2025-10-31-ret2libc-x64-study-note/ref6.webp)
 
 运行exp后getshell
 
-![ref7](/assets/images/2025-10-31-ret2libc-x64-study-note/ref7.png)
+![ref7](/assets/images/2025-10-31-ret2libc-x64-study-note/ref7.webp)
