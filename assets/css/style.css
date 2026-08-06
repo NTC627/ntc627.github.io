@@ -20,7 +20,7 @@
 
     --color-text: #3d3830;
     --color-text-inverse: #2d2820;
-    --color-text-link-hover: #4a7fb5;
+    --color-text-link-hover: #6b6660;
     --color-text-meta: #8a857c;
     --color-text-secondary: #a0988e;
     --color-text-excerpt: #6b6660;
@@ -101,11 +101,12 @@ body::before {
 a {
     color: var(--color-text);
     text-decoration: none;
+    transition: color 0.2s ease;
 }
 
 a:hover {
     color: var(--color-text-link-hover);
-    text-decoration: underline;
+    text-decoration: none;
 }
 
 code {
@@ -177,7 +178,22 @@ code {
     margin: 15px 10px;
     display: flex;
     justify-content: flex-start;
-    position: relative;
+    position: sticky;
+    top: 0;
+    z-index: 9999;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.navbar.hidden {
+    transform: translateY(-120%);
+}
+
+.navbar.translucent {
+    opacity: 0.5;
+}
+
+.navbar.translucent:hover {
+    opacity: 1;
 }
 
 .navbar a {
@@ -185,6 +201,12 @@ code {
     align-items: center;
     gap: 6px;
     position: relative;
+    transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.navbar a:hover {
+    text-decoration: none;
+    transform: scale(1.08);
 }
 
 .navbar a:not(:last-child)::after {
@@ -617,7 +639,7 @@ pre code {
 }
 
 .category-index-link:hover {
-    color: var(--color-accent);
+    color: var(--color-text-link-hover);
 }
 
 .category-count {
@@ -803,7 +825,7 @@ pre code {
 }
 
 #results-container li a:hover {
-    color: var(--color-accent);
+    color: var(--color-text-link-hover);
 }
 
 #results-container li small {
@@ -991,6 +1013,7 @@ pre code {
         border: none;
         border-bottom: 1px solid var(--color-border);
         margin: 10px;
+        transition: transform 0.3s ease, opacity 0.3s ease;
     }
 
     .navbar::-webkit-scrollbar {
@@ -1003,6 +1026,12 @@ pre code {
         white-space: nowrap;
         flex-shrink: 0;
         gap: 6px;
+        transition: color 0.2s ease, transform 0.2s ease;
+    }
+
+    .navbar a:hover {
+        text-decoration: none;
+        transform: scale(1.08);
     }
 
     .navbar a span {
