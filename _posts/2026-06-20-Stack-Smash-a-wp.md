@@ -1,9 +1,9 @@
 ---
 layout: post
-title: "[PWN]Stack Smash题目分析--wdb2018_guess"
+title: "[PWN]Stack Smash题目分析-wdb2018_guess"
 date: 2026-06-20
 categories: [PWN]
-excerpt: "以一道题目介绍stack smash相关技术"
+excerpt: "以一道题目介绍stack smash相关技术。"
 ---
 
 
@@ -50,7 +50,7 @@ void __attribute__ ((noreturn)) internal_function __fortify_fail (const char *ms
 }
 ```
 
-不过这个函数里的\_\_libc\_argv\[0\]，glibc-2.31之后删了，所以不会打印，不能用来泄漏了。所以如果glibc版本太高的话，需要手动调整一下
+不过这个函数里的`__libc_argv[0]`，glibc-2.31之后删了，所以不会打印，不能用来泄漏了。所以如果glibc版本太高的话，需要手动调整一下
 
 ```bash
 b14ckb0x@b14ckb0x:~/Desktop/temp/GUESS$ patchelf --set-interpreter ./ld-linux-x86-64.so.2 ./GUESS                        

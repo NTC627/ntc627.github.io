@@ -11,7 +11,7 @@ excerpt: "​ret2libc，即返回到libc库，libc是c语言的动态链接库�
 
 ## 信息检查
 
-先进行程序信息的检查，开启了`NX`保护
+先进行程序信息的检查，开启了NX保护
 
 ![ref1.1](/assets/images/2025-10-24-ret2libc-study-note/ref1.1.webp)
 
@@ -33,7 +33,7 @@ excerpt: "​ret2libc，即返回到libc库，libc是c语言的动态链接库�
 
 ![ref1.4](/assets/images/2025-10-24-ret2libc-study-note/ref1.4.webp)
 
-里面也没有编译好的system("`/bin/sh"`)，但是可以看到在bss段和plt表中分别有`/bin/sh`字符串和system的链接。
+里面也没有编译好的`system("/bin/sh")`，但是可以看到在bss段和plt表中分别有`/bin/sh`字符串和system的链接。
 
 ![ref1.5](/assets/images/2025-10-24-ret2libc-study-note/ref1.5.webp)
 
@@ -41,7 +41,7 @@ excerpt: "​ret2libc，即返回到libc库，libc是c语言的动态链接库�
 
 ![ref1.7](/assets/images/2025-10-24-ret2libc-study-note/ref1.7.webp)
 
-所以可以利用这两组合成完整的system("`/bin/sh"`)来攻击。
+所以可以利用这两组合成完整的`system("/bin/sh")`来攻击。
 
 
 
@@ -78,7 +78,7 @@ excerpt: "​ret2libc，即返回到libc库，libc是c语言的动态链接库�
 
 ![ref2.1](/assets/images/2025-10-24-ret2libc-study-note/ref2.1.webp)
 
-这回是`/bin/sh`字符串没有了，此外也没有`ret2syscall`需要的int 0x80。只留下了plt表中的system
+这回是`/bin/sh`字符串没有了，此外也没有ret2syscall需要的`int 0x80`。只留下了plt表中的system
 
 ![ref2.2](/assets/images/2025-10-24-ret2libc-study-note/ref2.2.webp)
 
@@ -88,7 +88,7 @@ excerpt: "​ret2libc，即返回到libc库，libc是c语言的动态链接库�
 
 ## Ret2libc
 
-所以解题的思路是我们自己输入`/bin/sh`字符串，然后拼接一下，我们需要从gets中读取，但由于原本的gets读到的字符放在栈缓冲区，而不在bss段里，我们没法用原来的gets读取并存储`/bin/sh，`所以我们需要利用ROP构造自己的gets，然后读到bss段中，可以通过pwndbg的vmmap确认，bss段确实是可以写的。
+所以解题的思路是我们自己输入`/bin/sh`字符串，然后拼接一下，我们需要从gets中读取，但由于原本的gets读到的字符放在栈缓冲区，而不在bss段里，我们没法用原来的gets读取并存储`/bin/sh`，所以我们需要利用ROP构造自己的gets，然后读到bss段中，可以通过pwndbg的`vmmap`确认，bss段确实是可以写的。
 
 ![ref2.4](/assets/images/2025-10-24-ret2libc-study-note/ref2.4.webp)
 
@@ -106,7 +106,7 @@ excerpt: "​ret2libc，即返回到libc库，libc是c语言的动态链接库�
 低地址
 ```
 
-这里注意，gets的返回地址不能乱填，因为还需要构造到system的链，也不能仅仅是ret的gadget，因为ret后会把栈顶当成指令pop到`eip`，而如果不pop的话，栈顶会还是buf的地址，所以我们需要pop，至于pop谁无所谓（经测试连pop `ebp`都可以，但如果构造长的利用链最好还是别这么玩），后面的部分就和ret2libc1一样了。
+这里注意，gets的返回地址不能乱填，因为还需要构造到system的链，也不能仅仅是ret的gadget，因为ret后会把栈顶当成指令pop到eip，而如果不pop的话，栈顶会还是buf的地址，所以我们需要pop，至于pop谁无所谓（经测试连pop ebp都可以，但如果构造长的利用链最好还是别这么玩），后面的部分就和ret2libc1一样了。
 
 ![ref2.5](/assets/images/2025-10-24-ret2libc-study-note/ref2.5.webp)
 
@@ -128,7 +128,7 @@ exp编写如下，所有用到的地址都很好找，但是注意写入到bss�
 
 ## 信息检查
 
-IDA反编译。这次连system也不自带了。但依然是栈溢出。这次要利用的是`ret2libc`。
+IDA反编译。这次连system也不自带了。但依然是栈溢出。这次要利用的是ret2libc。
 
 ![ref3.1](/assets/images/2025-10-24-ret2libc-study-note/ref3.1.webp)
 
@@ -136,13 +136,15 @@ IDA反编译。这次连system也不自带了。但依然是栈溢出。这次�
 
 ## Ret2libc
 
-在开始前先介绍一下`ret2libc`的实现。简单来说就是依靠两个机制，首先程序运行时，除了把程序加载进内存，还会把程序需要的库文件加载到内存。然后还存在一个延迟绑定的机制，就是比如printf这样的库里的函数，编译时不会把库里的函数代码一起编译，而是会创建一个PLT和GOT表，PLT指向函数在GOT表的位置，GOT表指向函数真实内存位置，但GOT表并不是一开始就指向真实内存位置，而是函数被调用时才动态链接，把真实地址加载进GOT表。
+在开始前先介绍一下ret2libc的实现。简单来说就是依靠两个机制，首先程序运行时，除了把程序加载进内存，还会把程序需要的库文件加载到内存。然后还存在一个延迟绑定的机制，就是比如printf这样的库里的函数，编译时不会把库里的函数代码一起编译，而是会创建一个PLT和GOT表，PLT指向函数在GOT表的位置，GOT表指向函数真实内存位置，但GOT表并不是一开始就指向真实内存位置，而是函数被调用时才动态链接，把真实地址加载进GOT表。
 
 由于整个库都在内存中，所以我们可以直接去找程序里没有调用的库函数，而为了找到这个库在内存哪，我们还需要从GOT表里获取某个函数在内存的哪，然后才计算出库的地址。
 
-libc就是一个c语言库，提供了大量的标准函数，包括system包括`/bin/sh，`我们`ret2libc`的目标就是在内存里找到这俩。而要找到这俩，就要先找到libc在内存中的基地址，要找基地址，就得依靠刚刚说的GOT表的函数的地址，要找GOT表中的函数的地址，就需要函数先在程序中执行过，还需要用一些函数去把它在GOT表中的地址泄露出来（比如puts）。还有一个非常重要的机制是，main函数其实并不是程序运行时第一个调用的函数，`libc_start_main`才是，这个函数会负责各种初始化，然后才到main。
+libc就是一个c语言库，提供了大量的标准函数，包括system包括`/bin/sh`，我们ret2libc的目标就是在内存里找到这俩。而要找到这俩，就要先找到libc在内存中的基地址，要找基地址，就得依靠刚刚说的GOT表的函数的地址，要找GOT表中的函数的地址，就需要函数先在程序中执行过，还需要用一些函数去把它在GOT表中的地址泄露出来（比如puts）。还有一个非常重要的机制是，main函数其实并不是程序运行时第一个调用的函数，`__libc_start_main`才是，这个函数会负责各种初始化，然后才到main。
 
-具体来说，我们要泄露`libc_start_main`的地址，因为这个函数肯定会最先执行，最稳定，泄露方式则是通过puts函数，这个函数是最简单的，参数简单，执行简单，如果有就用它就行了，找到`libc_start_main`的地址后，我们需要根据这个地址一个个去比对不同libc中的`libc_start_main`的地址（地址最后12位是固定的），去确定我们的`libc_start_main`是哪个版本的libc，当然，也可以使用libcsearcher直接帮我们自动找，找到libc的版本后，就需要再去找`libc_start_main`的地址（不是内存中的那个啊，是libc里面的那个）在该libc中的偏移（有`ASLR`的话，libc基地址是会随机的，但表里的各项函数的地址不随机，所以相对偏移还是固定的），从而根据内存中的`libc_start_main`的地址和偏移计算出libc的基地址。有了版本和基地址后，就可以根据偏移（使用各种工具查）去找任意其它表中的函数或者啥的了。
+具体来说，我们要泄露`__libc_start_main`的地址，因为这个函数肯定会最先执行，最稳定，泄露方式则是通过puts函数，这个函数是最简单的，参数简单，执行简单，如果有就用它就行了，找到`__libc_start_main`的地址后，我们需要根据这个地址一个个去比对不同libc中的`__libc_start_main`的地址（地址最后12位是固定的），去确定我们的`__libc_start_main`是哪个版本的libc。
+
+当然，也可以使用libcsearcher直接帮我们自动找，找到libc的版本后，就需要再去找`__libc_start_main`的地址（不是内存中的那个啊，是libc里面的那个）在该libc中的偏移（有`ASLR`的话，libc基地址是会随机的，但表里的各项函数的地址不随机，所以相对偏移还是固定的），从而根据内存中的`__libc_start_main`的地址和偏移计算出libc的基地址。有了版本和基地址后，就可以根据偏移（使用各种工具查）去找任意其它表中的函数或者啥的了。
 
 
 

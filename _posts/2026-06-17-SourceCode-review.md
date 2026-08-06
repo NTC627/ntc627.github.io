@@ -103,7 +103,7 @@ reset: unknown terminal type unknown
 Terminal type? xterm
 ```
 
-然后就以www-data的身份拿到了shell，拿到shell后默认在`/var/www/html，`所以顺便看看php文件里藏什么了没有，然后没有。因此再去其他文件夹找找，在opt文件夹下找到了boob.sh，又在backup中找到了user.txt，www-data也可以直接读
+然后就以www-data的身份拿到了shell，拿到shell后默认在`/var/www/html`，所以顺便看看php文件里藏什么了没有，然后没有。因此再去其他文件夹找找，在opt文件夹下找到了boob.sh，又在backup中找到了user.txt，www-data也可以直接读
 
 ```
 www-data@SourceCode:/opt/backup$ cat user.txt
@@ -142,7 +142,7 @@ do
 done
 ```
 
-整体看来，脚本负责清空/tmp和`/home/huazai`文件夹，然后又从`/opt/backup`中还原`/home/huazai，`最后还会检查有没有huazai用户的进程，有就杀了。有两个比较值得注意的点，一个是还原的方式，不是简单的cp，还加了个La参数，查了一下发现意思，和链接解析有关的，不是直接简单复制原文件；另一个就是pkill -9 -u huazai，想必就是web页说的八分钟重置一次了，也就是说获取到huazai的shell后，每次只能操作一定时间。然后我的做题部分就到此结束了，因为直接卡在huazai外面了，后面开了才知道首页的credential可以直接用来su切用户，这也是本人的第一个习惯的误区，ssh用凭证登不上就自动认为用户用凭证也登录不上，不过ssh的配置文件里是可以指定哪个用户能登录，哪个不能的，可以直接查看，可以看到最后写了DenyUsers huazai。
+整体看来，脚本负责清空`/tmp`和`/home/huazai`文件夹，然后又从`/opt/backup`中还原`/home/huazai`，最后还会检查有没有huazai用户的进程，有就杀了。有两个比较值得注意的点，一个是还原的方式，不是简单的cp，还加了个La参数，查了一下发现意思，和链接解析有关的，不是直接简单复制原文件；另一个就是`pkill -9 -u huazai`，想必就是web页说的八分钟重置一次了，也就是说获取到huazai的shell后，每次只能操作一定时间。然后我的做题部分就到此结束了，因为直接卡在huazai外面了，后面开了才知道首页的credential可以直接用来su切用户，这也是本人的第一个习惯的误区，ssh用凭证登不上就自动认为用户用凭证也登录不上，不过ssh的配置文件里是可以指定哪个用户能登录，哪个不能的，可以直接查看，可以看到最后写了DenyUsers huazai。
 
 ```bash
 www-data@SourceCode:/opt$ cat /etc/ssh/sshd_config
@@ -160,12 +160,12 @@ Subsystem	sftp	/usr/lib/openssh/sftp-server
 DenyUsers huazai
 ```
 
-cp -La
+`cp -La`
 这个命令由-L和-a参数组成，-L参数会让cp复制的时候，跟随符号链接，复制其指向的实际内容，-a则表示归档模式，会进行递归复制，会尽力保留文件的所有属性。这两个参数一起用好像是冲突的，因为a会不跟随链接，不过脚本写的是La，所以L优先级会大于a。
 
-所以想到两种利用方法。`cp -La /opt/backup/.* `/home/huazai/`，`会把backup下的隐藏文件，复制到`/home/huazai，`但是由于其追踪链接，所以可以把其中的一个隐藏文件软链接到root.txt，比如`ln -snf /root/root.txt `/opt/backup/.bashrc`，`这样就能直接读flag，不过这个方法不行，backup文件夹huazai不可写，所以创建不了软链接，顺便一提因为这个原因sed也不能用来修改.bashrc，因为sed的本质是创建一个副本然后覆盖旧文件。
+所以想到两种利用方法。`cp -La /opt/backup/.* /home/huazai/`，会把backup下的隐藏文件，复制到`/home/huazai`，但是由于其追踪链接，所以可以把其中的一个隐藏文件软链接到root.txt，比如`ln -snf /root/root.txt /opt/backup/.bashrc`，这样就能直接读flag，不过这个方法不行，backup文件夹huazai不可写，所以创建不了软链接，顺便一提因为这个原因sed也不能用来修改.bashrc，因为sed的本质是创建一个副本然后覆盖旧文件。
 
-另一种方案是写入，`ln -snf /home/huazai/.bashrc `/etc/passwd`，`通过链接复制目的地的.bashrc到`/etc/passwd，`我们就可以覆盖其内容，因为脚本还要执行pkill用户，所以其权限肯定足够写入`/etc/passwd，`并且这个脚本大概是以root执行，不过有个问题是脚本会先执行rm再cp，因此会删掉添加的链接文件，必须利用竞争，在rm完后cp之前重新创建链接。
+另一种方案是写入，`ln -snf /home/huazai/.bashrc /etc/passwd`，通过链接复制目的地的.bashrc到`/etc/passwd`，我们就可以覆盖其内容，因为脚本还要执行pkill用户，所以其权限肯定足够写入`/etc/passwd`，并且这个脚本大概是以root执行，不过有个问题是脚本会先执行rm再cp，因此会删掉添加的链接文件，必须利用竞争，在rm完后cp之前重新创建链接。
 
 先创建好.bashrc
 

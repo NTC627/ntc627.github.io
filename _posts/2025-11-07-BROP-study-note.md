@@ -27,7 +27,7 @@ BROP是针对没有二进制文件或源码的程序的攻击手段。主要依�
 
 ## BROP Gadget
 
-BROP Gadget即`libc_csu_init`结尾部分的一堆pop，注意其中最后的pop `r14`; pop `r15`; ret三行，这里如果从0x7的偏移（相对于第一个pop的偏移）去读的话，就可以解读出pop `rsi`; pop `r15`; ret，如果从0x9去读，就可以读出pop `rdi`; ret。也就是可以利用一个pop多控制两个寄存器，还是`rdi`、`rsi`这两个传参寄存器。
+BROP Gadget即`__libc_csu_init`结尾部分的一堆pop，注意其中最后的`pop r14;`、`pop r15;` `ret;`三行，这里如果从0x7的偏移（相对于第一个pop的偏移）去读的话，就可以解读出`pop rsi;`、`pop r15;`、`ret;`，如果从0x9去读，就可以读出`pop rdi;`、`ret;`。也就是可以利用一个pop多控制两个寄存器，还是rdi、rsi这两个传参寄存器。
 
 ![ref3](/assets/images/2025-11-07-BROP-study-note/ref3.webp)
 
@@ -49,15 +49,15 @@ BROP Gadget即`libc_csu_init`结尾部分的一堆pop，注意其中最后的pop
 
 ## Gadget识别
 
-找到pop ret还不够，因为不知道是pop了哪些寄存器。这里就依靠系统调用来识别，首先系统调用靠的是`rax`来传递系统调用号，所以必须要先找出哪个是`rax`，这里使用无参的系统调用pause()来确定，给找到的所有`pop|ret` gadget都试试看传这个系统调用号，执行成功了的话，系统会暂停（不是崩溃），那么也就找到了`rax`。其它寄存器也是用系统调用逐个去找，下面列出一张表来展示找的顺序与寄存器与系统调用的关系。
+找到pop ret还不够，因为不知道是pop了哪些寄存器。这里就依靠系统调用来识别，首先系统调用靠的是rax来传递系统调用号，所以必须要先找出哪个是rax，这里使用无参的系统调用pause()来确定，给找到的所有`pop|ret` gadget都试试看传这个系统调用号，执行成功了的话，系统会暂停（不是崩溃），那么也就找到了rax。其它寄存器也是用系统调用逐个去找，下面列出一张表来展示找的顺序与寄存器与系统调用的关系。
 
 
 | Order | Reg  | Syscall                                  |
 | ----- | ---- | ---------------------------------------- |
-| 1     | `rax`  | pause()                                  |
-| 2     | `rdi`  | nanosleep(len, rem)                      |
-| 3     | `rsi`  | kill(pid, sig)                           |
-| 4     | `rdx`  | `clock_nano_sleep`(clock, flags, len, rem) |
+| 1     | rax  | pause()                                  |
+| 2     | rdi  | nanosleep(len, rem)                      |
+| 3     | rsi  | kill(pid, sig)                           |
+| 4     | rdx  | clock_nano_sleep(clock, flags, len, rem) |
 
 
 其中2的和4的rem参数其实可以不用管，所以可以看到每一个系统调用的参数都是逐个递增加1的。注意kill的话需要杀掉进程，我们可以多开几个连接到服务端的程序，然后杀掉我们自己的进程来验证有没有触发系统调用。
@@ -76,7 +76,7 @@ BROP Gadget即`libc_csu_init`结尾部分的一堆pop，注意其中最后的pop
 
 4.利用Stop、Trap，去找真正可以用来攻击的gadget（`pop|ret`）。
 
-5.由于`rdx`一般不好找，如果找不到的话，我们可以先找PLT表，然后调用strcmp，这个函数会藏有`rdx`的gadget，PLT表的找法也是利用stop、trap、probe组合，顺便也可以找找write或puts的PLT用于泄露，找不到也没关系可以系统调用。
+5.由于rdx一般不好找，如果找不到的话，我们可以先找PLT表，然后调用strcmp，这个函数会藏有rdx的gadget，PLT表的找法也是利用stop、trap、probe组合，顺便也可以找找write或puts的PLT用于泄露，找不到也没关系可以系统调用。
 
 6.找好gadget后，用识别技术来识别。
 
@@ -88,7 +88,7 @@ BROP Gadget即`libc_csu_init`结尾部分的一堆pop，注意其中最后的pop
 
 # 来个真题！
 
-题目来自BUUCTF的`axb_2019`_brop64。
+题目来自BUUCTF的`axb_2019_brop64`。
 
 ## 测padding
 
@@ -128,7 +128,7 @@ BROP Gadget即`libc_csu_init`结尾部分的一堆pop，注意其中最后的pop
 
 ![ref11](/assets/images/2025-11-07-BROP-study-note/ref11.webp)
 
-跑出来`0x40095a`，就是要找的`libc_csu_init`的六连pop的地址。这里可以不用判断什么是什么gadget，可以直接根据`libc_csu_init`中每个pop的偏移，直接使用对应的寄存器。
+跑出来`0x40095a`，就是要找的`__libc_csu_init`的六连pop的地址。这里可以不用判断什么是什么gadget，可以直接根据`__libc_csu_init`中每个pop的偏移，直接使用对应的寄存器。
 
 ![ref12](/assets/images/2025-11-07-BROP-study-note/ref12.webp)
 
@@ -136,7 +136,7 @@ BROP Gadget即`libc_csu_init`结尾部分的一堆pop，注意其中最后的pop
 
 ## 找puts@plt
 
-plt表中的元素都是16字节对齐的，所以找的时候可以把步长设为16。同时`rdi`给puts传参，如果是puts的话，它应该会把`0x400000`里的东西打出来，接收到的响应会有ELF字样并且程序仍能正常返回到main函数。
+plt表中的元素都是16字节对齐的，所以找的时候可以把步长设为16。同时rdi给puts传参，如果是puts的话，它应该会把`0x400000`里的东西打出来，接收到的响应会有ELF字样并且程序仍能正常返回到main函数。
 
 ![ref13](/assets/images/2025-11-07-BROP-study-note/ref13.webp)
 

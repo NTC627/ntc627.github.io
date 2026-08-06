@@ -19,17 +19,17 @@ excerpt: "在实际操作中，常常很难在程序中找到特定的gadget，�
 
 ![ref3](/assets/images/2025-10-31-ret2csu-study-note/ref3.webp)
 
-首先由于`NX`保护，`ret2shellcode`肯定不行了，然后来考虑`ret2syscall`和`ret2libc`，但是可以ROPgadget看到根本没有可以利用的gadget来pop `rdi`，那就也不行了。
+首先由于NX保护，ret2shellcode肯定不行了，然后来考虑ret2syscall和ret2libc，但是可以ROPgadget看到根本没有可以利用的gadget来`pop rdi`，那就也不行了。
 
 ![ref4](/assets/images/2025-10-31-ret2csu-study-note/ref4.webp)
 
-此时就涉及到更复杂的利用`ret2csu`。
+此时就涉及到更复杂的利用ret2csu。
 
 
 
 # Ret2csu
 
-在使用glibc的程序中，存在一个初始化libc的函数`libc_csu_init`，它的代码里存在一段对大量的寄存器的初始化，如下。
+在使用glibc的程序中，存在一个初始化libc的函数`__libc_csu_init`，它的代码里存在一段对大量的寄存器的初始化，如下。
 ```assembly
 .text:00000000004005A0                 public __libc_csu_init
 .text:00000000004005A0 __libc_csu_init proc near               ; DATA XREF: _start+16↑o
@@ -82,21 +82,21 @@ excerpt: "在实际操作中，常常很难在程序中找到特定的gadget，�
 .text:0000000000400628                 retn
 .text:0000000000400628 ; } // starts at 4005A0
 ```
-可以看到，在`loc_400606`处，对大量寄存器进行了mov操作（依情况而定，也些csu代码有通过pop来改变内存的），而mov的源操作数则来自栈（使用了栈指针`rsp`），这意味着可以通过栈溢出控制栈，从而控制这些寄存器的值。
+可以看到，在`loc_400606`处，对大量寄存器进行了mov操作（依情况而定，也些csu代码有通过pop来改变内存的），而mov的源操作数则来自栈（使用了栈指针rsp），这意味着可以通过栈溢出控制栈，从而控制这些寄存器的值。
 
-但是`r12`、`r15`这类寄存器并不是我们常用的控制函数执行的寄存器，控制了他们并不能直接起作用，在x86_64中，我们是通过控制`rdi`、`rsi`、`rdx`、`rcx`、`r8`、`r9`这六个寄存器来调用特定函数的，因此我们还需要`libc_csu_init`的loc4005f0的代码，这些代码会把我们控制的`r14`、`r15`等寄存器的值，传给我们真正想要利用的`rdi`、`rsi`等。
+但是r12、r15这类寄存器并不是我们常用的控制函数执行的寄存器，控制了他们并不能直接起作用，在x86_64中，我们是通过控制`rdi`、`rsi`、`rdx`、`rcx`、`r8`、`r9`这六个寄存器来调用特定函数的，因此我们还需要`__libc_csu_init`的loc4005f0的代码，这些代码会把我们控制的r14、r15等寄存器的值，传给我们真正想要利用的rdi、rsi等。
 
-csu的利用不是找直接的pop ret gadget，也不一定要对寄存器的完全控制，比如对于上述的csu代码，我们就只能控制`edi`，也就是`rdi`的低32位，不同版本的`libc_csu_init`的汇编也不同，需要灵活利用。
+csu的利用不是找直接的pop ret gadget，也不一定要对寄存器的完全控制，比如对于上述的csu代码，我们就只能控制`edi`，也就是`rdi`的低32位，不同版本的`__libc_csu_init`的汇编也不同，需要灵活利用。
 
 
 
 # exp编写
 
-具体exp思路很简单，一共分三段，第一段payload负责找到libc基址，第二段负责写入`/bin/sh，`第三段getshell。
+具体exp思路很简单，一共分三段，第一段payload负责找到libc基址，第二段负责写入`/bin/sh`，第三段getshell。
 
 ![ref5](/assets/images/2025-10-31-ret2csu-study-note/ref5.webp)
 
-这里我们自定义一个csu的利用函数，从csu的代码来看，我们的csu的payload构造应该满足如下要求，`rbx`应该是0，`rbp`应该是1，这样cmp比较的结果就相等了，cmp实际是通过减法比较的，比较后对应的标志寄存器会设为0，则不满足jnz的跳转情况，也就不会跳转到`0x4005f0`；`r12`的值应该是我们想要调用的函数的地址，r13d的值应该是我们想要控制的`rdi`的值，`r14`值应该控制`rsi`，`r15`控制`rdx`。
+这里我们自定义一个csu的利用函数，从csu的代码来看，我们的csu的payload构造应该满足如下要求，`rbx`应该是0，`rbp`应该是1，这样cmp比较的结果就相等了，cmp实际是通过减法比较的，比较后对应的标志寄存器会设为0，则不满足jnz的跳转情况，也就不会跳转到`0x4005f0`；`r12`的值应该是我们想要调用的函数的地址，`r13d`的值应该是我们想要控制的rdi的值，`r14`值应该控制rsi，`r15`控制rdx。
 
 ![ref6](/assets/images/2025-10-31-ret2csu-study-note/ref6.webp)
 
@@ -104,9 +104,11 @@ csu的利用不是找直接的pop ret gadget，也不一定要对寄存器的完
 
 ![ref7](/assets/images/2025-10-31-ret2csu-study-note/ref7.webp)
 
-我们最开始可以使用调用过的write泄露出某函数地址再算基地址，然后第二次调用的时候，通过read读入binsh字符串，这里注意一下，之所以要读入，不能直接从libc里找，是因为控制参数的`rdi`，注意上图`0x4005f6`，我们只能通过r13d给`edi`也就是`rdi`的低32位传参，bss段的高32位刚好是0所以传过去没问题，但libc里的binsh高32位地址并不是0，如果通关r13d传过去高位的数就会被舍弃，导致`execve`找不到参数位置。这里把`execve`也写入bss段是出于另外一个原因，此处不能像ret一样，写哪个地址就直接跳到哪个地址，如果直接用`execve`的地址传入给`r12`，那其实call [`r12`]会再做一次解析。比如原本`execve`的地址是`0x123`，那么ret `0x123`就会跳转到`0x123`，但call [`0x123`]，则会先从`0x123`这个位置取数据，比如是`0x456`，然后再跳转到`0x456`，这样执行的就不是我们想要的`execve`了（不用system是因为有问题，system的执行过程相较于`execve`复杂，如果实战中system无法成功利用就考虑`execve`）。
+我们最开始可以使用调用过的write泄露出某函数地址再算基地址，然后第二次调用的时候，通过read读入binsh字符串，这里注意一下，之所以要读入，不能直接从libc里找，是因为控制参数的rdi，注意上图`0x4005f6`，我们只能通过r13d给edi也就是rdi的低32位传参，bss段的高32位刚好是0所以传过去没问题，但libc里的binsh高32位地址并不是0，如果通关r13d传过去高位的数就会被舍弃，导致execve找不到参数位置。
 
-第三段去bss段找我们写入的东西就行，注意这里和`ret2shellcode`的区别，我们并不是在bss段上执行的，因为call [`r12`]会解析地址，当`r12`是bss段的地址时，解析它实际会得到真正的`execve`的地址（在内存某处的libc），然后跳转到这个地址去执行。
+这里把execve也写入bss段是出于另外一个原因，此处不能像ret一样，写哪个地址就直接跳到哪个地址，如果直接用execve的地址传入给r12，那其实`call [r12]`会再做一次解析。比如原本execve的地址是`0x123`，那么`ret 0x123`就会跳转到0x123，但`call [0x123]`，则会先从`0x123`这个位置取数据，比如是`0x456`，然后再跳转到`0x456`，这样执行的就不是我们想要的execve了（不用system是因为有问题，system的执行过程相较于execve复杂，如果实战中system无法成功利用就考虑execve）。
+
+第三段去bss段找我们写入的东西就行，注意这里和ret2shellcode的区别，我们并不是在bss段上执行的，因为`call [r12]`会解析地址，当r12是bss段的地址时，解析它实际会得到真正的execve的地址（在内存某处的libc），然后跳转到这个地址去执行。
 
 最后getshell。
 

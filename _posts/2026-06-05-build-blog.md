@@ -3,7 +3,7 @@ layout: post
 title: "[Others]如何使用github搭建一个静态博客"
 date: 2026-06-05
 categories: [Others]
-excerpt: "介绍一下如何使用github轻松搭建个人博客"
+excerpt: "介绍一下如何使用github轻松搭建个人博客。"
 ---
 
 
@@ -29,10 +29,10 @@ Github是支持个人部署静态页面的，这个功能叫做github pages，�
 
 # Jekyll搭建步骤
 
-1.在网站的根目录下，按如下目录进行文件夹与文件的创建，其中最重要的文件是\_config.yml，这个文件包含了网站的基本设定，可以选择Jekyll支持的主题、插件等（在github pages上部署的时候，github pages只支持几个指定的主题，可以访问官方文档看看支持什么）；其次是_posts文件夹，用来放你写的文章，Jerkyll会自动把md格式渲染成静态网页；\_layouts文件夹里是一些公共部分，比如可以放网站的导航栏，底部栏等多个网页共通的内容；assets用来放网页的css、js和图片资源，这个不是必须要这么命名的，可以自由来。
+1.在网站的根目录下，按如下目录进行文件夹与文件的创建，其中最重要的文件是`_config.yml`，这个文件包含了网站的基本设定，可以选择Jekyll支持的主题、插件等（在github pages上部署的时候，github pages只支持几个指定的主题，可以访问官方文档看看支持什么）；其次是`_posts`文件夹，用来放你写的文章，Jerkyll会自动把md格式渲染成静态网页；`_layouts`文件夹里是一些公共部分，比如可以放网站的导航栏，底部栏等多个网页共通的内容；assets用来放网页的css、js和图片资源，这个不是必须要这么命名的，可以自由来。
 
 ``` bash
-b14ckb0x@b14ckb0x:~/ntc627.github.io$ tree -L 2
+~/ntc627.github.io$ tree -L 2
 .
 ├── assets
 │   ├── css
@@ -52,10 +52,10 @@ b14ckb0x@b14ckb0x:~/ntc627.github.io$ tree -L 2
 
 ![ref3](/assets/images/2026-06-05-build-blog/ref3.webp)
 
-2.我的_config.yml设置，theme我选择自己编写css，所以空着了，此外还有插件以及一些插件设置，用于控制博客的分页等。
+2.我的`_config.yml`设置，theme我选择自己编写css，所以空着了，此外还有插件以及一些插件设置，用于控制博客的分页等。
 
 ```yml
-title: b14ckb0x's space
+title: Suyu's space
 description: Hack everything
 theme: 
 paginate: 5
@@ -66,7 +66,7 @@ plugins:
   - jekyll-sitemap
 ```
 
-3.在_layouts文件夹里创建的公共文件，可以在其他文件的头部进行引用，比如我这里的index.html里就指定了layout为default，而\_layout中的default.html放的是我的导航栏，那么我就不需要重新把我的导航栏代码再完整复制过来。
+3.在`_layouts`文件夹里创建的公共文件，可以在其他文件的头部进行引用，比如我这里的index.html里就指定了layout为default，而`_layout`中的default.html放的是我的导航栏，那么我就不需要重新把我的导航栏代码再完整复制过来。
 
 ``` html
 ---
@@ -82,7 +82,7 @@ title: index
 </head>
 ```
 
-4.接下来就是文章了，\_posts目录下的文章必须按严格的格式命名，YYYY-MM-DD-title.md，比如2021-06-27-hello-world.md，jekyll只能接受这样的文件命名，符合这个格式才会当成文章渲染。此外，文章的开头必须有前置数据（Front matter），前置数据包裹在两个\-\-\-中间，比如这样：
+4.接下来就是文章了，`_posts`目录下的文章必须按严格的格式命名，`YYYY-MM-DD-title.md`，比如`2021-06-27-hello-world.md`，jekyll只能接受这样的文件命名，符合这个格式才会当成文章渲染。此外，文章的开头必须有前置数据（Front matter），前置数据包裹在两个`---`中间，比如这样：
 
 ```markdown
 ---
@@ -135,4 +135,4 @@ ssh-keygen -t ed25519
 ~/xxx.github.io$ git remote set-url origin git@github.com:xxx/xxx.github.io.git
 ```
 
-这样之后就可以直接push了
+这样之后就可以直接push了。

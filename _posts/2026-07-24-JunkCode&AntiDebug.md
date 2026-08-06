@@ -3,11 +3,11 @@ layout: post
 title: "[Reverse]花指令与反调试-JunkCode&AntiDebug"
 date: 2026-07-24
 categories: [Reverse]
-excerpt: "花指令和反调试都是重要的混淆技术。花指令主要反静态分析，通过代码中混入无关指令影响分析；反调试则是通过检测程序调试状态，判断是否在被调试，从而影响动态调试分析"
+excerpt: "花指令和反调试都是重要的混淆技术。花指令主要反静态分析，通过代码中混入无关指令影响分析；反调试则是通过检测程序调试状态，判断是否在被调试，从而影响动态调试分析。"
 ---
 
 
-# 花指令 Junk Code
+# 花指令
 
 花指令的东西很多很杂，只要是影响IDA自动静态分析的都可以算在里面，这里先讲理论，然后实践分析道题目吧。
 ## 理论
@@ -33,7 +33,7 @@ int main()
 
 编译的时候需要让编译器不要优化这段代码才能起作用。
 
-又或者，不一定需要执行也可以，比如下面这段JZ必定执行，跳过add操作，但依然会影响IDA分析。
+又或者，不一定需要执行也可以，比如下面这段jz必定执行，跳过add操作，但依然会影响IDA分析。
 
 ```c
 #include <stdio.h>
@@ -50,7 +50,7 @@ int main()
 }
 ```
 
-破坏栈还有另一种形式，这里通过call进入xxx函数，但是xxx的内容却是改变`esp`指向的值后立即返回：首先call会压入下一条指令的地址，而下一条指令就在xxx函数内，是add指令；执行完add指令后，`esp`指向的内容--即原本要返回的下一条指令的地址被改变，正好变成了call printf的地址，最后retn直接返回到printf，因此其本质就是执行了一次跳转，直接跳转到下一个指令。通过这种方式，我们可以跳转到任何地方。
+破坏栈还有另一种形式，这里通过call进入xxx函数，但是xxx的内容却是改变esp指向的值后立即返回：首先call会压入下一条指令的地址，而下一条指令就在xxx函数内，是add指令；执行完add指令后，esp指向的内容--即原本要返回的下一条指令的地址被改变，正好变成了`call printf`的地址，最后retn直接返回到printf，因此其本质就是执行了一次跳转，直接跳转到下一个指令。通过这种方式，我们可以跳转到任何地方。
 
 ```c
 #include <stdio.h>
@@ -123,19 +123,19 @@ int main()
 
 ## 实践
 
-接下来来一道题目看看如何分析，这题一开始跟着start函数跳转到main，却发现f5怎么也按不动，也无法切换到graph模式，搜索也搜不到main函数，这是因为IDA无法识别main函数的边界，所以没有把它视为函数，我们需要手动创建函数，把属于main的部分选中（自己判断哪部分可能属于main，可以找leave+retn作为判断边界），然后使用IDA的create function功能。
+接下来来一道题目看看如何分析，这题一开始跟着start函数跳转到main，却发现f5怎么也按不动，也无法切换到graph模式，搜索也搜不到main函数，这是因为IDA无法识别main函数的边界，所以没有把它视为函数，我们需要手动创建函数，把属于main的部分选中（自己判断哪部分可能属于main，可以找leave+retn作为判断边界），然后使用IDA的`create function`功能。
 
 ![ref1](/assets/images/2026-07-24-JunkCode&AntiDebug/ref1.webp)
 
-然后就可以反汇编main了，但是发现`strcpy`之后就没有了。
+然后就可以反汇编main了，但是发现strcpy之后就没有了。
 
 ![ref2](/assets/images/2026-07-24-JunkCode&AntiDebug/ref2.webp)
 
-这是因为`0x98B`处有花指令，这个就属于左右横跳+错位跳转，同时使用jb和jnb那就是必定跳转，同时跳转的位置是loc_98F+1也就是`0x990`，但是`0x98F`是一条指令，其下一条指令又是在`0x991`，跳转会跳转到这条指令的中间。
+这是因为`0x98B`处有花指令，这个就属于左右横跳+错位跳转，同时使用jb和jnb那就是必定跳转，同时跳转的位置是`loc_98F+1`也就是`0x990`，但是`0x98F`是一条指令，其下一条指令又是在`0x991`，跳转会跳转到这条指令的中间。
 
 ![ref3](/assets/images/2026-07-24-JunkCode&AntiDebug/ref3.webp)
 
-方法是选中loope这一整条指令（别用鼠标直接点这条指令，不然IDA之后的操作会对这条指令所在的区块的所有指令进行操作），然后右键undefine，再对jb和jnb跳转的位置`0x990`重新创建代码，这样右边反汇编一下就好了，之后把剩下的`0x98f`的db 0e1h直接nop就好，nop使用插件来nop，不同机器码占的长度不同，nop是0x90，常常比nop之前的指令长度短，插件可以帮我们把多余的操作数进行填充，这样就不需要一个个改。。
+方法是选中loope这一整条指令（别用鼠标直接点这条指令，不然IDA之后的操作会对这条指令所在的区块的所有指令进行操作），然后右键undefine，再对jb和jnb跳转的位置`0x990`重新创建代码，这样右边反汇编一下就好了，之后把剩下的`0x98f`的`db 0e1h`直接nop就好，nop使用插件来nop，不同机器码占的长度不同，nop是0x90，常常比nop之前的指令长度短，插件可以帮我们把多余的操作数进行填充，这样就不需要一个个改。。
 
 ![ref4](/assets/images/2026-07-24-JunkCode&AntiDebug/ref4.webp)
 
@@ -151,7 +151,7 @@ int main()
 
 ![ref7](/assets/images/2026-07-24-JunkCode&AntiDebug/ref7.webp)
 
-IDA不会直接对原文件进行修改，一般来说，在IDA里的操作都是对IDA的数据库进行操作，想要获得patch后的程序，得在IDA里选择Apply patches to input file然后保存为新应用，分析完后的main：
+IDA不会直接对原文件进行修改，一般来说，在IDA里的操作都是对IDA的数据库进行操作，想要获得patch后的程序，得在IDA里选择`Apply patches to input file`然后保存为新应用，分析完后的main：
 
 {% raw %}
 ```c
@@ -262,13 +262,13 @@ void __fastcall main(int a1, char **a2, char **a3)
 ```
 {% endraw %}
 
-# 反调试 Anti-Debug
+# 反调试
 
 反调试比花指令花哨很多，整个反调试可以分为两部分，一部分是检测程序调试状态，一部分是针对调试状态做出对应响应。下面先梳理一下反调试特征。
 
 ## 理论
 
-检测反调试有很多种方法，首先比较简单直接的就是直接调用系统的函数、接口等来检测调试状态。对于linux而言，常常会检测``/proc/self/status`、`ptrace(PTRACE_TRACEME)，windows则是会使用`IsDebuggerPresent()`、`CheckRemoteDebuggerPresent()`、`NtQueryInformationProcess()`来检测。在逆向的时候可以搜索字符串或者import表，看到这些就知道有反调试了。
+检测反调试有很多种方法，首先比较简单直接的就是直接调用系统的函数、接口等来检测调试状态。对于linux而言，常常会检测`/proc/self/status`、`ptrace(PTRACE_TRACEME)`，windows则是会使用`IsDebuggerPresent()`、`CheckRemoteDebuggerPresent()`、`NtQueryInformationProcess()`来检测。在逆向的时候可以搜索字符串或者import表，看到这些就知道有反调试了。
 
 ![ref8](/assets/images/2026-07-24-JunkCode&AntiDebug/ref8.webp)
 
@@ -280,19 +280,19 @@ windows中每个进程还有进程环境块PEB，是用来记录每一个进程�
 
 ## 实践
 
-下面找了一道windows的anti-debug的题目，`SecCon 2016 - anti-debugging`。F5之后先发现sp的值分析错误，也就是main函数的反汇编可能是错的。但是总体逻辑看了挺简单的，就是输入密码`I have a pen.`就通过验证，但是通过验证以后什么也没有。同时通过看看反汇编的代码，已经可以发现一堆反debug的技术了。
+下面找了一道windows的反调试的题目，`SecCon 2016-anti-debugging`。F5之后先发现sp的值分析错误，也就是main函数的反汇编可能是错的。但是总体逻辑看了挺简单的，就是输入密码`I have a pen.`就通过验证，但是通过验证以后什么也没有。同时通过看看反汇编的代码，已经可以发现一堆反debug的技术了。
 
 ![ref9](/assets/images/2026-07-24-JunkCode&AntiDebug/ref9.webp)
 
-先解决分析问题，用IDA的栈指针差值SPD（Stack Pointer Delta）来分析每一步的栈变化，可以发现两个事情，一是在`0x40176e`处，SPD的值为负了，即当前SP的值是正的（positive sp value），然后这期间还有一个很奇怪的事情是部分代码的SPD只有4；二是出现了call MessageBox，也就是windows的弹窗，但是这个之前反编译没有出来。
+先解决分析问题，用IDA的栈指针差值SPD（Stack Pointer Delta）来分析每一步的栈变化，可以发现两个事情，一是在`0x40176e`处，SPD的值为负了，即当前SP的值是正的（positive sp value），然后这期间还有一个很奇怪的事情是部分代码的SPD只有4；二是出现了`call MessageBox`，也就是windows的弹窗，但是这个之前反编译没有出来。
 
 ![ref11](/assets/images/2026-07-24-JunkCode&AntiDebug/ref11.webp)
 
-往前追溯一下是谁对`esp`指针动手了，就可以发现`0x4015f6`处还原了旧的`esp`，然后突然就变成4了，而这个值是`0x401326`的时候mov指令保存的，IDA的静态分析很难处理`mov reg, [mem_addr]`的情况，因为IDA静态分析默认不会维护完整的内存状态，对于`mov esp, [ebp+ms_exc.old_esp]`这种涉及到根据内存修改栈指针的运算来说，`esp`的值在IDA的分析里就会变为无法确定的。但是可以通过动态调试确定这个`esp`的值，这下知道题目为什么要反调试了。
+往前追溯一下是谁对esp指针动手了，就可以发现`0x4015f6`处还原了旧的esp，然后突然就变成4了，而这个值是`0x401326`的时候mov指令保存的，IDA的静态分析很难处理`mov reg, [mem_addr]`的情况，因为IDA静态分析默认不会维护完整的内存状态，对于`mov esp, [ebp+ms_exc.old_esp]`这种涉及到根据内存修改栈指针的运算来说，esp的值在IDA的分析里就会变为无法确定的。但是可以通过动态调试确定这个esp的值，这下知道题目为什么要反调试了。
 
 ![ref12](/assets/images/2026-07-24-JunkCode&AntiDebug/ref12.webp)
 
-接下来就是一层层的破除反调试了，确定好`esp`的变化后，就能恢复出完整的反汇编代码，然后分析出逻辑了，不过其实最后可以知道MessageBox是打印真正的flag的，直接patch一下jmp到这里就能获取flag了。
+接下来就是一层层的破除反调试了，确定好esp的变化后，就能恢复出完整的反汇编代码，然后分析出逻辑了，不过其实最后可以知道MessageBox是打印真正的flag的，直接patch一下jmp到这里就能获取flag了。
 
 直接看，第一个反debug的是windows的函数IsDebuggerPresent，程序通过判断IsDebuggerPresent的输出来确定有没有debug，有就exit
 
@@ -317,7 +317,7 @@ windows中每个进程还有进程环境块PEB，是用来记录每一个进程�
 值得一说的是最后的SEH，也就是
 
 ```c
-#这里其实因为sp的原因不是完整的代码，可以看到好像都没见到判断逻辑
+#这里其实因为sp的原因不是完整的代码，可以看到都没见到判断逻辑
 pbDebuggerPresent[2] = 1;
 pbDebuggerPresent[5] = 1;
 pbDebuggerPresent[4] = 1 / 0;
@@ -329,7 +329,7 @@ printf("But detected Debugged.\n");
 
 ![ref18](/assets/images/2026-07-24-JunkCode&AntiDebug/ref18.webp)
 
-最后改`esp`还是过于麻烦了，我也是选择直接动态调试确定分支，最后直接跳转的形式了。patch一下直接能在main中看到处理逻辑，并且直接打印flag。
+最后改esp还是过于麻烦了，我也是选择直接动态调试确定分支，最后直接跳转的形式了。patch一下直接能在main中看到处理逻辑，并且直接打印flag。
 
 ![ref19](/assets/images/2026-07-24-JunkCode&AntiDebug/ref19.webp)
 

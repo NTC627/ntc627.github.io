@@ -57,7 +57,7 @@ int main(void) {
  return 0; }
 ```
 
-在释放完chunk2后，`main_arena`指向了chunk2，所以old != p了，那么就可以再free一次chunk1了，如下图，很好的展示了`chunk`是怎么链接的。
+在释放完chunk2后，`main_arena`指向了chunk2，所以old != p了，那么就可以再free一次chunk1了，如下图，很好的展示了chunk是怎么链接的。
 
 ![ref4](/assets/images/2026-03-20-FastbinAttack-Double-free-note/ref4.webp)
 
@@ -110,14 +110,14 @@ p.sendline(b"4")
 p.interactive()
 ```
 
-顺序是先Alloc两个块，然后free掉第一个块，随后第二个块，此时还一切正常，而当再次free掉第一个块的时候，`fastbin`链表就变成了前面画的图的样子，此时因为modify并不检查写入的块是否还在，因此可以往里面写入。这时候要记一张经典老图
+顺序是先Alloc两个块，然后free掉第一个块，随后第二个块，此时还一切正常，而当再次free掉第一个块的时候，fastbin链表就变成了前面画的图的样子，此时因为modify并不检查写入的块是否还在，因此可以往里面写入。这时候要记一张经典老图
 
 ![ref7](/assets/images/2026-03-20-FastbinAttack-Double-free-note/ref7.webp)
 
-一个`chunk`的数据结构，在使用时仅包含`prev_size`和size，当它释放时，原`userdata`的一部分空间会用来放fd和bk两个指针，指向其它空闲块，因此我们再次调用modify对一个释放的块写数据，就会覆盖掉原本的fd，在它下一次分配时，会分配当前fd指向的`0x602080`作为空闲块，而为什么是这个，则是因为：
+一个chunk的数据结构，在使用时仅包含`prev_size`和`size`，当它释放时，原userdata的一部分空间会用来放fd和bk两个指针，指向其它空闲块，因此我们再次调用modify对一个释放的块写数据，就会覆盖掉原本的fd，在它下一次分配时，会分配当前fd指向的`0x602080`作为空闲块，而为什么是这个，则是因为：
 
 ![ref5](/assets/images/2026-03-20-FastbinAttack-Double-free-note/ref5.webp)
 
 题目留了个后门给我们，正常情况下，2.23的glibc分配空闲块还会检查空闲块的size位正确不，而题目刚刚好把数据段的`0x602088`设为了0x50，刚刚好对应`0x602080`的size位。
 
-不过modify完以后也只是改了指针，需要继续分配块，把`0x602080`分配出去，我们才能改里面的内容，注:modify完后，链表结构是这样，`main_arena`->chunk1->`0x602080`，而之前是`main_arena`->chunk1->chunk2->chunk1。最后两次alloc中，第一次alloc的是之前的chunk1（如果没有double free的话，本应该alloc chunk2），第二次则是`0x602080`，此时往里面写数据就可以覆盖掉shell_check了。不过这题虽然展示了double free的用法，但不是很好，因为modify不检查free，所以可以直接uaf，仅通过这题我也不能完全认识到double free的作用。
+不过modify完以后也只是改了指针，需要继续分配块，把`0x602080`分配出去，我们才能改里面的内容，注:modify完后，链表结构是这样，`main_arena->chunk1->0x602080`，而之前是`main_arena->chunk1->chunk2->chunk1`。最后两次alloc中，第一次alloc的是之前的chunk1（如果没有double free的话，本应该alloc chunk2），第二次则是`0x602080`，此时往里面写数据就可以覆盖掉`shell_check`了。
