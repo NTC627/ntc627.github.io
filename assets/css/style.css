@@ -382,6 +382,8 @@ code {
     padding: 25px;
     margin: 0 10px;
     border-radius: 6px;
+    max-width: 100%;
+    min-width: 0;
 }
 
 .post h1 {
@@ -494,6 +496,7 @@ pre code {
     border: 1px solid var(--color-border);
     border-radius: 6px;
     overflow: hidden;
+    max-width: 100%;
 }
 
 .post-content th {
@@ -997,8 +1000,11 @@ pre code {
         align-items: stretch;
     }
 
+    .content {
+        width: 100%;
+    }
+
     .sidebar,
-    aside {
         display: none !important;
         width: 0 !important;
         height: 0 !important;
