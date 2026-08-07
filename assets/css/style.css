@@ -388,6 +388,7 @@ code {
 
 .post h1 {
     margin-bottom: 10px;
+    font-size: 1.8rem;
     text-align: left;
 }
 
@@ -415,6 +416,18 @@ code {
 .post-content {
     line-height: 1.8;
     overflow-x: auto;
+}
+
+.post-content h1 {
+    font-size: 1.6rem;
+}
+
+.post-content h2 {
+    font-size: 1.4rem;
+}
+
+.post-content h3 {
+    font-size: 1.2rem;
 }
 
 .post-content h1,

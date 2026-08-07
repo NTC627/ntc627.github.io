@@ -8,6 +8,7 @@ excerpt: "Double free指的是同一块内存地址连续调用两次free，使�
 # 分析
 
 先来逆向看看，可以看到有个后门函数，触发方式是`qword_602090`等于0，而这个值默认是1。
+
 ![ref1](/assets/images/2026-03-20-FastbinAttack-Double-free-note/ref1.webp)
 
 还有一个函数，可以分配用户输入的指定大小的堆
@@ -41,7 +42,6 @@ void *chunk1,*chunk2,*chunk3;
 ```c
 if (__builtin_expect (old == p, 0))
     malloc_printerr ("double free or corruption (fasttop)");
-
 ```
 
 但有一种情况，是可以重复free掉chunk1的。
@@ -61,7 +61,7 @@ int main(void) {
 
 ![ref4](/assets/images/2026-03-20-FastbinAttack-Double-free-note/ref4.webp)
 
-# Exploit
+# 利用
 
 double_free的方法来做是这样：
 

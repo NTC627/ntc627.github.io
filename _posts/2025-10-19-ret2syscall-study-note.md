@@ -7,7 +7,7 @@ excerpt: "ret2syscall是一种比ret2shellcode更通用的技术，它无需向�
 ---
 
 
-# 1.信息检查
+# 信息检查
 
 这一题开启了NX保护
 
@@ -21,7 +21,7 @@ IDA反汇编可以看到，这回不自带shell函数，也提示无法注入she
 
 
 
-# 2.Gadgets拼接
+# Gadgets拼接
 
 使用`execve("/bin/sh",NULL,NULL)`这一系统调用，可以直接获取shell，为了执行这个系统调用，寄存器的值应为下列值
 
@@ -56,7 +56,7 @@ edx=0
 
 
 
-# 3.exp编写
+# exp编写
 
 exp编写如下，这里用到了一个新（对本人来说）函数flat，来把多个变量转换成一串二进制值。
 

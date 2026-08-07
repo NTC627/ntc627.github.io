@@ -7,7 +7,7 @@ excerpt: "笔者对Pickle以及反序列化漏洞的相关知识有限，故仅�
 ---
 
 
-# Pickle
+# Pickle介绍
 
 Pickle是Python的一个模块，用来对python的对象进行序列化和反序列化，不过这个模块并不安全，可以通过构造恶意的pickle数据，来使pickle执行对数据反序列化的同时，执行恶意代码。序列化和反序列化在pickle这里也叫封存和解封。
 
@@ -34,7 +34,7 @@ Pickle的opcode与PVM的工作流程比较复杂，但是理解了以后，也�
 
 我们直接从Pickle的反序列化函数开始讨论，这些函数会解析pickle序列化数据，是可以直接利用的，这样的函数有：
 
-## 1.pickle.loads()
+## pickle.loads()
 
 输入的参数是字节，或者字节数组，例如：
 
@@ -42,7 +42,7 @@ Pickle的opcode与PVM的工作流程比较复杂，但是理解了以后，也�
 obj = pickle.loads(data)
 ```
 
-## 2.pickle.load()
+## pickle.load()
 
 输入是二进制文件，示例：
 
@@ -51,7 +51,7 @@ with open('f.pkl', 'rb') as f:
 	obj = pickle.load(f)
 ```
 
-## 3.pickle.Unpickler
+## pickle.Unpickler
 
 也是从文件中读取，这里顺便一提，官方的修复建议就是重写Unpickler.find\_class()方法，限制模块调用的函数，不过也可以用前面说的手写opcode来根据具体情况绕过。
 
@@ -60,14 +60,14 @@ unpickler = pickle.Unpickler(f)
 obj = unpickler.load()
 ```
 
-## 4.\_pickle.loads()、\_pickle.load()、\_pickle.Unpickler
+## \_pickle.loads()、\_pickle.load()、\_pickle.Unpickler
 
 pickle模块底层用c语言重写，所以也可以直接调用底层的c模块，效果跟上面是一样的
 
-## 5.其它会调用pickle反序列化的模块
+## 其它会调用pickle反序列化的模块
 
 这里列举部分。
-### (1) shelve.open()
+### shelve.open()
 
 shelve是Python的一个数据1持久化的模块，它读取db的键值的时候会调用pickle反序列化。
 
@@ -76,7 +76,7 @@ db = shelve.open('mydb')
 val = db['key']
 ```
 
-### (2)  dill.loads()、dill.load()
+### dill.loads()、dill.load()
 
 dill是pickle的增强版，可以序列化更多东西，包括pickle无法序列化的lambda函数等。因此也比pickle更危险
 
@@ -84,7 +84,7 @@ dill是pickle的增强版，可以序列化更多东西，包括pickle无法序�
 obj = dill.loads(data)
 ```
 
-### (3) cloudpickle.loads()
+### cloudpickle.loads()
 
 cloudpickle常用于Ray，Dask等分布式框架。
 
@@ -92,7 +92,7 @@ cloudpickle常用于Ray，Dask等分布式框架。
 obj = cloudpickle.loads(data)
 ```
 
-### (4) joblib.load()
+### joblib.load()
 
 机器学习领域常用的，用于加载外部模型。
 

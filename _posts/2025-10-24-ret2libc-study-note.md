@@ -7,9 +7,9 @@ excerpt: "​ret2libc，即返回到libc库，libc是c语言的动态链接库�
 ---
 
 
-# ret2libc1
+# 例题1
 
-## 信息检查
+## 例题1 信息检查
 
 先进行程序信息的检查，开启了NX保护
 
@@ -23,7 +23,7 @@ excerpt: "​ret2libc，即返回到libc库，libc是c语言的动态链接库�
 
 
 
-## Ret2libc
+## 组合bss与plt内容
 
 还是先看看返回地址怎么样，毕竟无论怎么溢出，至少都要先把返回地址覆盖了，可以看到依旧是需要覆盖112的数据。
 
@@ -45,7 +45,7 @@ excerpt: "​ret2libc，即返回到libc库，libc是c语言的动态链接库�
 
 
 
-## exp编写
+## 例题1 exp编写
 
 具体做法就是把返回地址写成system的plt地址，然后把`/bin/sh`作为参数传递给system
 
@@ -70,11 +70,11 @@ excerpt: "​ret2libc，即返回到libc库，libc是c语言的动态链接库�
 
 
 
-# ret2libc2
+# 例题2
 
-## 信息检查
+## 例题2 信息检查
 
-先进行程序信息的检查，保护内容和ret2libc1的内容一致所以略。然后IDA反编译。
+先进行程序信息的检查，保护内容和例题1的内容一致所以略。然后IDA反编译。
 
 ![ref2.1](/assets/images/2025-10-24-ret2libc-study-note/ref2.1.webp)
 
@@ -86,7 +86,7 @@ excerpt: "​ret2libc，即返回到libc库，libc是c语言的动态链接库�
 
 
 
-## Ret2libc
+## 组合plt与输入内容
 
 所以解题的思路是我们自己输入`/bin/sh`字符串，然后拼接一下，我们需要从gets中读取，但由于原本的gets读到的字符放在栈缓冲区，而不在bss段里，我们没法用原来的gets读取并存储`/bin/sh`，所以我们需要利用ROP构造自己的gets，然后读到bss段中，可以通过pwndbg的`vmmap`确认，bss段确实是可以写的。
 
@@ -112,7 +112,7 @@ excerpt: "​ret2libc，即返回到libc库，libc是c语言的动态链接库�
 
 
 
-## exp编写
+## 例题2 exp编写
 
 exp编写如下，所有用到的地址都很好找，但是注意写入到bss段的时候有个小坑，那就是bss段不是任意地方都可以随便写的，要写到程序里分配好的未初始化变量buf2里，这样才能被system当成参数执行
 
@@ -124,11 +124,11 @@ exp编写如下，所有用到的地址都很好找，但是注意写入到bss�
 
 
 
-# ret2libc3
+# 例题3
 
-## 信息检查
+## 例题3 信息检查
 
-IDA反编译。这次连system也不自带了。但依然是栈溢出。这次要利用的是ret2libc。
+IDA反编译。这次连system也不自带了。但依然是栈溢出。这次要是完整的ret2libc流程了。
 
 ![ref3.1](/assets/images/2025-10-24-ret2libc-study-note/ref3.1.webp)
 
@@ -148,7 +148,7 @@ libc就是一个c语言库，提供了大量的标准函数，包括system包括
 
 
 
-## exp编写
+## 例题3 exp编写
 
 ctf-wiki的exp编写如下，基本就是上面讲的过程的代码化，注意一下第二次调用main的payload的填充要重新算，和一开始不一样了。
 

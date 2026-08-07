@@ -51,7 +51,7 @@ rsp指向栈顶，rbp指向栈底，两者相减就可以得到栈的空间是0x
 
 接下来说说这条payload是怎么构造的，原理是什么。
 
-## 原理部分
+## 原理
 
 首先，每个函数执行完后，都会执行leave和ret指令，ret指令就是pop然后返回到对应地址，重点是leave，leave这个指令相当于`mov rsp, rbp; pop rbp;`也就是先通过`mov rsp, rbp`把rsp的值设为rbp，达到清空栈的目的，然后`pop rbp`把原来的栈底变成栈顶，也就是恢复成上一个调用函数的栈帧。由于这个操作会同时控制rsp和rbp两个关于栈的重要指针，因此栈迁移的核心实现就靠它们。
 
@@ -87,7 +87,7 @@ sh.sendafter(b">", flat([b'deadbeef', pop_rdi, elf.got['puts'], elf.plt['puts'],
 
 
 
-## 实操部分
+## 实践
 
 实际操作的话，对我们来说最重要的是找到迁移的位置。如何确定迁移的位置，主要是看你payload的构造，这里payload是直接写在栈上了，那肯定就是迁移到栈，那要迁移多少，也就是要看你一开始的元素是怎么样的，如果像上面的payload，deadbeef、pop啥的直接往栈顶写了，那就得把rbp的值变成栈顶才能触发溢出；也可以先填充，最后写deadbeef、pop啥的，那此时rbp和rsp就是要指向填充完后有意义的那一段rop的栈上的地址了。我们这里payload都是从栈顶开始布置，所以rbp和rsp都要迁移到栈顶。完整exp如下
 

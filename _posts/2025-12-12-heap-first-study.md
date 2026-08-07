@@ -7,13 +7,12 @@ excerpt: "学习堆的pwn，就要从堆的基本结构开始学起，对于初�
 ---
 
 
-# 堆的基本结构
 
-## 1.堆基本概念
+# 堆基本概念
 
 堆的结构是由不同应用程序决定，与数据结构中的堆不同，程序中的堆一般指代一块连续的内存，且由于不同应用程序对内存的需求不同，有些要求的内存比较小块，有些应用要求的内容又比较大块。在glibc中，使用的堆分配器是Ptmalloc。
 
-## 2.arena、bin、chunk
+# arena、bin、chunk
 
 一个程序可以有多个arena（多线程），arena是个管理堆内存的东西。bin是一个“存放”空闲堆块的数据结构。chunk是堆管理的基本单位。
 ```
@@ -21,7 +20,7 @@ excerpt: "学习堆的pwn，就要从堆的基本结构开始学起，对于初�
   |-bin
   |-chunk
 ```
-## 3.几种bin
+# 几种bin
 
 fastbin
 
@@ -31,7 +30,7 @@ largebin
 
 unsortedbin
 
-## 4.几种chunk
+# 几种chunk
 
 fastbin chunk
 
@@ -43,7 +42,7 @@ top chunk
 
 mmapped chunk
 
-## 5.chunk
+# chunk
 
 接下来先讲讲chunk吧，一个chunk，除了用户malloc时给用户分配的区域userdata，还有十分重要的头数据，接下来讲讲几个重要的字段。
 
@@ -53,7 +52,7 @@ mmapped chunk
 
 （3）`fd`，`bk`，当前chunk使用时，从fd字段起是用户数据。空闲时，fd指向下一个空闲chunk，bk指向上一个chunk。
 
-## 6.bin类型
+# bin类型
 
 在讲chunk的分类之前需要讲bin，chunk的一部分分类其实是按它释放以后所归属的bin来分类的，一般来说每个chunk free后，其指针都会链接到bin相关的链表中管理。
 
@@ -65,7 +64,7 @@ mmapped chunk
 
 （4）`unsorted bin`，虽然有大小bin之分，但是最开始free时，都归于unsorted bin，在malloc时才会再划分成largebin或者smallbin，然后再划分chunk。
 
-## 7.chunk类型
+# chunk类型
 chunk有好几种类型，在4中已经说过了，现在讲讲这几种类型是怎么分的。
 
 （1）`fastbin chunk`，如果chunk的范围在特定的小范围内，比如0x20到0x80，这类chunk就被划分为fastbin chunk。
@@ -78,15 +77,15 @@ chunk有好几种类型，在4中已经说过了，现在讲讲这几种类型�
 
 （5）`mmapped chunk`，独立于之前的arena，这是比上方说的各种chunk的空间都要大的多的chunk，由单独特定的管理来分配和释放。
 
-## 8.malloc、calloc、free
+# malloc、calloc、free
 
 malloc会初始化chunk并分配，和calloc不同，malloc申请地址的时候不会把里面的内存都清空，就是原来的东西都还在。
 free操作会释放已经分配的chunk，但不会清空其内容，free时会判断chunk类型同时按分类把它挂到不同bin或在其他上（munmap）。free时还会合并前后空闲chunk，如果与top chunk相邻就合并进top chunk。
 
-## 小结
+# 小结
 第一次接触堆，概念可能描述的不是很准确，后续一步步学了一步步补充吧。
 
-## 二次编辑
+# 二次编辑
 了解完每一种攻击后再回头看，这篇笔记确实写的挺皮毛的，后面的笔记对各种bin的结构做了详细分析了，这里不补充了，不过学完以后，我自己感觉下面的这张图非常重要，所有的攻击方法无非是利用这几个指针实现读写，非常建议牢牢记住这个结构体
 
 ![ref1](/assets/images/2025-12-12-heap-first-study/ref1.webp)

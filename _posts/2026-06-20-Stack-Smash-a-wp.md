@@ -14,7 +14,7 @@ excerpt: "以一道题目介绍stack smash相关技术。"
 简单分析一下就是会把flag读入内存，准确的说是读入栈的区域，然后又给了个溢出漏洞，同时这题开了canary，那就没法rop
 
 ```bash
-b14ckb0x@b14ckb0x:~/Desktop/temp/GUESS$ checksec GUESS
+~/Desktop/temp/GUESS$ checksec GUESS
 [*] '/home/b14ckb0x/Desktop/temp/GUESS/GUESS'
     Arch:       amd64-64-little
     RELRO:      Partial RELRO
@@ -53,10 +53,10 @@ void __attribute__ ((noreturn)) internal_function __fortify_fail (const char *ms
 不过这个函数里的`__libc_argv[0]`，glibc-2.31之后删了，所以不会打印，不能用来泄漏了。所以如果glibc版本太高的话，需要手动调整一下
 
 ```bash
-b14ckb0x@b14ckb0x:~/Desktop/temp/GUESS$ patchelf --set-interpreter ./ld-linux-x86-64.so.2 ./GUESS                        
+~/Desktop/temp/GUESS$ patchelf --set-interpreter ./ld-linux-x86-64.so.2 ./GUESS                        
 
-b14ckb0x@b14ckb0x:~/Desktop/temp/GUESS$ patchelf --set-rpath ./ ./GUESS                                          
-b14ckb0x@b14ckb0x:~/Desktop/temp/GUESS$ ldd GUESS                                                
+~/Desktop/temp/GUESS$ patchelf --set-rpath ./ ./GUESS                                          
+~/Desktop/temp/GUESS$ ldd GUESS                                                
 	linux-vdso.so.1 (0x00007fbc719ef000)
 	libc.so.6 => ./libc.so.6 (0x00007fbc71600000)
 	./ld-linux-x86-64.so.2 => /lib64/ld-linux-x86-64.so.2 (0x00007fbc719f1000)
