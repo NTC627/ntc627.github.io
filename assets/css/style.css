@@ -29,7 +29,7 @@
     --color-text-blockquote: #6b6660;
     --color-text-inline-code: #c4524a;
 
-    --color-accent: #4a7fb5;
+    --color-accent: #a89059;
     --color-accent-hover: #3d6a99;
 
     --font-mono: "Courier New", "Courier", "DejaVu Sans Mono",
@@ -498,6 +498,90 @@ pre code {
 
 .post-content pre code {
     color: var(--color-text);
+}
+
+.code-wrapper {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    border: 1px solid var(--color-border);
+    border-radius: 6px;
+    overflow: hidden;
+    background: var(--color-bg-code);
+    margin-bottom: 15px;
+}
+
+.code-wrapper > pre.highlight {
+    border: none;
+    margin: 0;
+    padding: 15px;
+    overflow-x: auto;
+    background: transparent;
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-border) var(--color-bg-code);
+}
+
+.code-wrapper > pre.highlight::-webkit-scrollbar {
+    height: 6px;
+}
+
+.code-wrapper > pre.highlight::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.code-wrapper > pre.highlight::-webkit-scrollbar-thumb {
+    background: var(--color-border);
+    border-radius: 3px;
+}
+
+.code-gutter {
+    border-right: 1px solid var(--color-border);
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+.code-gutter pre {
+    padding: 15px 10px;
+    margin: 0;
+    background: transparent;
+    border: none;
+    color: var(--color-text-secondary);
+    text-align: right;
+    overflow: hidden;
+}
+
+.code-gutter code {
+    background: transparent;
+    color: var(--color-text-secondary);
+}
+
+.code-copy-btn {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    border: 1px solid var(--color-border);
+    border-radius: 4px;
+    background: var(--color-bg-card);
+    color: var(--color-text-secondary);
+    cursor: pointer;
+    opacity: 0.7;
+    transition: opacity 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+    z-index: 10;
+}
+
+.code-copy-btn:hover {
+    opacity: 1;
+    color: var(--color-text);
+    border-color: var(--color-border-card);
+}
+
+.code-copy-btn.copied {
+    color: var(--color-accent);
+    border-color: var(--color-accent);
 }
 
 /* --- Tables --- */
