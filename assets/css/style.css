@@ -237,7 +237,7 @@ code {
     transition: color 0.2s ease, transform 0.2s ease;
 }
 
-.navbar a:hover {
+.nav-links a:hover {
     text-decoration: none;
     transform: scale(1.08);
 }
@@ -920,6 +920,7 @@ pre code {
     width: 320px;
     max-height: 400px;
     overflow-y: auto;
+    overflow-x: hidden;
     background: var(--color-bg-search);
     border: 1px solid var(--color-border-input);
     border-radius: 4px;
@@ -970,13 +971,21 @@ pre code {
     color: var(--color-text);
     font-size: 14px;
     display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 #results-container li a:hover {
     color: var(--color-text-link-hover);
+    filter: brightness(1.1);
 }
 
 #results-container li small {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
     color: var(--color-text-secondary);
     font-size: 12px;
 }
@@ -1182,7 +1191,7 @@ pre code {
         transition: color 0.2s ease, transform 0.2s ease;
     }
 
-    .navbar a:hover {
+    .nav-links a:hover {
         text-decoration: none;
         transform: scale(1.08);
     }

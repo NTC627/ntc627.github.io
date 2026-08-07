@@ -1,13 +1,13 @@
 ---
 layout: default
-title: Home
+title: 主页
 pagination:
   enabled: true
 ---
 <div class="main-layout">
 {% include sidebar.html %}
     <main class="content"> 
-    <h1>欢迎来到{{ site.author }}的博客</h1>
+    <h1>欢迎来到{{ site.author }}的茶馆</h1>
     {% assign posts = paginator.posts | default: site.posts %}
     {% for post in posts %}
     {% include post-card.html post=post %}
