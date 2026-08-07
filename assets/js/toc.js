@@ -7,7 +7,7 @@
 
     var headings = content.querySelectorAll('h1, h2, h3');
     if (!headings.length) {
-        toc.parentElement.parentElement.style.display = 'none';
+        toc.innerHTML = '<p class="toc-empty">当前文章无目录</p>';
         return;
     }
 
