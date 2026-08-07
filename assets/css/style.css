@@ -447,6 +447,7 @@ code {
    ======================================== */
 
 .post-content {
+    font-size: 1.0rem;
     line-height: 1.8;
     overflow-x: auto;
 }
@@ -760,6 +761,8 @@ pre code {
     margin: 20px 0;
     font-family: var(--font-body);
 }
+
+.category-index-item {
     display: flex;
     align-items: center;
     justify-content: space-between;
