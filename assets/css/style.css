@@ -89,6 +89,7 @@
 
 html {
     overflow-y: scroll;
+    zoom: 120%;
     scrollbar-gutter: stable;
     scrollbar-width: thin;
     scrollbar-color: var(--color-border) var(--color-bg);
@@ -155,7 +156,7 @@ code {
    ======================================== */
 
 #wrapper {
-    max-width: 960px;
+    max-width: 1400px;
     width: 100%;
     margin: 0 auto;
 }
