@@ -1,6 +1,7 @@
 title: NTC627的茶馆
 description: Hack everything
 author: NTC627
+future: true
 
 pagination:
   enabled: true
