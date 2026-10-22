@@ -16,6 +16,8 @@ excerpt: "MAZE-SEC社区靶机MiniIRC的复盘。"
 
 # User
 
+## 信息收集
+
 开放了三个端口，web进去是登录页面，尝试常规爆破未果，转向6667端口。
 
 ```bash
@@ -31,6 +33,8 @@ Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
 ```
 
 ![ref1](/assets/images/2026-10-07-MiniIRC-review/ref1.webp)
+
+## IRC服务
 
 6667端口运行着IRC服务，IRC即Internet Relay Chat，因特网中继聊天，是一个很有年代的通讯方式，使用者可以通过连接到一个IRC服务器中的频道的方式，和频道内的其他人说话，类似很多早期的多人游戏可以选择各种XX服，同一个服务器内的人就能互相发消息，如果看过一些黑客电影或者有点年纪的人对IRC应该不会陌生。
 
@@ -76,6 +80,8 @@ JOIN #maze
 
 # Root
 
+## 利用控制台RCE
+
 进一步获取root前，先看看web端的源码，
 
 ```php
@@ -106,6 +112,8 @@ total 48
 $ cat /opt/miniircd/miniircd
 略了
 ```
+
+## miniircd程序分析
 
 可以看到miniirc的服务器是python写的，其中有一个函数会用exec执行python代码，
 
@@ -159,7 +167,11 @@ $ systemctl status miniircd.service
              `-414 python3 /opt/miniircd/miniircd --setuid root --state-dir=/tmp --motd=/root/motd.txt --ports 6667
 ```
 
-当前进程的state-dir是/tmp，/tmp很明显是可控的，那么往/tmp里构造一个恶意python代码文件，就可以让miniirc以root身份执行。不过这里有个坑，网页控制台写入的tmp不是真实tmp，apache进程把系统分配的隔离的tmp--/systemd-private-631b3734475d49f1a7f3619336bf1f83-apache2.service-1TFAMt/tmp挂载到了常规tmp的位置，所以无法通过网页控制台直接写入tmp。
+当前进程的state-dir是/tmp，/tmp很明显是可控的，那么往/tmp里构造一个恶意python代码文件，就可以让miniirc以root身份执行。
+
+## 绕过tmp隔离并提权
+
+不过这里有个坑，网页控制台写入的tmp不是真实tmp，apache进程把系统分配的隔离的tmp--/systemd-private-631b3734475d49f1a7f3619336bf1f83-apache2.service-1TFAMt/tmp挂载到了常规tmp的位置，所以无法通过网页控制台直接写入tmp。
 
 ```bash
 $ cat /proc/self/mountinfo
@@ -227,7 +239,7 @@ JOIN #pwn
 flag{root-00dd0ada1b0d67c5e18d802f75090666}
 ```
 
-miniirc完整源码：
+## miniirc完整源码
 
 ```python
 #!/usr/bin/env python3

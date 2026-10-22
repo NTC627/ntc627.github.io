@@ -16,6 +16,8 @@ excerpt: "MAZE-SEC社区靶机lnnnPy的通关记录。"
 
 # User
 
+## 信息收集
+
 nmap扫一下，
 
 ```bash
@@ -38,6 +40,8 @@ Nmap done: 1 IP address (1 host up) scanned in 15.33 seconds
 这里虽然有80和7860两个web端口，但是进去的内容都是一样的，都是一个叫langflow的东西的面板，进去也也没有验证，点开右上角可以看到版本
 
 ![ref1](/assets/images/2026-06-21-lnnnPy-walkthrough/ref1.webp)
+
+## langflow已知RCE漏洞利用
 
 搜索一下可以发现，1.3.0之前存在一个RCE漏洞，可以利用/api/v1/validate/code这个地址进行RCE，下面是poc
 
@@ -78,6 +82,8 @@ lnnn{w3lc0me_t0_lnnn_w0rksh0p_y0u_g0t_u53r}
 ```
 
 # Root
+
+## lnnn模型服务分析
 
 查看一下家目录的其它文件，这应该是个提示，说明有脚本或程序监控`/home/lnnn/models/`这个文件夹
 
@@ -212,6 +218,8 @@ if __name__ == '__main__':
     logging.info('Eval cycle complete')
 
 ```
+
+## Pickle反序列化提权
 
 可以看到，这个脚本会把`/home/lnnn/models`下的.pkl文件，全部调用pickle.load加载，所以就可以构造恶意的pickle文件，进行反序列化提权，恶意脚本
 

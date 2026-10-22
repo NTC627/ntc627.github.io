@@ -14,6 +14,8 @@ excerpt: "MAZE-SEC社区靶机Rctl的通关记录。"
 
 # User
 
+## 信息收集
+
 nmap简单扫描一下，开了三个端口，7000这个curl了一下，返回一些报错信息，暂时不知道怎么利用，于是去看web。
 
 ```bash
@@ -26,6 +28,8 @@ PORT     STATE SERVICE              VERSION
 MAC Address: E8:B0:C5:A2:6E:21 (Intel Corporate)
 Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
 ```
+
+## web端RCE
 
 web有登录窗口，随便爆破一下发现admin:admin可以登录，同时目录扫描发现的device.php可以执行命令，是很经典的ip探测RCE，但是屏蔽了一些管道符号，用%0a换行符可以实现绕过，绕过即可发现user flag。
 
@@ -61,6 +65,8 @@ x;{command};x
 当前还没有稳定的shell，只能继续用RCE探测一下，有两个发现。
 
 一，存在Rctl服务端和客户端，都是以root来运行的；二，opt里放了Rctl源码。因此后续利用的重点是审计源代码看看有没有可以利用的漏洞。
+
+## Rctl服务分析
 
 Rctl服务相关情况：
 
@@ -196,6 +202,8 @@ cli->outfile = fopen(path, "a+");
 ```
 
 然而漏洞4最终AI没有利用成功，于是走了1+2+3：先利用SIGPIPE机制让服务端停止，然后伪造服务端，最后让服务端发送给客户端执行root命令。
+
+## 伪造Rctl服务端提权
 
 利用方式是，serd.c的accept_newcli函数会为了连接新的客户端而清理掉旧的socket，比如其中的clean4最终就是通过TLS的`SSL_shutdown()`向socket发送close_notify来通知要关闭socket，那么如果我们通过先一步发送RST标志的方式提前关闭socket，触发清理的时候就会往已经关闭的socket写数据，从而导致SIGPIPE终止掉rctl服务端。
 

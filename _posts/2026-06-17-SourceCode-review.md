@@ -18,6 +18,8 @@ excerpt: "MAZE-SEC社区靶机SourceCode的个人复盘与学习。"
 
 # User
 
+## 信息收集
+
 先是nmap扫了，留的端口不多，先去80看看
 
 ```bash
@@ -36,6 +38,8 @@ Service detection performed. Please report any incorrect results at https://nmap
 Nmap done: 1 IP address (1 host up) scanned in 9.04 seconds
 
 ```
+
+## 80端口渗透
 
 主页直接有了credential，索性直接用ssh上，结果连接失败
 
@@ -112,6 +116,8 @@ flag{user-945d9178d85464137929353a7c3a5857}
 
 # Root
 
+## boob.sh脚本分析
+
 首页有提示要拆弹，因此提权肯定和boob.sh有关的。先看看内容
 
 ```bash
@@ -159,6 +165,8 @@ AcceptEnv LANG LC_* COLORTERM NO_COLOR
 Subsystem	sftp	/usr/lib/openssh/sftp-server
 DenyUsers huazai
 ```
+
+## 利用符号链接篡改/etc/passwd提权
 
 `cp -La`
 这个命令由-L和-a参数组成，-L参数会让cp复制的时候，跟随符号链接，复制其指向的实际内容，-a则表示归档模式，会进行递归复制，会尽力保留文件的所有属性。这两个参数一起用好像是冲突的，因为a会不跟随链接，不过脚本写的是La，所以L优先级会大于a。
